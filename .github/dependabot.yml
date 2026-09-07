@@ -13,15 +13,7 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    cooldown:
-      # Don't update to any action release that is less than two weeks old.
-      default-days: 14
-    groups:
-      # Group all non-major updates of official actions together - they're lower-risk.
-      official-actions:
-        applies-to: version-updates
-        patterns:
-          - "actions/*"
-        update-types:
-          - "minor"
-          - "patch"
+    # Security updates only, matching the cargo entry above. Every pull request
+    # here starts a full Windows build of the workspace, which is far more
+    # compute than a routine action version bump is worth on this fork.
+    open-pull-requests-limit: 0
