@@ -9,7 +9,7 @@
 //! keyboard focus.
 //!
 //! The server routes all *core* input-related requests of a client — XTEST fake input,
-//! `RookPointer`, `QueryPointer`, `SetInputFocus` — through that client's "ClientPointer"
+//! `WarpPointer`, `QueryPointer`, `SetInputFocus` — through that client's "ClientPointer"
 //! master pair. By creating a private master pair and pointing a dedicated connection's
 //! ClientPointer at it (`XISetClientPointer`), the existing XTEST-based mouse and keyboard code
 //! drives the agent seat unchanged: events are indistinguishable from real hardware input to
@@ -112,7 +112,7 @@ impl AgentSeat {
             }
         };
 
-        // Route this connection's core requests (XTEST fake input, RookPointer, QueryPointer,
+        // Route this connection's core requests (XTEST fake input, WarpPointer, QueryPointer,
         // SetInputFocus) through the agent master pair instead of the user's virtual core
         // pointer and keyboard. Window `None` selects the requesting client itself.
         let selected = conn

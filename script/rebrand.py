@@ -97,6 +97,11 @@ EXTERNAL_CRATES = re.compile(
 # Where our own code happens to use one of these names for its own field, it
 # keeps the upstream spelling too. That is consistent and compiles; it just
 # leaves a few internal identifiers unbranded.
+# Names where "warp" is the English word, not the brand. X11's XWarpPointer
+# teleports the cursor and predates the terminal by decades; renaming it broke
+# the Linux build, and nothing about a Windows-only check would have caught it.
+PROTOCOL_TERMS = re.compile(r"[Ww]arp[_ ]?[Pp]ointer")
+
 EXTERNAL_API = re.compile(
     r"api::(?:[A-Za-z0-9_]+::)*[Ww]arp[A-Za-z0-9_]*"
     r"|Metadata::WarpDocumentationSearch"
@@ -126,6 +131,7 @@ def replace_case_preserving(text: str) -> str:
     text = UPSTREAM_ORG.sub(stash, text)
     text = EXTERNAL_CRATES.sub(stash, text)
     text = EXTERNAL_API.sub(stash, text)
+    text = PROTOCOL_TERMS.sub(stash, text)
     text = WORD.sub(lambda m: CASE_MAP.get(m.group(0), "rook"), text)
     for index, original in enumerate(preserved):
         text = text.replace(SENTINEL.format(index), original)

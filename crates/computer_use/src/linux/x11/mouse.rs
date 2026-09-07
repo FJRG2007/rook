@@ -25,11 +25,11 @@ impl<'a> Mouse<'a> {
     }
 
     pub fn move_to(&mut self, target: Vector2I) -> Result<(), String> {
-        // Use RookPointer to move the pointer. Unlike XTEST MotionNotify, this
+        // Use WarpPointer to move the pointer. Unlike XTEST MotionNotify, this
         // reliably updates the server's pointer position, ensuring that subsequent
         // button events are delivered to the correct window.
         self.conn
-            .rook_pointer(
+            .warp_pointer(
                 x11rb::NONE,      // src_window (unconstrained)
                 self.root_window, // dst_window (absolute coordinates)
                 0,                // src_x (unused)
