@@ -21,6 +21,22 @@ It deliberately leaves some names alone, and every exception exists because rena
 
 The script's header explains how the list is maintained: by compiling. Each missing exception shows up as an unknown field or variant on a type this repository does not own.
 
+## Importing files from a checkout
+
+Copy with something that preserves the executable bit. The original import used
+`robocopy`, which does not, so all 60 executable files under `script/` landed as
+644 and every macOS and Linux CI job died in setup with exit code 126 - "found,
+but not executable". Nothing about that failure names the mode bit.
+
+After copying, restore it from the source checkout rather than guessing:
+
+```bash
+git -C <source> ls-files -s | awk '$1=="100755"{print $2}'   # then update-index --chmod=+x
+```
+
+Windows has `core.filemode=false`, so git will not notice the difference on its
+own and the working tree looks fine locally.
+
 ## Verifying a change
 
 ```bash
