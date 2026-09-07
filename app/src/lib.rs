@@ -2682,6 +2682,19 @@ pub(crate) fn app_callbacks(
                 manager.close_notebooks(ctx);
             });
 
+            // Snapshot the session before the writer stops. Nothing else here does:
+            // `save_app` is driven by window move, resize, focus change and close, and
+            // the close handler returns early once the app is Terminating. Opening,
+            // closing, renaming and reordering tabs write nothing on their own, so
+            // without this the restored session is whatever the window layout happened
+            // to be the last time a window was moved or focused, which is why tabs came
+            // back missing or stale after a shutdown.
+            //
+            // This is dispatched rather than queued: global actions run their handlers
+            // inline, so the snapshot is on the writer's channel before `terminate`
+            // sends the event that stops it, and `terminate` joins the thread.
+            ctx.dispatch_global_action("workspace:save_app", &());
+
             PersistenceWriter::handle(ctx).update(ctx, |writer, _ctx| {
                 writer.terminate();
             });
