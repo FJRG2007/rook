@@ -28,6 +28,7 @@ Those are names the rename must leave alone. There is a second failure mode it c
 
 - `regex_right`, `regex_left` and `nested_regex` search for `Wa.*123` and `Wa.*rp` in fixtures that said `Warp`. The needles are fragments, not the whole word, so they stayed put while the haystack became `Rook` and the searches began returning `None`.
 - `test_find_url_omits_trailing_periods` hard-codes the columns a URL occupies. `github.com/warpdotdev/Warp` became `github.com/FJRG2007/rook` and lost two characters; the column numbers did not move.
+- `deserialize_mixed_environment_uses_per_repo_forges` is the inverse: its fixture's `"repo": "warp"` was renamed to `"rook"`, while the clone URL it asserts, `https://github.com/warpdotdev/warp.git`, was *deliberately preserved* by the rule that protects the upstream repository. The protection and the rename disagreed, and the test compared one against the other.
 
 After re-running the rename, run the tests on every platform rather than only building. A fragment of the brand used as a search pattern, and a hard-coded length or offset into a renamed literal, are the two shapes to look for.
 

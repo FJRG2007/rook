@@ -305,7 +305,7 @@ fn deserialize_mixed_environment_uses_per_repo_forges() {
     assert_eq!(repos[1].code_forge, Some(CodeForge::GitLab));
     assert_eq!(
         repos[0].https_clone_url(),
-        "https://github.com/warpdotdev/warp.git"
+        "https://github.com/warpdotdev/rook.git"
     );
     assert_eq!(
         repos[1].https_clone_url(),

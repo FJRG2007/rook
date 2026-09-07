@@ -107,8 +107,12 @@ jobs:
         shell: bash
         # The integration package drives a real window and is not run in CI
         # upstream either.
+        #
+        # --no-fail-fast because the default stops at the first failure: one
+        # broken test hid the other 10,700 and made each fix another round trip.
         run: |
-          cargo nextest run --workspace --locked ${{ matrix.test_excludes }} \
+          cargo nextest run --workspace --locked --no-fail-fast \
+            ${{ matrix.test_excludes }} \
             -E "not package(integration)"
 
   release-check:
