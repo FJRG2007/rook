@@ -32,7 +32,7 @@ jobs:
       matrix:
         arch: [x64]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.tag || github.ref }}
 
@@ -83,10 +83,13 @@ jobs:
           fi
           echo "path=$path" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: rook-windows-${{ matrix.arch }}
           path: ${{ steps.installer.outputs.path }}
+          # One installer, so hand it over as the .exe rather than wrapping it
+          # in a zip the downloader has to unpack first.
+          archive: false
 
       - name: Publish to the release
         uses: softprops/action-gh-release@v2
