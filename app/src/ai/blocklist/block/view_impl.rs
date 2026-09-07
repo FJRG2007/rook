@@ -34,7 +34,6 @@ use std::collections::{HashMap, HashSet};
 use common::get_highlight_ranges_for_find_matches;
 use itertools::Itertools;
 use pathfinder_color::ColorU;
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rook_core::semantic_selection::SemanticSelection;
 use rook_core::ui::color::Rgb;
@@ -53,6 +52,7 @@ use rookui::platform::Cursor;
 use rookui::text_layout::TextStyle;
 use rookui::ui_components::components::UiComponent;
 use rookui::{AppContext, Element, SingletonEntity, View, ViewContext};
+use settings::Setting as _;
 
 use super::secret_redaction::SecretRedactionState;
 use super::{

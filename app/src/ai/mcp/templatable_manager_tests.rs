@@ -1,6 +1,6 @@
 use futures_util::stream::AbortHandle;
-use uuid::Uuid;
 use rookui::App;
+use uuid::Uuid;
 
 use super::{SpawnedServerInfo, TemplatableMCPServerManager};
 use crate::ai::mcp::builtin;

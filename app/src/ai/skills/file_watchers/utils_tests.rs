@@ -8,12 +8,12 @@ use repo_metadata::{
     DirectoryWatcher, RepoMetadataModel, RepoMetadataUpdate, RepositoryIdentifier,
     StandingQueryContent, StandingQueryResults, StandingQueryResultsDelta,
 };
-use virtual_fs::{Stub, VirtualFS};
 use rook_util::host_id::HostId;
 use rook_util::local_or_remote_path::LocalOrRemotePath;
 use rook_util::remote_path::RemotePath;
 use rook_util::standardized_path::StandardizedPath;
 use rookui::App;
+use virtual_fs::{Stub, VirtualFS};
 
 use super::{
     extract_skill_parent_directory, find_project_skill_files_in_tree, is_home_provider_path,

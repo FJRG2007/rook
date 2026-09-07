@@ -4,9 +4,9 @@ mod model_impl;
 use chrono::{DateTime, Local, TimeDelta};
 pub use helper::AIBlockModelHelper;
 pub use model_impl::*;
-use session_sharing_protocol::common::ParticipantId;
 use rook_core::features::FeatureFlag;
 use rookui::{AppContext, ViewContext};
+use session_sharing_protocol::common::ParticipantId;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::{

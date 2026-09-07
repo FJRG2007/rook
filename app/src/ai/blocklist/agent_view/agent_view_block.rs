@@ -1,6 +1,5 @@
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::Vector2F;
-use settings::Setting;
 use rook_core::ui::Icon;
 use rook_core::ui::appearance::Appearance;
 use rookui::elements::{
@@ -16,6 +15,7 @@ use rookui::{
     AppContext, Element, Entity, EntityId, EventContext, ModelHandle, SingletonEntity,
     TypedActionView, View, ViewContext,
 };
+use settings::Setting;
 
 use super::{AgentViewController, AgentViewEntryOrigin};
 use crate::BlocklistAIHistoryModel;

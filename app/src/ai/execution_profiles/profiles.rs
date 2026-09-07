@@ -5,13 +5,13 @@ use anyhow::Context as _;
 // Only the legacy import, which eval builds compile out, materializes an ordered collection.
 #[cfg(not(feature = "agent_mode_evals"))]
 use indexmap::IndexMap;
-use settings::Setting as _;
-use uuid::Uuid;
 use rook_core::channel::ChannelState;
 use rook_core::features::FeatureFlag;
 use rook_core::user_preferences::GetUserPreferences;
 use rook_errors::report_error;
 use rookui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
+use settings::Setting as _;
+use uuid::Uuid;
 
 use super::{
     AIExecutionProfile, ActionPermission, CloudAIExecutionProfileModel, ExecutionProfileId,

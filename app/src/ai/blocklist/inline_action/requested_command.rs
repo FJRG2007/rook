@@ -7,8 +7,6 @@ use std::sync::Arc;
 use lazy_static::lazy_static;
 use parking_lot::FairMutex;
 use pathfinder_geometry::vector::vec2f;
-use settings::Setting as _;
-use uuid::Uuid;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::Icon;
 use rook_core::ui::appearance::Appearance;
@@ -28,6 +26,8 @@ use rookui::{
     AppContext, Element, Entity, EntityId, EventContext, ModelHandle, SingletonEntity,
     TypedActionView, UpdateView, View, ViewContext, ViewHandle,
 };
+use settings::Setting as _;
+use uuid::Uuid;
 
 use super::inline_action_icons::{self, icon_size};
 use crate::ai::agent::conversation::ConversationStatus;

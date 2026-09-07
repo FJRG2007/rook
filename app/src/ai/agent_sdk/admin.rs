@@ -1,10 +1,10 @@
 //! General-purpose administrative commands in the Rook CLI.
 
 use anyhow::{Context, Result};
-use serde::Serialize;
 use rook_cli::agent::OutputFormat;
 use rookui::platform::TerminationMode;
 use rookui::{AppContext, SingletonEntity};
+use serde::Serialize;
 
 use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};
 use crate::auth::user::PrincipalType;

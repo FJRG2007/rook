@@ -66,7 +66,7 @@ fn test_skill() -> api::Skill {
                 r#type: Some(api::skill_descriptor::scope::Type::Project(())),
             }),
             provider: Some(api::skill_descriptor::Provider {
-                r#type: Some(api::skill_descriptor::provider::Type::Rook(())),
+                r#type: Some(api::skill_descriptor::provider::Type::Warp(())),
             }),
         }),
         content: Some(api::FileContent {

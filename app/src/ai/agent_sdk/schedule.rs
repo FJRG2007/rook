@@ -1,7 +1,6 @@
 use chrono::{DateTime, Utc};
 use comfy_table::Cell;
 use futures::future;
-use serde::Serialize;
 use rook_cli::GlobalOptions;
 use rook_cli::agent::OutputFormat;
 use rook_cli::schedule::{
@@ -11,6 +10,7 @@ use rook_cli::schedule::{
 use rook_graphql::queries::get_scheduled_agent_history::ScheduledAgentHistory;
 use rookui::platform::TerminationMode;
 use rookui::{AppContext, SingletonEntity};
+use serde::Serialize;
 
 use super::common::{EnvironmentChoice, ResolveConfigurationError};
 use super::output::{self, TableFormat};

@@ -752,7 +752,7 @@ impl ConvertAPIToolCallToAIAgentAction for api::message::ToolCall {
                             agent_run_id,
                         }
                     }
-                    Some(Metadata::RookDocumentationSearch(_)) => {
+                    Some(Metadata::WarpDocumentationSearch(_)) => {
                         SubagentType::RookDocumentationSearch
                     }
                     None => SubagentType::Unknown,

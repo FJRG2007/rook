@@ -2,7 +2,6 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use anyhow::{Context, Result};
-use serde::Serialize;
 use rook_cli::GlobalOptions;
 use rook_cli::agent::OutputFormat;
 use rook_cli::artifact::{
@@ -10,6 +9,7 @@ use rook_cli::artifact::{
 };
 use rookui::platform::TerminationMode;
 use rookui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use super::artifact_upload::{
     CompletedFileArtifactUpload, FileArtifactUploadRequest, FileArtifactUploader,

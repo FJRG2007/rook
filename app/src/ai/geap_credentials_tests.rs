@@ -2,10 +2,10 @@ use std::sync::Arc;
 use std::time::{Duration, SystemTime};
 
 use ai::api_keys::ApiKeyManager;
-use settings::{PrivatePreferences, PublicPreferences};
 use rook_managed_secrets::ManagedSecretManager;
 use rookui::{AddSingletonModel, App};
 use rookui_extras::user_preferences;
+use settings::{PrivatePreferences, PublicPreferences};
 
 use super::*;
 use crate::features::FeatureFlag;

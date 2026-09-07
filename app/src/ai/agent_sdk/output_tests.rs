@@ -1,8 +1,8 @@
 use comfy_table::Cell;
-use serde::Serialize;
-use serde_json::json;
 use rook_cli::agent::OutputFormat;
 use rook_cli::json_filter::parse_jq_filter;
+use serde::Serialize;
+use serde_json::json;
 
 use super::{
     TableFormat, run_jq_filter, write_filter_output, write_json, write_json_line, write_list,

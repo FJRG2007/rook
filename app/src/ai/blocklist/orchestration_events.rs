@@ -1,8 +1,8 @@
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex};
 
-use warp_multi_agent_api as api;
 use rookui::{Entity, ModelContext, SingletonEntity};
+use warp_multi_agent_api as api;
 
 use super::history_model::{
     BlocklistAIHistoryEvent, BlocklistAIHistoryModel, ConversationStatusUpdate,

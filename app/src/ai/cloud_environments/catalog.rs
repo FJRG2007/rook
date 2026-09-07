@@ -1,8 +1,8 @@
 //! Shared projection of cloud environments for GUI and TUI consumers.
 
-use settings::Setting as _;
 use rook_errors::report_if_error;
 use rookui::{AppContext, Entity, ModelContext, SingletonEntity as _};
+use settings::Setting as _;
 
 use super::CloudAmbientAgentEnvironment;
 use crate::ai::cloud_agent_settings::CloudAgentSettings;

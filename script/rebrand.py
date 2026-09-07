@@ -66,6 +66,28 @@ EXTERNAL_CRATES = re.compile(
     r"|workflows)"
 )
 
+# Types and fields generated from the upstream protobuf definitions. They are
+# reached through the `api::` alias of that crate, so anything named under that
+# path belongs to the wire format and cannot be renamed on this side.
+# Anything under the `api::` alias is generated from the upstream protobuf
+# definitions. The named entries below come from the same wire format (and from
+# session-sharing-protocol) but are reached without that prefix, so they have to
+# be listed. The list is maintained by compiling: `cargo check` reports each one
+# as an unknown field or variant on a type this repository does not own.
+#
+# Where our own code happens to use one of these names for its own field, it
+# keeps the upstream spelling too. That is consistent and compiles; it just
+# leaves a few internal identifiers unbranded.
+EXTERNAL_API = re.compile(
+    r"api::(?:[A-Za-z0-9_]+::)*[Ww]arp[A-Za-z0-9_]*"
+    r"|Metadata::WarpDocumentationSearch"
+    r"|ActivePrompt::WarpPrompt"
+    r"|FailedToAddGuestsReason::NotWarpUsers"
+    r"|allow_use_of_warp_credits"
+    r"|warp_drive_context_enabled"
+    r"|warp_token_usage"
+)
+
 SENTINEL = "\x00preserved-{}\x00"
 
 WORD = re.compile(r"[Ww][Aa][Rr][Pp]")
@@ -84,6 +106,7 @@ def replace_case_preserving(text: str) -> str:
 
     text = UPSTREAM_ORG.sub(stash, text)
     text = EXTERNAL_CRATES.sub(stash, text)
+    text = EXTERNAL_API.sub(stash, text)
     text = WORD.sub(lambda m: CASE_MAP.get(m.group(0), "rook"), text)
     for index, original in enumerate(preserved):
         text = text.replace(SENTINEL.format(index), original)

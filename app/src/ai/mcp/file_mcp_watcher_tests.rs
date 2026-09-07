@@ -7,8 +7,8 @@ use std::rc::Rc;
 use futures::stream::AbortHandle;
 use repo_metadata::repositories::RepoDetectionSource;
 use repo_metadata::{RepositoryUpdate, TargetFile};
-use settings::SettingsMode;
 use rookui::{App, Entity, ModelHandle};
+use settings::SettingsMode;
 
 use super::{
     FileMCPConfigDiagnosticKind, FileMCPConfigParseOutcome, FileMCPWatcher, FileMCPWatcherEvent,

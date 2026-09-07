@@ -9,7 +9,6 @@ use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use parking_lot::{FairMutex, RwLock};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rook_core::semantic_selection::SemanticSelection;
 use rook_core::ui::appearance::Appearance;
@@ -37,6 +36,7 @@ use rookui::{
     AppContext, Element, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use settings::Setting as _;
 
 use super::cli_controller::{CLISubagentController, CLISubagentEvent, UserTakeOverReason};
 use super::model::{AIBlockModel, AIBlockModelHelper, AIBlockModelImpl, AIBlockOutputStatus};

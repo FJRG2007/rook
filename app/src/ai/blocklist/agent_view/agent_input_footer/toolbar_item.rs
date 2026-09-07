@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use rookui::SingletonEntity;
+use serde::{Deserialize, Serialize};
 
 use super::editor::AgentToolbarEditorMode;
 use crate::context_chips::{ContextChipKind, agent_footer_available_chips, available_chips};

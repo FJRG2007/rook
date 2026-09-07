@@ -5,11 +5,11 @@ use std::pin::Pin;
 use std::time::Duration;
 
 use anyhow::Context;
-use tempfile::{Builder, NamedTempFile};
-use vec1::Vec1;
 use rook_core::safe_info;
 use rook_managed_secrets::ManagedSecretManager;
 use rookui::{ModelSpawner, SingletonEntity};
+use tempfile::{Builder, NamedTempFile};
+use vec1::Vec1;
 
 use super::super::terminal::TerminalDriver;
 use super::{CloudProvider, CloudProviderSetupError, Result};

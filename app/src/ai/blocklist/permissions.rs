@@ -2,7 +2,6 @@ use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 
 use anyhow::Result;
-use serde::{Deserialize, Serialize};
 use rook_completer::parsers::simple::{command_without_leading_env_vars, decompose_command};
 use rook_core::execution_mode::AppExecutionMode;
 use rook_core::features::FeatureFlag;
@@ -11,6 +10,7 @@ use rook_core::user_preferences::GetUserPreferences;
 use rook_errors::{report_error, report_if_error};
 use rook_util::path::EscapeChar;
 use rookui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
 
 use super::BlocklistAIHistoryModel;
 use crate::ai::agent::conversation::AIConversationId;

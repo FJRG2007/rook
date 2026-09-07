@@ -2,7 +2,6 @@ use std::default::Default;
 use std::sync::Arc;
 
 use parking_lot::FairMutex;
-use style::{DENIED_MODAL_WIDTH, MODAL_HEIGHT, MODAL_WIDTH};
 use rook_core::ui::appearance::Appearance;
 use rookui::keymap::FixedBinding;
 use rookui::presenter::ChildView;
@@ -11,6 +10,7 @@ use rookui::{
     AppContext, Element, Entity, EntityId, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use style::{DENIED_MODAL_WIDTH, MODAL_HEIGHT, MODAL_WIDTH};
 
 use crate::modal::{Modal, ModalEvent};
 use crate::pane_group::TerminalPaneId;

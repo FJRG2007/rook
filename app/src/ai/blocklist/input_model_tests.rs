@@ -16,9 +16,9 @@ use std::sync::Arc;
 
 use chrono::Duration;
 use parking_lot::FairMutex;
-use settings::Setting as _;
 use rookui::r#async::executor::Background;
 use rookui::{App, AppContext, EntityId, ModelHandle, SingletonEntity};
+use settings::Setting as _;
 
 use super::*;
 use crate::ai::agent::conversation::AIConversationId;

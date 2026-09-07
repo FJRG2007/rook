@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 
-use uuid::Uuid;
 use rook_core::execution_mode::ExecutionMode;
 use rook_core::settings::Setting as _;
 use rook_util::path::EscapeChar;
 use rookui::{App, EntityId, ModelHandle, SingletonEntity};
+use uuid::Uuid;
 
 use super::{BlocklistAIHistoryModel, BlocklistAIPermissions};
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;

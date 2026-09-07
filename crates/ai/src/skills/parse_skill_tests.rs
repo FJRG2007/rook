@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
-use tempfile::TempDir;
 use rook_util::local_or_remote_path::LocalOrRemotePath;
+use tempfile::TempDir;
 
 use super::*;
 

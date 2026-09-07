@@ -1,9 +1,9 @@
 use std::path::Path;
 
 use anyhow::Context as _;
-use serde_json::{Map, Value};
 use rook_cli::mcp::MCPSpec;
 use rook_core::features::FeatureFlag;
+use serde_json::{Map, Value};
 
 use crate::ai::ambient_agents::AgentConfigSnapshot;
 

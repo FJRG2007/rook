@@ -23,9 +23,6 @@ use itertools::Itertools as _;
 use oneshot::{Canceled, Receiver};
 use repo_metadata::local_model::IndexedRepoState;
 use repo_metadata::{RepoMetadataModel, RepositoryIdentifier};
-use session_sharing_protocol::sharer::SessionRetentionReason;
-use tracing::Instrument as _;
-use uuid::Uuid;
 use rook_cli::agent::{Harness, OutputFormat, RepositoryHeadOverride};
 use rook_cli::mcp::MCPSpec;
 use rook_cli::share::ShareRequest;
@@ -38,6 +35,9 @@ use rook_managed_secrets::ManagedSecretValue;
 use rook_util::local_or_remote_path::LocalOrRemotePath;
 use rookui::r#async::{FutureExt, TimeoutError, Timer};
 use rookui::{AppContext, Entity, ModelContext, ModelHandle, ModelSpawner, SingletonEntity};
+use session_sharing_protocol::sharer::SessionRetentionReason;
+use tracing::Instrument as _;
+use uuid::Uuid;
 
 use crate::ai::agent::conversation::{AIConversationId, ConversationStatus};
 use crate::ai::agent::{

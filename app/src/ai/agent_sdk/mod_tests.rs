@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use clap::Parser;
-use serde_json::json;
 use rook_cli::agent::{AgentCommand, Harness, RunAgentArgs};
 use rook_cli::artifact::{
     ArtifactCommand, DownloadArtifactArgs, GetArtifactArgs, UploadArtifactArgs,
@@ -10,6 +9,7 @@ use rook_cli::task::{MessageCommand, MessageSendArgs, MessageWatchArgs, TaskComm
 use rook_cli::{Args, CliCommand, Command};
 use rook_core::telemetry::TelemetryEvent;
 use rookui::{App, SingletonEntity, WindowId};
+use serde_json::json;
 
 use super::{
     AgentDriverRunner, CommandAuthentication, command_authentication, command_requires_auth,

@@ -2,12 +2,12 @@ use std::path::PathBuf;
 
 use ai::agent::action::{RunAgentsAgentRunConfig, RunAgentsExecutionMode};
 use ai::skills::SkillReference;
-use settings::Setting;
 use rook_core::channel::ChannelState;
 use rook_util::local_or_remote_path::LocalOrRemotePath;
 #[cfg(feature = "local_fs")]
 use rook_util::path::LineAndColumnArg;
 use rookui::{App, SingletonEntity};
+use settings::Setting;
 
 #[cfg(feature = "local_fs")]
 use super::{AIBlockEvent, open_code_action_event};

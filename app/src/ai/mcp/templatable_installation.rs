@@ -3,11 +3,11 @@ use std::hash::{Hash, Hasher};
 
 use handlebars::{get_arguments, render_template};
 use lazy_static::lazy_static;
+use rook_errors::report_error;
+use rook_managed_secrets::ManagedSecretValue;
 use serde::{Deserialize, Serialize};
 use siphasher::sip::SipHasher;
 use uuid::Uuid;
-use rook_errors::report_error;
-use rook_managed_secrets::ManagedSecretValue;
 
 use crate::ai::mcp::{TemplatableMCPServer, TemplateVariable};
 

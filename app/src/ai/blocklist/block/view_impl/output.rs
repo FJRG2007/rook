@@ -20,7 +20,6 @@ use itertools::Itertools;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use ui_components::{Component as _, Options as _, button};
 use rook_core::channel::ChannelState;
 use rook_core::ui::theme::color::internal_colors;
 use rook_errors::report_error;
@@ -39,6 +38,7 @@ use rookui::ui_components::radio_buttons::{RadioButtonItem, RadioButtonLayout};
 use rookui::{
     Action, AppContext, Element, EntityId, ModelHandle, SingletonEntity, View, ViewHandle,
 };
+use ui_components::{Component as _, Options as _, button};
 
 use super::common::{
     DebugFooterProps, FailedOutputProps, FindContext, STATUS_FOOTER_VERTICAL_PADDING,

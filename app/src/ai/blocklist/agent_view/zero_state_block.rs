@@ -7,7 +7,6 @@ use itertools::Itertools as _;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine, parse_markdown};
 use parking_lot::FairMutex;
 use pathfinder_color::ColorU;
-use settings::Setting;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::Icon;
 use rook_errors::report_if_error;
@@ -27,6 +26,7 @@ use rookui::{
     Action, AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext,
 };
+use settings::Setting;
 
 use crate::ai::active_agent_views_model::{ActiveAgentViewsModel, ConversationOrTaskId};
 use crate::ai::agent::conversation::AIConversationId;

@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use rook_core::ui::icons::Icon;
+use serde::{Deserialize, Serialize};
 
 use super::{ParsedSkill, SkillProvider, SkillReference, SkillScope};
 

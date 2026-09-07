@@ -12,13 +12,13 @@ use ai::document::DEFAULT_PLANNING_DOCUMENT_TITLE;
 pub use ai::document::{AIDocumentId, AIDocumentVersion};
 use chrono::{DateTime, Local, Utc};
 use itertools::Itertools;
-use uuid::Uuid;
 use rook_editor::model::RichTextEditorModel;
 use rook_editor::render::model::RichTextStyles;
 use rook_errors::{ReportErrorLogMode, report_error};
-use warp_multi_agent_api as maa_api;
 use rookui::color::ColorU;
 use rookui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity, WindowId};
+use uuid::Uuid;
+use warp_multi_agent_api as maa_api;
 
 use crate::ai::agent::AIAgentActionId;
 use crate::ai::agent::conversation::AIConversationId;

@@ -5,10 +5,10 @@ use std::future::Future;
 use std::sync::Arc;
 
 use futures::channel::oneshot;
-use session_sharing_protocol::common::SessionId;
-use update_queue::LocalTaskUpdateQueue;
 use rook_graphql::ai::{AgentTaskState, PlatformErrorCode};
 use rookui::{Entity, EntityId, ModelContext, SingletonEntity};
+use session_sharing_protocol::common::SessionId;
+use update_queue::LocalTaskUpdateQueue;
 
 use super::history_model::{
     BlocklistAIHistoryEvent, BlocklistAIHistoryModel, ConversationStatusUpdate,

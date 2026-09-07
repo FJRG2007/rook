@@ -1,14 +1,14 @@
 use std::sync::Arc;
 
 use parking_lot::FairMutex;
-use session_sharing_protocol::common::{
-    OrderedTerminalEvent, OrderedTerminalEventType, Scrollback, ScrollbackBlock, WindowSize,
-};
 use rook_core::command::ExitCode;
 use rook_core::features::FeatureFlag;
 use rookui::platform::WindowStyle;
 use rookui::units::Lines;
 use rookui::{App, SingletonEntity, ViewHandle};
+use session_sharing_protocol::common::{
+    OrderedTerminalEvent, OrderedTerminalEventType, Scrollback, ScrollbackBlock, WindowSize,
+};
 
 use crate::ai::blocklist::{BlocklistAIHistoryModel, QueuedQueryModel};
 use crate::terminal::TerminalView;

@@ -774,7 +774,7 @@ fn test_is_rook_documentation_search_subagent() {
             "docs_call",
             parent_id,
             subtask_id,
-            Some(api::message::tool_call::subagent::Metadata::RookDocumentationSearch(())),
+            Some(api::message::tool_call::subagent::Metadata::WarpDocumentationSearch(())),
         )],
     );
     let subtask_api_task = create_api_subtask(subtask_id, parent_id, vec![]);

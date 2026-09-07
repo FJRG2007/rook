@@ -18,11 +18,11 @@ pub use native::McpIntegration;
 #[cfg(not(target_family = "wasm"))]
 use parking_lot::Mutex;
 #[cfg(not(target_family = "wasm"))]
-use simple_logger::SimpleLogger;
-use uuid::Uuid;
-#[cfg(not(target_family = "wasm"))]
 use rookui::ModelSpawner;
 use rookui::{Entity, SingletonEntity};
+#[cfg(not(target_family = "wasm"))]
+use simple_logger::SimpleLogger;
+use uuid::Uuid;
 
 #[cfg(not(target_family = "wasm"))]
 use crate::ai::mcp::templatable::CloudTemplatableMCPServer;

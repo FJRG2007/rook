@@ -25,9 +25,9 @@ use super::cli_controller::{CLISubagentController, CLISubagentEvent, UserTakeOve
 use super::model::{AIBlockModel, AIBlockModelImpl, AIBlockOutputStatus};
 use super::view_impl::common::{
     AutoExecuteButtonProps, ButtonProps, ForceRefreshButtonProps, LOAD_OUTPUT_MESSAGE,
-    MaybeShimmeringText, STATUS_MESSAGE_ELLIPSIS, WAITING_FOR_USER_INPUT_MESSAGE,
-    RookingIndicatorProps, RookingProps, render_switch_control_to_user_button,
-    render_rooking_indicator, render_rooking_indicator_base, status_message_naming_model,
+    MaybeShimmeringText, RookingIndicatorProps, RookingProps, STATUS_MESSAGE_ELLIPSIS,
+    WAITING_FOR_USER_INPUT_MESSAGE, render_rooking_indicator, render_rooking_indicator_base,
+    render_switch_control_to_user_button, status_message_naming_model,
 };
 use crate::ai::AgentTip;
 use crate::ai::agent::conversation::AIConversationId;
@@ -61,10 +61,10 @@ use crate::terminal::input::suggestions_mode_model::InputSuggestionsModeModel;
 use crate::terminal::input::{HandoffComposeState, SET_INPUT_MODE_TERMINAL_ACTION_NAME};
 use crate::terminal::model::block::LONG_RUNNING_COMMAND_DURATION_MS;
 use crate::terminal::model_events::{ModelEvent, ModelEventDispatcher};
+use crate::terminal::rookify::render::LEFT_STRIPE_WIDTH;
 use crate::terminal::view::ambient_agent::{
     AmbientAgentViewModel, AmbientAgentViewModelEvent, is_cloud_agent_pre_first_exchange,
 };
-use crate::terminal::rookify::render::LEFT_STRIPE_WIDTH;
 use crate::terminal::{
     CANCEL_COMMAND_KEYBINDING, TOGGLE_AUTOEXECUTE_MODE_KEYBINDING,
     TOGGLE_HIDE_CLI_RESPONSES_KEYBINDING, TOGGLE_QUEUE_NEXT_PROMPT_KEYBINDING, TerminalModel,

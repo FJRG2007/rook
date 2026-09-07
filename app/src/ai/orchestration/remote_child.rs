@@ -12,10 +12,10 @@ use prost::Message as _;
 use rook_cli::agent::Harness;
 #[cfg(not(target_family = "wasm"))]
 use rook_cli::skill::SkillSpec;
-use warp_multi_agent_api as multi_agent_api;
 #[cfg(not(target_family = "wasm"))]
 use rook_util::local_or_remote_path::LocalOrRemotePath;
 use rookui::{AppContext, SingletonEntity as _};
+use warp_multi_agent_api as multi_agent_api;
 
 use crate::ChannelState;
 use crate::ai::agent::UserQueryMode;

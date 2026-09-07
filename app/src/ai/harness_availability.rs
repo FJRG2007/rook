@@ -2,7 +2,6 @@ use std::collections::HashMap;
 use std::time::Duration;
 
 use instant::Instant;
-use serde::{Deserialize, Serialize};
 use rook_cli::agent::Harness;
 use rook_core::features::FeatureFlag;
 use rook_core::user_preferences::GetUserPreferences;
@@ -10,6 +9,7 @@ use rook_errors::report_error;
 use rook_managed_secrets::client::SecretOwner;
 use rook_managed_secrets::{ManagedSecretManager, ManagedSecretValue};
 use rookui::{Entity, ModelContext, RequestState, SingletonEntity};
+use serde::{Deserialize, Serialize};
 
 use crate::ai::harness_display;
 use crate::auth::AuthStateProvider;

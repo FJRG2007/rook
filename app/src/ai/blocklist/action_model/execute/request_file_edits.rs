@@ -13,6 +13,8 @@ use futures::FutureExt;
 use futures::channel::oneshot;
 use futures::future::BoxFuture;
 use itertools::Itertools;
+use rook_core::send_telemetry_from_ctx;
+use rookui::{Entity, EntityId, ModelContext, ModelHandle, SingletonEntity as _};
 pub(crate) use telemetry::MalformedFinalLineProxyEvent;
 #[allow(unused_imports)]
 pub use telemetry::{EditAcceptAndContinueClickedEvent, EditAcceptClickedEvent};
@@ -21,8 +23,6 @@ pub use telemetry::{
     RequestFileEditsTelemetryEvent,
 };
 use vec1::{Vec1, vec1};
-use rook_core::send_telemetry_from_ctx;
-use rookui::{Entity, EntityId, ModelContext, ModelHandle, SingletonEntity as _};
 
 use super::{ActionExecution, AnyActionExecution, ExecuteActionInput, PreprocessActionInput};
 use crate::ai::agent::conversation::AIConversationId;

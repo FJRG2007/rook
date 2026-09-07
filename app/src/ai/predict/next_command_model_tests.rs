@@ -1,8 +1,8 @@
-use typed_path::TypedPathBuf;
 use rook_completer::meta::SpannedItem;
 use rook_completer::parsers::ParsedToken;
 use rook_completer::signatures::CommandRegistry;
 use rookui::App;
+use typed_path::TypedPathBuf;
 
 use super::*;
 use crate::completer::SessionContext;

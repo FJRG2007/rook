@@ -5,8 +5,8 @@ use async_channel::Sender;
 use async_io::Timer;
 use instant::Instant;
 use parking_lot::FairMutex;
-use session_sharing_protocol::viewer::UpstreamMessage;
 use rookui::{App, ModelHandle};
+use session_sharing_protocol::viewer::UpstreamMessage;
 
 use super::{Network, PtyBytesBatchStatus, Stage};
 use crate::terminal::TerminalModel;

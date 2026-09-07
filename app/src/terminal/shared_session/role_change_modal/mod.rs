@@ -1,8 +1,8 @@
-use session_sharing_protocol::common::{ParticipantId, Role, RoleRequestId};
 use rookui::elements::Empty;
 use rookui::presenter::ChildView;
 use rookui::ui_components::components::{Coords, UiComponentStyles};
 use rookui::{AppContext, Element, Entity, View, ViewContext, ViewHandle};
+use session_sharing_protocol::common::{ParticipantId, Role, RoleRequestId};
 
 use crate::modal::Modal;
 use crate::pane_group::TerminalPaneId;

@@ -24,10 +24,10 @@ use futures::FutureExt as _;
 use futures::future::BoxFuture;
 use instant::Instant;
 use rand::Rng as _;
-use tokio::sync::{mpsc, oneshot};
 use rookui::r#async::executor::Background;
 use rookui::r#async::{FutureExt as _, Timer};
 use rookui::{ModelSpawner, SingletonEntity};
+use tokio::sync::{mpsc, oneshot};
 
 use super::AgentDriver;
 use super::snapshot::{self, CheckpointResult, DeclarationsWriterHandle};

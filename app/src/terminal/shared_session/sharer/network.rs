@@ -17,6 +17,11 @@ use futures_util::stream::AbortHandle;
 use futures_util::{SinkExt, StreamExt};
 use instant::Instant;
 use parking_lot::FairMutex;
+use rook_core::features::FeatureFlag;
+use rook_errors::report_error;
+use rook_server_client::iap::IapManager;
+use rookui::r#async::Timer;
+use rookui::{Entity, ModelContext, RequestState, RetryOption, SingletonEntity};
 use session_sharing_protocol::common::{
     ActivePrompt, ActivePromptUpdate, AgentPromptFailureReason, AgentPromptRequest,
     AgentPromptRequestId, CommandExecutionFailureReason, CommandExecutionRequestId, ControlAction,
@@ -38,11 +43,6 @@ use session_sharing_protocol::sharer::{
     SessionTerminatedReason, TeamAccessLevelUpdateResponse, UpdatePendingUserRoleResponse,
     UpstreamMessage,
 };
-use rook_core::features::FeatureFlag;
-use rook_errors::report_error;
-use rook_server_client::iap::IapManager;
-use rookui::r#async::Timer;
-use rookui::{Entity, ModelContext, RequestState, RetryOption, SingletonEntity};
 use websocket::{Message, Sink, Stream, WebSocket, WebsocketMessage as _};
 
 use crate::auth::{AuthStateProvider, UserUid};
@@ -1815,7 +1815,7 @@ pub fn failed_to_initialize_session_user_error(reason: &FailedToInitializeSessio
 pub fn failed_to_add_guests_user_error(reason: &FailedToAddGuestsReason) -> String {
     match reason {
         FailedToAddGuestsReason::Invalid => "Something went wrong. Please try again.",
-        FailedToAddGuestsReason::NotRookUsers => {
+        FailedToAddGuestsReason::NotWarpUsers => {
             "One or more emails were not associated with Rook accounts."
         }
         FailedToAddGuestsReason::GuestAlreadyAdded => {

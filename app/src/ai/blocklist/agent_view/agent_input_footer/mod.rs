@@ -16,16 +16,6 @@ use chrono::{DateTime, Local};
 use parking_lot::FairMutex;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-#[cfg(feature = "voice_input")]
-use settings::Setting;
-use settings::ToggleableSetting;
-#[cfg(not(target_family = "wasm"))]
-use tokio::fs;
-use toolbar_item::AgentToolbarItemKind;
-#[cfg(feature = "voice_input")]
-use voice_input::{
-    StartListeningError, VoiceInputLifecycle, VoiceInputLifecycleState, VoiceSessionResult,
-};
 use rook_cli::agent::Harness;
 use rook_core::context_flag::ContextFlag;
 use rook_core::ui::color::ContrastingColor;
@@ -46,6 +36,16 @@ use rookui::elements::{
 use rookui::{
     AppContext, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
+};
+#[cfg(feature = "voice_input")]
+use settings::Setting;
+use settings::ToggleableSetting;
+#[cfg(not(target_family = "wasm"))]
+use tokio::fs;
+use toolbar_item::AgentToolbarItemKind;
+#[cfg(feature = "voice_input")]
+use voice_input::{
+    StartListeningError, VoiceInputLifecycle, VoiceInputLifecycleState, VoiceSessionResult,
 };
 
 pub(crate) use self::environment_selector::{

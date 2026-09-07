@@ -38,10 +38,6 @@ use pathfinder_geometry::vector::vec2f;
 pub use pending_user_query_block::{PendingUserQueryBlock, PendingUserQueryBlockEvent};
 #[cfg(not(target_family = "wasm"))]
 use repo_metadata::repositories::DetectedRepositories;
-use rustc_hash::FxHashSet;
-use serde::Serialize;
-use settings::Setting as _;
-use string_offset::StringRange;
 use rook_core::channel::ChannelState;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::theme::Fill;
@@ -70,6 +66,10 @@ use rookui::{
     AppContext, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle, WindowId,
 };
+use rustc_hash::FxHashSet;
+use serde::Serialize;
+use settings::Setting as _;
+use string_offset::StringRange;
 
 use self::model::{AIBlockModel, AIBlockModelHelper};
 use self::secret_redaction::*;

@@ -4,12 +4,12 @@ use std::sync::{Arc, OnceLock};
 use ai::api_keys::{ApiKeyManager, ApiKeyManagerEvent, CustomEndpoint, CustomEndpointModel};
 pub use ai::{LLMId, LLMProvider};
 use parking_lot::FairMutex;
-use serde::{Deserialize, Serialize, de};
 use rook_core::features::FeatureFlag;
 use rook_core::ui::Icon;
 use rook_errors::report_error;
-use warp_multi_agent_api as api;
 use rookui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize, de};
+use warp_multi_agent_api as api;
 
 use super::custom_model_routers::{self, CustomModelRouter, ModelConfigError};
 use super::execution_profiles::profiles::AIExecutionProfilesModel;

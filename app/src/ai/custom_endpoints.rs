@@ -2,9 +2,9 @@ use ai::api_keys::{
     ApiKeyManager, CustomEndpointDefinition, CustomEndpointDefinitions, CustomEndpointId,
     CustomEndpointModel, CustomEndpointParams,
 };
+use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
 use settings::Setting;
 use uuid::Uuid;
-use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
 
 use crate::LaunchMode;
 use crate::global_resource_handles::GlobalResourceHandlesProvider;

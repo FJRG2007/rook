@@ -3,10 +3,10 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::time::Duration;
 
 use anyhow::anyhow;
-use session_sharing_protocol::common::SessionId;
 use rook_graphql::ai::{AgentTaskState, PlatformErrorCode};
 use rookui::App;
 use rookui::r#async::FutureExt as _;
+use session_sharing_protocol::common::SessionId;
 
 use super::super::history_model::{BlocklistAIHistoryEvent, BlocklistAIHistoryModel};
 use super::{

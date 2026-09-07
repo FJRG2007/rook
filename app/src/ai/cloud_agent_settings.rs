@@ -5,10 +5,10 @@
 
 use std::collections::HashMap;
 
-use settings::macros::define_settings_group;
-use settings::{Setting as _, SupportedPlatforms, SyncToCloud};
 use rook_cli::agent::Harness;
 use rook_errors::report_if_error;
+use settings::macros::define_settings_group;
+use settings::{Setting as _, SupportedPlatforms, SyncToCloud};
 
 use crate::server::ids::SyncId;
 

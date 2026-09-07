@@ -37,7 +37,7 @@ fn request_params_with_ask_user_question_enabled(ask_user_question_enabled: bool
         api_keys: None,
         custom_model_providers: None,
         custom_model_routers: None,
-        allow_use_of_rook_credits: false,
+        allow_use_of_warp_credits: false,
         autonomy_level: api::AutonomyLevel::Supervised,
         isolation_level: api::IsolationLevel::None,
         web_search_enabled: false,
@@ -72,7 +72,7 @@ fn api_keys_with_rook_credit_fallback_setting_creates_fallback_only_api_keys() {
     let api_keys = api_keys_with_rook_credit_fallback_setting(None, true)
         .expect("fallback setting should create ApiKeys");
 
-    assert!(api_keys.allow_use_of_rook_credits);
+    assert!(api_keys.allow_use_of_warp_credits);
     assert!(api_keys.anthropic.is_empty());
     assert!(api_keys.openai.is_empty());
     assert!(api_keys.google.is_empty());
@@ -89,7 +89,7 @@ fn api_keys_with_rook_credit_fallback_setting_preserves_existing_keys() {
             google: String::new(),
             open_router: String::new(),
             grok_oauth_access_token: String::new(),
-            allow_use_of_rook_credits: false,
+            allow_use_of_warp_credits: false,
             aws_credentials: None,
             google_cloud_credentials: None,
         }),
@@ -98,7 +98,7 @@ fn api_keys_with_rook_credit_fallback_setting_preserves_existing_keys() {
     .expect("existing ApiKeys should be preserved");
 
     assert_eq!(api_keys.anthropic, "anthropic-key");
-    assert!(api_keys.allow_use_of_rook_credits);
+    assert!(api_keys.allow_use_of_warp_credits);
 }
 
 #[test]

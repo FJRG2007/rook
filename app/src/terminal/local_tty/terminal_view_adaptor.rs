@@ -5,6 +5,10 @@ use std::sync::Arc;
 use std::sync::mpsc::SyncSender;
 
 use parking_lot::FairMutex;
+use rook_core::execution_mode::AppExecutionMode;
+use rook_core::send_telemetry_from_ctx;
+use rook_errors::report_error;
+use rookui::{AppContext, ModelHandle, SingletonEntity, ViewContext, ViewHandle, WindowId};
 use session_sharing_protocol::common::{
     ActivePrompt, AgentPromptFailureReason, AgentPromptRequest, CLIAgentSessionState,
     CommandExecutionFailureReason, ControlAction, ControlActionFailureReason,
@@ -20,10 +24,6 @@ use session_sharing_protocol::sharer::{
     QuotaType, RemoveGuestResponse, SessionEndedReason, SessionSourceType,
     TeamAccessLevelUpdateResponse, UpdatePendingUserRoleResponse,
 };
-use rook_core::execution_mode::AppExecutionMode;
-use rook_core::send_telemetry_from_ctx;
-use rook_errors::report_error;
-use rookui::{AppContext, ModelHandle, SingletonEntity, ViewContext, ViewHandle, WindowId};
 
 use super::terminal_manager::{TerminalManager, TerminalSurfaceInit, TerminalSurfaceResult};
 use crate::NetworkStatus;
@@ -345,7 +345,7 @@ fn wire_up_terminal_view_session_sharing(
                 return
             };
             network.update(ctx, |network, _| {
-                network.send_active_prompt_update_if_changed(session_sharing_protocol::common::ActivePrompt::RookPrompt(serialized_prompt))
+                network.send_active_prompt_update_if_changed(session_sharing_protocol::common::ActivePrompt::WarpPrompt(serialized_prompt))
             });
         }
     });
@@ -822,7 +822,7 @@ impl TerminalManager<TerminalView> {
                 );
                 return;
             };
-            ActivePrompt::RookPrompt(serialized_prompt)
+            ActivePrompt::WarpPrompt(serialized_prompt)
         };
 
         let selection = terminal_view.read(ctx, |view, ctx| {

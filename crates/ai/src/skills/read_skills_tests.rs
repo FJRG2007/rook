@@ -1,7 +1,7 @@
 use std::fs;
 
-use tempfile::tempdir;
 use rook_util::local_or_remote_path::LocalOrRemotePath;
+use tempfile::tempdir;
 
 use super::*;
 

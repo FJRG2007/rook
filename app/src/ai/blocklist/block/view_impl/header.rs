@@ -18,7 +18,7 @@ use crate::ai::blocklist::{
 };
 use crate::appearance::Appearance;
 use crate::terminal::block_list_element::render_hoverable_block_button;
-use crate::terminal::view::{TerminalAction, ROOK_PROMPT_HEIGHT_LINES};
+use crate::terminal::view::{ROOK_PROMPT_HEIGHT_LINES, TerminalAction};
 use crate::ui_components::blended_colors;
 use crate::ui_components::icons::Icon;
 use crate::view_components::action_button::ActionButton;

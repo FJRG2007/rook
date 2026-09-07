@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use uuid::Uuid;
 use rookui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
+use uuid::Uuid;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::blocklist::{BlocklistAIHistoryEvent, BlocklistAIHistoryModel, PendingAttachment};

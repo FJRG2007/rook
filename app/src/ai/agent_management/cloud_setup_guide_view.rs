@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 
-use serde::Serialize;
-use string_offset::CharCounter;
 use rook_completer::ParsedTokensSnapshot;
 use rook_completer::signatures::CommandRegistry;
 use rook_completer::util::parse_current_commands_and_tokens;
@@ -19,6 +17,8 @@ use rookui::prelude::ChildView;
 use rookui::text_layout::TextStyle;
 use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
+use serde::Serialize;
+use string_offset::CharCounter;
 
 use crate::ai::agent_management::telemetry::{AgentManagementTelemetryEvent, SetupGuideStep};
 use crate::ai::blocklist::code_block::{

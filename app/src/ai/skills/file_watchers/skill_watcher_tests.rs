@@ -10,12 +10,12 @@ use repo_metadata::{
     DirectoryWatcher, RepoMetadataModel, RepositoryIdentifier, RepositoryUpdate,
     StandingQueryContent, StandingQueryResults, StandingQueryResultsDelta, TargetFile,
 };
-use tempfile::TempDir;
 use rook_util::host_id::HostId;
 use rook_util::local_or_remote_path::LocalOrRemotePath;
 use rook_util::remote_path::RemotePath;
 use rook_util::standardized_path::StandardizedPath;
 use rookui::App;
+use tempfile::TempDir;
 
 use super::super::subscribers::SkillRepositoryMessage;
 use super::{SkillWatcher, parse_project_skill_contents};

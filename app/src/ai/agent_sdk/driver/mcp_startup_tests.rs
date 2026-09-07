@@ -9,7 +9,6 @@ use futures::channel::oneshot;
 use futures::executor::block_on;
 use http::StatusCode;
 use instant::Instant;
-use uuid::Uuid;
 use rook_cli::mcp::MCPSpec;
 use rook_core::channel::ChannelState;
 use rook_core::features::FeatureFlag;
@@ -20,6 +19,7 @@ use rook_graphql::response_context::ResponseContext;
 use rook_managed_secrets::ManagedSecretValue;
 use rookui::r#async::{FutureExt as _, Timer};
 use rookui::{App, ModelContext, ModelHandle, SingletonEntity as _};
+use uuid::Uuid;
 
 use super::{AgentDriver, AgentDriverError, MANAGED_MCP_RESOLVE_MAX_ATTEMPTS};
 use crate::ai::agent_sdk::driver::terminal::TerminalDriver;
@@ -36,11 +36,11 @@ use crate::ai::mcp::{
 };
 use crate::auth::AuthStateProvider;
 use crate::auth::credentials::Credentials;
+use crate::rook_managed_paths_watcher::rook_managed_mcp_config_path;
 use crate::server::graphql::GraphQLError;
 use crate::server::server_api::ServerApiProvider;
 use crate::server::server_api::managed_mcp::MockManagedMcpClient;
 use crate::test_util::terminal::{add_window_with_terminal, initialize_app_for_terminal_view};
-use crate::rook_managed_paths_watcher::rook_managed_mcp_config_path;
 
 #[test]
 fn test_normalize_single_cli_server() {

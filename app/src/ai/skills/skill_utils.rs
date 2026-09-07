@@ -9,13 +9,13 @@ use ai::skills::{
     provider_rank,
 };
 use lazy_static::lazy_static;
-use siphasher::sip::SipHasher;
 use rook_core::ui::Icon;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::color::internal_colors;
 use rook_util::local_or_remote_path::LocalOrRemotePath;
 use rookui::prelude::MouseStateHandle;
 use rookui::{AppContext, Element, EventContext, SingletonEntity};
+use siphasher::sip::SipHasher;
 
 use super::{SkillDescriptor, SkillManager};
 use crate::ai::agent::conversation::AIConversationId;

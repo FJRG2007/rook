@@ -4,9 +4,9 @@ use std::time::Duration;
 
 use chrono::{DateTime, Local, Utc};
 use itertools::Itertools;
-use uuid::Uuid;
 use rook_cli::agent::Harness;
 use rookui::{App, EntityId, ModelHandle};
+use uuid::Uuid;
 
 use super::{
     AIConversationMetadata, AIQueryHistoryOutputStatus, BeginConversationRenameError,

@@ -6,9 +6,9 @@ pub use cloud_object_models::{
 };
 use futures::FutureExt;
 use futures::channel::oneshot;
-use serde_json::{Map, Value};
 use rook_graphql::queries::get_scheduled_agent_history::ScheduledAgentHistory;
 use rookui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
+use serde_json::{Map, Value};
 
 use crate::cloud_object::model::generic_string_model::StringModel;
 use crate::cloud_object::model::json_model::JsonModel;

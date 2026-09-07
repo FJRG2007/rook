@@ -22,8 +22,8 @@ use crate::ai::agent::{
     UploadArtifactResult,
 };
 use crate::ai::skills::SkillManager;
-use crate::settings::AISettings;
 use crate::rook_managed_paths_watcher::RookManagedPathsWatcher;
+use crate::settings::AISettings;
 
 #[test]
 fn format_upload_artifact_text_includes_request_details() {

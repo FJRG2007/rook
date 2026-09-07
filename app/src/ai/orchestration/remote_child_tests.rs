@@ -2,8 +2,8 @@ use std::path::PathBuf;
 
 use ai::skills::parse_skill;
 use anyhow::anyhow;
-use tempfile::TempDir;
 use rookui::{App, SingletonEntity as _};
+use tempfile::TempDir;
 
 use super::{
     CloudAgentStartupAuthFlow, CloudAgentStartupBlocker, CloudAgentStartupFailure,

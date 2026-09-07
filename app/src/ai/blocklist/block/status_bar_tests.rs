@@ -1,7 +1,7 @@
 use rook_core::features::FeatureFlag;
 
 use super::{
-    ModelInUse, UNNAMED_FALLBACK_MODEL_ROOKING_TEXT, RookingModelInputs, RookingModelMessage,
+    ModelInUse, RookingModelInputs, RookingModelMessage, UNNAMED_FALLBACK_MODEL_ROOKING_TEXT,
     rooking_model_message,
 };
 use crate::ai::agent::OutputModelInfo;

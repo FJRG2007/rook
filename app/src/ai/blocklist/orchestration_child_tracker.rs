@@ -28,11 +28,11 @@
 
 use std::collections::{HashMap, HashSet};
 
-use session_sharing_protocol::common::SessionId;
-use warp_multi_agent_api as api;
 use rookui::ModelContext;
 #[cfg(not(test))]
 use rookui::SingletonEntity;
+use session_sharing_protocol::common::SessionId;
+use warp_multi_agent_api as api;
 
 #[cfg(not(test))]
 use super::history_model::BlocklistAIHistoryModel;

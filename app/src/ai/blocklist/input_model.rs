@@ -13,12 +13,12 @@ use input_classifier::util::{is_agent_follow_up_input, is_one_off_natural_langua
 pub use input_classifier::{InputClassifierDecisionSource, InputType};
 use instant::Instant;
 use parking_lot::FairMutex;
-use serde::{Deserialize, Serialize};
-use session_sharing_protocol::common::{InputMode, InputType as ProtocolInputType};
-use settings::Setting as _;
 use rook_completer::completer::CompletionContext;
 use rook_core::features::FeatureFlag;
 use rookui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
+use serde::{Deserialize, Serialize};
+use session_sharing_protocol::common::{InputMode, InputType as ProtocolInputType};
+use settings::Setting as _;
 
 /// The source of the final input type decision applied to the user input.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]

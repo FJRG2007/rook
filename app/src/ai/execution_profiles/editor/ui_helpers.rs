@@ -1,6 +1,4 @@
 use pathfinder_geometry::vector::vec2f;
-use thousands::Separable;
-use uuid::Uuid;
 use rook_core::features::FeatureFlag;
 use rookui::elements::{
     ChildAnchor, ChildView, ConstrainedBox, Container, CrossAxisAlignment, Dismiss, Flex,
@@ -10,6 +8,8 @@ use rookui::elements::{
 use rookui::fonts::{Properties, Weight};
 use rookui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use rookui::{AppContext, Element, SingletonEntity, ViewHandle};
+use thousands::Separable;
+use uuid::Uuid;
 
 use super::{ExecutionProfileEditorView, ExecutionProfileEditorViewAction};
 use crate::ai::blocklist::BlocklistAIPermissions;

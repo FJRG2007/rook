@@ -2,9 +2,9 @@
 
 use std::io::Write as _;
 
-use serde_json::json;
 use rook_cli::mcp::MCPSpec;
 use rook_core::features::FeatureFlag;
+use serde_json::json;
 
 use crate::ai::ambient_agents::AgentConfigSnapshot;
 

@@ -4,8 +4,8 @@ use rookui::App;
 use watcher::HomeDirectoryWatcher;
 
 use super::*;
-use crate::settings::AISettings;
 use crate::rook_managed_paths_watcher::RookManagedPathsWatcher;
+use crate::settings::AISettings;
 
 fn bundled_skill(
     id: &str,

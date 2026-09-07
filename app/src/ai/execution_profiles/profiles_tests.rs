@@ -1,9 +1,9 @@
 use chrono::{DateTime, Utc};
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rook_graphql::object_permissions::AccessLevel;
 use rook_util::path::EscapeChar;
 use rookui::{App, EntityId, SingletonEntity};
+use settings::Setting as _;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::blocklist::{BlocklistAIHistoryModel, BlocklistAIPermissions};

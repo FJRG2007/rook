@@ -1,5 +1,5 @@
-use uuid::Uuid;
 use rookui::{App, EntityId, ModelHandle};
+use uuid::Uuid;
 
 use super::*;
 use crate::ai::agent::conversation::{AIConversationId, ConversationStatus};

@@ -1,11 +1,11 @@
 use std::collections::HashSet;
 
-use serde_json::{Value, json};
-use strum_macros::{EnumDiscriminants, EnumIter};
 use rook_core::send_telemetry_from_ctx;
 use rook_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 use rook_core::user_preferences::GetUserPreferences;
 use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
+use serde_json::{Value, json};
+use strum_macros::{EnumDiscriminants, EnumIter};
 
 use crate::pricing::{PricingInfoModel, PricingInfoModelEvent};
 

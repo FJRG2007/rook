@@ -3,10 +3,10 @@ use std::sync::Arc;
 
 use instant::Instant;
 use parking_lot::FairMutex;
-use serde::{Deserialize, Deserializer, Serialize};
 use rook_core::send_telemetry_from_ctx;
 use rook_errors::report_error;
 use rookui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
+use serde::{Deserialize, Deserializer, Serialize};
 
 use crate::BlocklistAIHistoryModel;
 use crate::ai::agent::conversation::AIConversationId;

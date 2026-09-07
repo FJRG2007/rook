@@ -1,7 +1,7 @@
 use std::fmt;
 
-use serde::{Deserialize, Serialize};
 use rook_util::local_or_remote_path::LocalOrRemotePath;
+use serde::{Deserialize, Serialize};
 
 /// An unique reference to a skill.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]

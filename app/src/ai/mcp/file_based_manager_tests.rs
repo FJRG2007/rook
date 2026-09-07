@@ -4,10 +4,10 @@ use std::path::PathBuf;
 use repo_metadata::RepoMetadataModel;
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
-use settings::Setting as _;
-use uuid::Uuid;
 use rook_core::features::FeatureFlag;
 use rookui::{App, Entity, ModelHandle, SingletonEntity as _};
+use settings::Setting as _;
+use uuid::Uuid;
 use watcher::HomeDirectoryWatcher;
 
 use super::{
@@ -19,8 +19,8 @@ use crate::ai::mcp::file_mcp_watcher::{
 };
 use crate::ai::mcp::{FileMCPWatcher, FileMCPWatcherEvent, ParsedTemplatableMCPServerResult};
 use crate::auth::AuthStateProvider;
-use crate::settings::{AISettings, FocusedTerminalInfo};
 use crate::rook_managed_paths_watcher::{RookManagedPathsWatcher, rook_managed_mcp_config_path};
+use crate::settings::{AISettings, FocusedTerminalInfo};
 use crate::workspaces::user_workspaces::UserWorkspaces;
 
 // Helper to initialize dependencies and return FileBasedMCPManager handle

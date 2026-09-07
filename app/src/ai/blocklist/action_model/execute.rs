@@ -56,6 +56,15 @@ pub use request_file_edits::{
     RequestFileEditsExecutor, RequestFileEditsFormatKind, RequestFileEditsTelemetryEvent,
 };
 pub(crate) use request_file_edits::{FileReadResult, MalformedFinalLineProxyEvent, apply_edits};
+use rook_core::execution_mode::AppExecutionMode;
+#[cfg(feature = "local_fs")]
+use rook_files::{FileModel, TextFileReadResult};
+#[cfg(feature = "local_fs")]
+use rook_util::file::FileLoadError;
+#[cfg(feature = "local_fs")]
+use rook_util::file_type::is_buffer_binary;
+use rookui::r#async::{Spawnable, SpawnableOutput};
+use rookui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 pub use run_agents::{RunAgentsExecutor, RunAgentsExecutorEvent, RunAgentsSpawningSnapshot};
 #[cfg(test)]
 pub use run_agents::{compose_run_agents_child_prompt, run_agents_to_start_agent_mode};
@@ -74,15 +83,6 @@ pub use suggest_prompt::PromptSuggestionExecutor;
 use upload_artifact::UploadArtifactExecutor;
 use use_computer::UseComputerExecutor;
 use wait_for_events::WaitForEventsExecutor;
-use rook_core::execution_mode::AppExecutionMode;
-#[cfg(feature = "local_fs")]
-use rook_files::{FileModel, TextFileReadResult};
-#[cfg(feature = "local_fs")]
-use rook_util::file::FileLoadError;
-#[cfg(feature = "local_fs")]
-use rook_util::file_type::is_buffer_binary;
-use rookui::r#async::{Spawnable, SpawnableOutput};
-use rookui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 
 use self::search_codebase::SearchCodebaseExecutor;
 use crate::BlocklistAIHistoryModel;

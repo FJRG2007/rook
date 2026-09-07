@@ -9,12 +9,12 @@ use aws_credential_types::provider::error::CredentialsError;
 use futures::channel::oneshot::channel;
 use futures::future::BoxFuture;
 use parking_lot::FairMutex;
-use tokio::sync::Mutex;
-use vec1::vec1;
 use rook_errors::report_error;
 use rook_managed_secrets::ManagedSecretManager;
 use rook_managed_secrets::client::IdentityTokenOptions;
 use rookui::{ModelContext, ModelHandle, SingletonEntity};
+use tokio::sync::Mutex;
+use vec1::vec1;
 
 use crate::settings::{AISettings, AISettingsChangedEvent};
 use crate::terminal::event::{AfterBlockCompletedEvent, BlockType};

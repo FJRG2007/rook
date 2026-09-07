@@ -1,6 +1,5 @@
 use anyhow::Result;
 use comfy_table::Cell;
-use serde::Serialize;
 use rook_cli::GlobalOptions;
 use rook_cli::agent::OutputFormat;
 use rook_cli::memory_store::{
@@ -9,6 +8,7 @@ use rook_cli::memory_store::{
 };
 use rookui::platform::TerminationMode;
 use rookui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use crate::ai::agent_sdk::output::{self, TableFormat};
 use crate::server::server_api::ServerApiProvider;

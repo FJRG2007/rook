@@ -57,7 +57,7 @@ pub async fn generate_multi_agent_output(
 
     let api_keys = api_keys_with_rook_credit_fallback_setting(
         params.api_keys,
-        params.allow_use_of_rook_credits,
+        params.allow_use_of_warp_credits,
     );
 
     let request = api::Request {
@@ -74,7 +74,7 @@ pub async fn generate_multi_agent_output(
                 ..Default::default()
             }),
             rules_enabled: params.is_memory_enabled,
-            rook_drive_context_enabled: params.rook_drive_context_enabled,
+            warp_drive_context_enabled: params.rook_drive_context_enabled,
             web_context_retrieval_enabled: true,
             supports_parallel_tool_calls: true,
             use_anthropic_text_editor_tools: false,
@@ -191,15 +191,15 @@ async fn convert_multi_agent_client_error(
 
 fn api_keys_with_rook_credit_fallback_setting(
     api_keys: Option<api::request::settings::ApiKeys>,
-    allow_use_of_rook_credits: bool,
+    allow_use_of_warp_credits: bool,
 ) -> Option<api::request::settings::ApiKeys> {
     match api_keys {
         Some(mut api_keys) => {
-            api_keys.allow_use_of_rook_credits = allow_use_of_rook_credits;
+            api_keys.allow_use_of_warp_credits = allow_use_of_warp_credits;
             Some(api_keys)
         }
-        None if allow_use_of_rook_credits => Some(api::request::settings::ApiKeys {
-            allow_use_of_rook_credits: true,
+        None if allow_use_of_warp_credits => Some(api::request::settings::ApiKeys {
+            allow_use_of_warp_credits: true,
             ..Default::default()
         }),
         None => None,

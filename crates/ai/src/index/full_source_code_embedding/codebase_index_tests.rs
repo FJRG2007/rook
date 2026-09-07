@@ -7,10 +7,10 @@ use std::sync::Arc;
 use chrono::Utc;
 use futures::executor::block_on;
 use repo_metadata::DirectoryWatcher;
-use string_offset::ByteOffset;
-use virtual_fs::{Stub, VirtualFS};
 use rook_util::standardized_path::StandardizedPath;
 use rookui_core::{App, SingletonEntity};
+use string_offset::ByteOffset;
+use virtual_fs::{Stub, VirtualFS};
 
 use super::{
     CodebaseIndex, CodebaseIndexTimeStampMetadata, DEFAULT_INCREMENAL_SYNC_FLUSH_INTERVAL,

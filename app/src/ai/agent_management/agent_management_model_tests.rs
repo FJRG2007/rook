@@ -1,7 +1,7 @@
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rook_errors::report_if_error;
 use rookui::{App, EntityId, ModelHandle, SingletonEntity};
+use settings::Setting as _;
 
 use super::AgentNotificationsModel;
 use crate::BlocklistAIHistoryModel;

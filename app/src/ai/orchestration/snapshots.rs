@@ -11,7 +11,7 @@ use rookui::{AppContext, SingletonEntity};
 
 use super::config_state::{AuthSecretSelection, OrchestrationConfigState};
 use super::providers::{
-    ORCHESTRATION_ENV_NONE_LABEL, ORCHESTRATION_RUNNER_NONE_LABEL, ORCHESTRATION_ROOK_WORKER_HOST,
+    ORCHESTRATION_ENV_NONE_LABEL, ORCHESTRATION_ROOK_WORKER_HOST, ORCHESTRATION_RUNNER_NONE_LABEL,
     get_base_model_choices, resolve_default_host_slug, resolve_recent_host_slug,
 };
 use crate::LLMPreferences;

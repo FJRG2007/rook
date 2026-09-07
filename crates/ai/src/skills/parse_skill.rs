@@ -6,8 +6,8 @@ use std::path::Path;
 use anyhow::Result;
 use lazy_static::lazy_static;
 use regex::Regex;
-use thiserror::Error;
 use rook_util::local_or_remote_path::LocalOrRemotePath;
+use thiserror::Error;
 
 use super::parser::parse_markdown_content;
 use super::skill_provider::{SkillProvider, SkillScope, get_provider_for_path, get_scope_for_path};

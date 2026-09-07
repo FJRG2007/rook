@@ -6,11 +6,11 @@ use ai::skills::{
 };
 use anyhow::Error;
 use repo_metadata::{RepoMetadataModel, RepositoryIdentifier};
-use walkdir::{DirEntry, WalkDir};
 use rook_util::local_or_remote_path::LocalOrRemotePath;
 use rook_util::remote_path::RemotePath;
 use rook_util::standardized_path::StandardizedPath;
 use rookui::AppContext;
+use walkdir::{DirEntry, WalkDir};
 
 use crate::rook_managed_paths_watcher::rook_managed_skill_dirs;
 

@@ -1,5 +1,5 @@
-use settings::Setting;
 use rookui::{App, SingletonEntity};
+use settings::Setting;
 
 use crate::terminal::TerminalModel;
 use crate::terminal::safe_mode_settings::SafeModeSettings;

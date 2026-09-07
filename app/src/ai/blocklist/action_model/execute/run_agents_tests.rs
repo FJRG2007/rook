@@ -4,10 +4,10 @@ use ai::agent::action::{RunAgentsAgentRunConfig, RunAgentsExecutionMode, RunAgen
 use ai::agent::orchestration_config::{
     OrchestrationConfig, OrchestrationConfigStatus, OrchestrationExecutionMode,
 };
-use settings::Setting;
 use rook_core::execution_mode::ExecutionMode;
 use rook_core::features::FeatureFlag;
 use rookui::{App, Entity, EntityId, ModelHandle};
+use settings::Setting;
 
 use super::*;
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;

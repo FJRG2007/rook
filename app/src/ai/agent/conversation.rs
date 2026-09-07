@@ -6,7 +6,6 @@ use ai::skills::SkillPathOrigin;
 use anyhow::Context as _;
 use chrono::{DateTime, Local, TimeZone};
 use itertools::Itertools as _;
-use vec1::{Size0Error, Vec1};
 use rook_cli::agent::Harness;
 use rook_core::command::ExitCode;
 use rook_core::execution_mode::AppExecutionMode;
@@ -16,11 +15,12 @@ use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::RookTheme;
 use rook_core::ui::theme::color::internal_colors;
 use rook_errors::report_error;
+use rookui::color::ColorU;
+use rookui::{AppContext, EntityId, ModelContext, SingletonEntity};
+use vec1::{Size0Error, Vec1};
 use warp_multi_agent_api::response_event::stream_finished;
 use warp_multi_agent_api::response_event::stream_finished::TokenUsage;
 use warp_multi_agent_api::{self as api};
-use rookui::color::ColorU;
-use rookui::{AppContext, EntityId, ModelContext, SingletonEntity};
 
 use super::api::ServerConversationToken;
 use super::task::helper::*;
@@ -142,7 +142,7 @@ fn footer_model_token_usage(
     // `ModelTokenUsage`; it is translated to an alias up front and only the
     // alias flows downstream (display + shared-session replay).
     let mut standard_usage: HashMap<String, ModelTokenUsage> = HashMap::new();
-    for (model_id, usage) in &usage_metadata.rook_token_usage {
+    for (model_id, usage) in &usage_metadata.warp_token_usage {
         let entry = standard_usage
             .entry(model_id.clone())
             .or_insert_with(|| ModelTokenUsage {

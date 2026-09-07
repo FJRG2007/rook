@@ -14,13 +14,13 @@ use handlebars::get_arguments;
 use instant::Instant;
 use itertools::Itertools as _;
 use oneshot::Canceled;
-use uuid::Uuid;
 use rook_cli::mcp::MCPSpec;
 use rook_core::execution_mode::AppExecutionMode;
 use rook_core::features::FeatureFlag;
 use rook_managed_secrets::ManagedSecretValue;
 use rookui::r#async::{FutureExt as _, TimeoutError};
 use rookui::{Entity, ModelContext, ModelHandle, ModelSpawner, SingletonEntity};
+use uuid::Uuid;
 
 use super::{AgentDriver, AgentDriverError};
 use crate::ai::agent_sdk::retry::{is_transient_graphql_or_http_error, with_bounded_retry_using};

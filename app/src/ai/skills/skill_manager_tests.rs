@@ -5,7 +5,6 @@ use std::path::Path;
 use ai::skills::{ParsedSkill, SkillProvider, SkillReference, SkillScope, get_provider_for_path};
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::{DirectoryWatcher, RepoMetadataModel};
-use tempfile::TempDir;
 use rook_core::channel::ChannelState;
 use rook_core::execution_mode::{AppExecutionMode, ExecutionMode};
 use rook_core::features::FeatureFlag;
@@ -14,11 +13,12 @@ use rook_util::local_or_remote_path::LocalOrRemotePath;
 use rook_util::remote_path::RemotePath;
 use rook_util::standardized_path::StandardizedPath;
 use rookui::App;
+use tempfile::TempDir;
 use watcher::HomeDirectoryWatcher;
 
 use super::*;
-use crate::settings::AISettings;
 use crate::rook_managed_paths_watcher::RookManagedPathsWatcher;
+use crate::settings::AISettings;
 
 // ============================================================================
 // Tests for get_skills_for_working_directory subdirectory scoping

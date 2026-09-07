@@ -16,8 +16,8 @@ use remote_server::proto::{
     FragmentMetadata as ProtoFragmentMetadata, LineRange, ReadFileContextFile,
     ReadFileContextRequest, ReadFileContextResponse, file_context_proto,
 };
-use string_offset::ByteOffset;
 use rookui::{AppContext, ModelContext, SingletonEntity};
+use string_offset::ByteOffset;
 
 use crate::ai::agent::{
     AnyFileContent, FileContext, SearchCodebaseFailureReason, SearchCodebaseResult,

@@ -21,7 +21,6 @@ use lsp::{LspManagerModel, LspServerConfig};
 use repo_metadata::RepoMetadataModel;
 #[cfg(feature = "local_fs")]
 use repo_metadata::repositories::{DetectedRepositories, DetectedRepositoriesEvent};
-use serde::{Deserialize, Serialize};
 #[cfg(feature = "local_fs")]
 use rook_core::channel::ChannelState;
 use rook_core::features::FeatureFlag;
@@ -31,6 +30,7 @@ use rook_util::{local_or_remote_path::LocalOrRemotePath, standardized_path::Stan
 #[cfg(feature = "local_fs")]
 use rookui::windowing::WindowManager;
 use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
 
 use crate::ai::AIRequestUsageModel;
 use crate::ai::blocklist::{BlocklistAIHistoryEvent, BlocklistAIHistoryModel};

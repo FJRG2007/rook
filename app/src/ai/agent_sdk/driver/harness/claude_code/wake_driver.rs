@@ -4,10 +4,10 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use anyhow::{Context, Result};
-use shell_words::quote as shell_quote;
-use uuid::Uuid;
 use rook_cli::agent::Harness;
 use rook_graphql::ai::AgentTaskState;
+use shell_words::quote as shell_quote;
+use uuid::Uuid;
 
 use super::super::claude_transcript::{
     ClaudeTranscriptEnvelope, claude_config_dir, write_envelope, write_session_index_entry,

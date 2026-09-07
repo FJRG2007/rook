@@ -2,9 +2,9 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use regex::Regex;
+use rookui::App;
 use serial_test::serial;
 use session_sharing_protocol::sharer::SessionRetentionReason;
-use rookui::App;
 
 use super::TerminalDriver;
 use crate::ai::agent_sdk::driver::AgentDriverError;

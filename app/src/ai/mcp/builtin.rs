@@ -20,8 +20,8 @@
 
 use std::collections::HashMap;
 
-use uuid::Uuid;
 use rook_core::channel::ChannelState;
+use uuid::Uuid;
 
 use super::templatable::{JsonTemplate, TemplatableMCPServer};
 use super::templatable_installation::TemplatableMCPServerInstallation;

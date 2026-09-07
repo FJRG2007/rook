@@ -6,7 +6,6 @@ use anyhow::{Result, anyhow};
 use chrono::{DateTime, Utc};
 use comfy_table::Cell;
 use inquire::{Confirm, InquireError, Select};
-use serde::Serialize;
 use rook_cli::agent::OutputFormat;
 use rook_cli::api_key::{
     ApiKeyCommand, ApiKeyExpirationArgs, ApiKeySortByArg, CreateApiKeyArgs, ExpireApiKeyArgs,
@@ -19,6 +18,7 @@ use rook_graphql::queries::api_keys::ApiKeyProperties;
 use rook_graphql::scalars::Time;
 use rookui::platform::TerminationMode;
 use rookui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use super::output::{self, TableFormat};
 use crate::ServerApiProvider;

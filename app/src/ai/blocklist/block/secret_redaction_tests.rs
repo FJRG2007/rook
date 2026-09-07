@@ -1,7 +1,7 @@
 use regex::Regex;
-use serial_test::serial;
 use rookui::elements::Text;
 use rookui::fonts::FamilyId;
+use serial_test::serial;
 
 use super::*;
 use crate::terminal::model::secrets::{self, SecretLevel, merge_sorted_ranges_with_levels};

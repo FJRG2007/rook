@@ -5,12 +5,12 @@ use anyhow::Context as _;
 use chrono::{DateTime, Local, Utc};
 use futures::channel::oneshot::{self, Receiver};
 use instant::Instant;
-use serde::{Deserialize, Serialize};
 use rook_core::user_preferences::GetUserPreferences as _;
 use rook_errors::report_error;
 pub use rook_graphql::billing::BonusGrantType;
 use rook_graphql::scalars::time::ServerTimestamp;
 use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
 
 use crate::BlocklistAIHistoryModel;
 use crate::ai::agent::AIAgentExchangeId;

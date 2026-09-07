@@ -30,14 +30,14 @@ use comment::ReviewComment;
 use derivative::Derivative;
 use markdown_parser::{FormattedTable, FormattedText, FormattedTextInline, parse_markdown};
 use parking_lot::RwLock;
+use rook_core::channel::ChannelState;
+use rook_core::features::FeatureFlag;
+use rook_editor::render::model::LineCount;
 use serde::{Deserialize, Serialize};
 use session_sharing_protocol::common::ParticipantId;
 use task::TaskId;
 pub use telemetry::AIIdentifiers;
 use uuid::Uuid;
-use rook_core::channel::ChannelState;
-use rook_core::features::FeatureFlag;
-use rook_editor::render::model::LineCount;
 use warp_multi_agent_api::{AgentEvent, AgentType, diff_hunk as diff_hunk_api};
 
 pub use self::api::{MaybeAIAgentOutputMessage, MessageToAIAgentOutputMessageError};

@@ -3,10 +3,10 @@
 /// This distinguishes the legacy search/replace edit format from the structured
 /// V4A patch format used by `apply_patch`.
 use ai::diff_validation::DiffMatchFailures;
+use rook_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 use serde::Serialize;
 use serde_json::json;
 use strum_macros::{EnumDiscriminants, EnumIter};
-use rook_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 
 use crate::ai::agent::AIIdentifiers;
 use crate::ai::blocklist::RequestedEditResolution;

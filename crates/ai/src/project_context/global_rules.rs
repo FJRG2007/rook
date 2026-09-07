@@ -4,12 +4,12 @@ use std::path::{Path, PathBuf};
 use async_channel::Sender;
 use repo_metadata::repository::{RepositorySubscriber, SubscriberId};
 use repo_metadata::{DirectoryWatcher, Repository, RepositoryUpdate, RepositoryWatchMode};
-use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
 use rook_core::safe_warn;
 use rook_util::local_or_remote_path::LocalOrRemotePath;
 use rook_util::standardized_path::StandardizedPath;
 use rookui_core::{ModelContext, ModelHandle, SingletonEntity};
+use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
 use watcher::{HomeDirectoryWatcher, HomeDirectoryWatcherEvent};
 
 use super::model::{GlobalRulesDelta, ProjectContextModel, ProjectContextModelEvent, ProjectRule};

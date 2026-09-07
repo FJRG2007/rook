@@ -4,12 +4,12 @@ use std::sync::Arc;
 
 use ai::skills::{ParsedSkill, SkillProvider, SkillScope};
 use itertools::Itertools;
-use ui_components::lightbox::{LightboxImage, LightboxImageSource};
 use rook_util::local_or_remote_path::LocalOrRemotePath;
 #[cfg(feature = "local_fs")]
 use rookui::assets::asset_cache::AssetSource;
 use rookui::elements::{Empty, MouseStateHandle};
 use rookui::{App, Element};
+use ui_components::lightbox::{LightboxImage, LightboxImageSource};
 
 use super::{
     CollapsibleElementState, CollapsibleExpansionState, LOAD_OUTPUT_MESSAGE,
@@ -17,8 +17,8 @@ use super::{
     VisualMarkdownLightboxCollection, collect_visual_markdown_lightbox_collection,
     compute_visual_section_width, image_tooltip_handles_for_group, inline_image_source_label,
     is_supported_blocklist_image_source, lightbox_trigger_for_section, query_prefix_highlight_len,
-    render_scrollable_collapsible_content, status_message_naming_model, text_sections_with_indices,
-    rooking_footer_height,
+    render_scrollable_collapsible_content, rooking_footer_height, status_message_naming_model,
+    text_sections_with_indices,
 };
 #[cfg(feature = "local_fs")]
 use super::{ResolvedBlocklistImageSources, blocklist_image_asset_source};

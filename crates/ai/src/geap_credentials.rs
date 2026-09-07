@@ -18,8 +18,8 @@ use chrono::{DateTime, Local};
 #[cfg(not(target_family = "wasm"))]
 use futures::channel::oneshot;
 use rook_core::ui::Icon;
-use warp_multi_agent_api as api;
 use rookui_core::ModelContext;
+use warp_multi_agent_api as api;
 
 use crate::api_keys::{ApiKeyManager, ApiKeyManagerEvent};
 

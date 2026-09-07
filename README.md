@@ -1,110 +1,52 @@
-<a href="https://www.rook.dev">
-    <img width="1024" alt="Rook Agentic Development Environment product preview" src="https://github.com/user-attachments/assets/9976b2da-2edd-4604-a36c-8fd53719c6d4" />
-</a>
-&nbsp;
-<p align="center">
-  <a href="https://rook.dev/factories"><img height="20" alt="Built with Rook" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Built-With-Rook-Export@2x.png" /></a>
-</p>
+# Rook
 
-<p align="center">
-  <a href="https://www.rook.dev">Website</a>
-  ·
-  <a href="https://www.rook.dev/code">Code</a>
-  ·
-  <a href="https://www.rook.dev/agents">Agents</a>
-  ·
-  <a href="https://www.rook.dev/terminal">Terminal</a>
-  ·
-  <a href="https://www.rook.dev/drive">Drive</a>
-  ·
-  <a href="https://docs.rook.dev">Docs</a>
-  ·
-  <a href="https://www.rook.dev/blog/how-rook-works">How Rook Works</a>
-</p>
+A terminal for Windows, built from the open-source [Warp](https://github.com/warpdotdev/warp) client and retuned for machines with a discrete GPU.
 
-> [!NOTE]
-> OpenAI is the founding sponsor of the new, open-source Rook repository, and the new agentic management workflows are powered by GPT models.
+Upstream is an excellent terminal that behaves poorly on some Windows setups: input and scrolling stutter, opening a tab stalls, and the app slows down the longer it has been installed. Rook keeps the terminal and changes the defaults and storage decisions behind those symptoms.
 
-<h1></h1>
+## What differs from upstream
 
-## About
+**Rendering runs on the discrete GPU.** Upstream sets `prefer_low_power_gpu` to true on Windows, so a machine with a dedicated card renders the terminal on the integrated one. Every repaint pays for it: typing, scrolling, selecting text, switching panes. Rook defaults to the discrete GPU on Windows and keeps the integrated one as the crash fallback, so an unstable driver still recovers on its own. Override it with `system.prefer_low_power_gpu` in settings.
 
-[Rook](https://www.rook.dev) is an agentic development environment, born out of the terminal. Use Rook's built-in coding agent, or bring your own CLI agent (Claude Code, Codex, Gemini CLI, and others).
+**The blocks table is indexed.** `blocks` shipped with no index on `pane_leaf_uuid`, so the retention check that runs after every completed command scanned the whole table, as did session restore at startup. On a 76 MB database that measured 2.14 ms per command before the index and 0.02 ms after.
 
-## Installation
+**Closed panes stop accumulating.** Blocks have no foreign key to their pane, so closing a pane left its captured output in the database permanently. On the machine this was diagnosed on, 1596 of 1640 rows were orphaned and held most of the file. Rook deletes them at startup, when no session is running.
 
-You can [download Rook](https://www.rook.dev/download) and [read our docs](https://docs.rook.dev/) for platform-specific instructions.
+**No update polling.** Upstream polls its own release host every ten minutes. Rook has no such host, so the flag is off and releases are published here instead.
 
-## Rook Contributions Overview Dashboard
+## Install
 
-Explore [build.rook.dev](https://build.rook.dev) to:
-- Watch thousands of [Rook Factory](rook.dev/factories) agents triage issues, write specs, implement changes, and review PRs
-- View top contributors and in-flight features
-- Track your own issues with GitHub sign-in
-- Click into active agent sessions in a web-compiled Rook terminal
+Download the Windows installer from [Releases](https://github.com/FJRG2007/rook/releases) and run it.
 
-## Automate development with Rook Factories
+The installer is not code-signed, so SmartScreen shows a warning on first run. Choose "More info" then "Run anyway", or check the file against the checksum on the release page.
 
-This repository is driven by [Rook Factories](https://rook.dev/factories): open, flexible infrastructure for teams to build cloud software factories of their own.
+## Build from source
 
-Rook Factories are defined in code and easy to deploy on any model or harness, with evals, benchmarks, and self-improvement built in. [Request early access](rook.dev/factories/request-access).
-
-## Licensing
-
-Rook's UI framework (the `rookui_core` and `rookui` crates) are licensed under the [MIT license](LICENSE-MIT).
-
-The rest of the code in this repository is licensed under the [AGPL v3](LICENSE-AGPL).
-
-## Open Source & Contributing
-
-Rook's client codebase is open source and lives in this repository. We welcome community contributions and have designed a lightweight workflow to help new contributors get started. For the full contribution flow, read our [CONTRIBUTING.md](CONTRIBUTING.md) guide.
-
-> [!TIP]
-> **Chat with contributors and the Rook team** in the [`#oss-contributors`](https://rookcommunity.slack.com/archives/C0B0LM8N4DB) Slack channel — a good place for ad-hoc questions, design discussion, and pairing with maintainers. New here? [Join the Rook Slack community](https://go.rook.dev/join-preview) first, then jump into `#oss-contributors`.
-
-### Issue to PR
-
-Before filing, [search existing issues](https://github.com/FJRG2007/rook/issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc) for your bug or feature request. If nothing exists, [file an issue](https://github.com/FJRG2007/rook/issues/new/choose) using our templates. Security vulnerabilities should be reported privately as described in [CONTRIBUTING.md](CONTRIBUTING.md#reporting-security-issues).
-
-Once filed, a Rook maintainer reviews the issue and may apply a readiness label: [`ready-to-spec`](https://github.com/FJRG2007/rook/issues?q=is%3Aissue+is%3Aopen+label%3Aready-to-spec) signals the design is open for contributors to spec out, and [`ready-to-implement`](https://github.com/FJRG2007/rook/issues?q=is%3Aissue+is%3Aopen+label%3Aready-to-implement) signals the design is settled and code PRs are welcome. Anyone can pick up a labeled issue — mention **@oss-maintainers** on an issue if you'd like it considered for a readiness label.
-
-### Building the Repo Locally
-
-To build and run Rook from source:
+Needs Git for Windows (with Git LFS), Visual Studio Build Tools 2022, and Rust, which `rust-toolchain.toml` pins.
 
 ```bash
-./script/bootstrap   # platform-specific setup
-./script/run         # build and run Rook
-./script/presubmit   # fmt, clippy, and tests
+./script/bootstrap    # installs the remaining build dependencies
+./script/run          # build and run
+./script/presubmit    # fmt, clippy, and tests
 ```
 
-See [AGENTS.md](AGENTS.md) for the full engineering guide, including coding style, testing, and platform-specific notes.
+To produce the installer:
 
-## Joining the Team
+```powershell
+.\script\windows\bundle.ps1 -CHANNEL oss -ARCH x64
+```
 
-Interested in joining the team? See our [open roles](https://www.rook.dev/careers).
+## Tracking upstream
 
-## Support and Questions
+`script/rebrand.py` performs the rename, so upstream changes can be merged by copying the new files in and running it again:
 
-1. See our [docs](https://docs.rook.dev/) for a comprehensive guide to Rook's features.
-2. Join our [Slack Community](https://go.rook.dev/join-preview) to connect with other users and get help from the Rook team — contributors hang out in [`#oss-contributors`](https://rookcommunity.slack.com/archives/C0B0LM8N4DB).
-3. Try our [Preview build](https://www.rook.dev/download-preview) to test the latest experimental features.
-4. Mention **@oss-maintainers** on any issue to escalate to the team — for example, if you encounter problems with the automated agents.
+```bash
+python script/rebrand.py --dry-run
+python script/rebrand.py
+```
 
-## Code of Conduct
+It preserves what the rename must not touch: third-party repositories under the upstream organization, the five external crates whose package names carry the upstream brand, the protobuf types reached through `api::`, binary assets, and the classifier's tokenizer vocabulary. Renaming any of those breaks the build or the model.
 
-We ask everyone to be respectful and empathetic. Rook follows the [Code of Conduct](CODE_OF_CONDUCT.md). To report violations, email rook-coc at rook.dev.
+## License and attribution
 
-## Open Source Dependencies
-
-We'd like to call out a few of the [open source dependencies](https://docs.rook.dev/help/licenses) that have helped Rook to get off the ground:
-
-- [Tokio](https://github.com/tokio-rs/tokio)
-- [NuShell](https://github.com/nushell/nushell)
-- [Fig Completion Specs](https://github.com/withfig/autocomplete)
-- [Rook Server Framework](https://github.com/seanmonstar/rook)
-- [Alacritty](https://github.com/alacritty/alacritty)
-- [Hyper HTTP library](https://github.com/hyperium/hyper)
-- [FontKit](https://github.com/servo/font-kit)
-- [Core-foundation](https://github.com/servo/core-foundation-rs)
-- [Smol](https://github.com/smol-rs/smol)
+Rook is a fork of [warpdotdev/warp](https://github.com/warpdotdev/warp) and inherits its licensing. The `rookui_core` and `rookui` crates are [MIT](LICENSE-MIT); everything else is [AGPL v3](LICENSE-AGPL). Warp is a trademark of its owners and this project is not affiliated with or endorsed by them.

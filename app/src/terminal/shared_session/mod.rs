@@ -1,10 +1,10 @@
 use byte_unit::Byte;
 use instant::Duration;
+use rookui::keymap::ContextPredicate;
+use rookui::{AppContext, WindowId, id};
 use serde::{Deserialize, Serialize};
 use session_sharing_protocol::common::{Role, Scrollback, ScrollbackBlock, SessionId};
 use session_sharing_protocol::sharer::SessionSourceType;
-use rookui::keymap::ContextPredicate;
-use rookui::{AppContext, WindowId, id};
 
 use super::model::block::SerializedBlock;
 use super::model::terminal_model::BlockIndex;

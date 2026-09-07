@@ -8,11 +8,11 @@ use chrono::Utc;
 #[cfg(not(target_family = "wasm"))]
 use command::r#async::Command;
 use parking_lot::FairMutex;
-use serde_json::json;
 use rook_core::features::FeatureFlag;
 use rook_errors::report_error;
 use rookui::r#async::{FutureExt as AsyncFutureExt, SpawnedFutureHandle, Timer};
 use rookui::{Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
+use serde_json::json;
 
 use super::static_prompt_suggestions::static_suggested_query;
 #[cfg(not(target_family = "wasm"))]

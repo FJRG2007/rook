@@ -1,7 +1,7 @@
 use ai::api_keys::ApiKeyManager;
 use anyhow::Context as _;
-use uuid::Uuid;
 use rookui::{ModelContext, SingletonEntity as _};
+use uuid::Uuid;
 
 use crate::rook_managed_paths_watcher::{
     RookManagedPathsWatcher, RookManagedPathsWatcherEvent, repository_update_touches_path,

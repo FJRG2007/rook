@@ -4,8 +4,8 @@
 
 use std::sync::Arc;
 
-use warp_multi_agent_api::StoredScreenshotRef;
 use rookui::assets::asset_cache::{AssetSource, AsyncAssetId, AsyncAssetType};
+use warp_multi_agent_api::StoredScreenshotRef;
 
 use crate::server::server_api::ai::AIClient;
 

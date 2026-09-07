@@ -7,13 +7,13 @@ use std::path::{Path, PathBuf};
 
 #[cfg(not(target_family = "wasm"))]
 use diesel::{QueryDsl, RunQueryDsl, SqliteConnection};
+use rook_core::ui::Icon;
+use rook_core::ui::appearance::Appearance;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 #[cfg(not(target_family = "wasm"))]
 pub use templatable_manager::McpIntegration;
 pub use templatable_manager::TemplatableMCPServerManager;
-use rook_core::ui::Icon;
-use rook_core::ui::appearance::Appearance;
 
 use crate::cloud_object::model::generic_string_model::StringModel;
 use crate::cloud_object::model::json_model::JsonModel;

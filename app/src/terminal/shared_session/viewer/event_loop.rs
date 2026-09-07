@@ -3,10 +3,10 @@ use std::io::{Sink, sink};
 use std::sync::Arc;
 
 use parking_lot::FairMutex;
+use rookui::{Entity, ModelContext, SingletonEntity, WeakViewHandle};
 use session_sharing_protocol::common::{
     OrderedTerminalEvent, OrderedTerminalEventType, Scrollback, WindowSize,
 };
-use rookui::{Entity, ModelContext, SingletonEntity, WeakViewHandle};
 
 use crate::ai::agent::AIAgentActionId;
 use crate::ai::blocklist::block::cli_controller::LongRunningCommandControlState;

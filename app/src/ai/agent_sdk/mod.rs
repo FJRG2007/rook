@@ -12,8 +12,6 @@ use anyhow::Context;
 pub use driver::AgentDriver;
 use driver::AgentDriverError;
 pub(crate) use driver::harness::{ClaudeHarness, task_env_vars, validate_cli_installed};
-use telemetry::CliTelemetryEvent;
-use tracing::Instrument as _;
 use rook_cli::agent::{
     AgentCommand, AgentProfileCommand, Harness, OutputFormat, Prompt, RunAgentArgs,
 };
@@ -43,6 +41,8 @@ use rook_managed_secrets::ManagedSecretManager;
 use rook_server_client::iap::{IapManager, IapManagerEvent};
 use rookui::platform::TerminationMode;
 use rookui::{AppContext, ModelSpawner, SingletonEntity};
+use telemetry::CliTelemetryEvent;
+use tracing::Instrument as _;
 
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::agent::api::convert_conversation::{

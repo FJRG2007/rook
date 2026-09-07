@@ -6,8 +6,6 @@ use fuzzy_match::match_indices_case_insensitive;
 use lazy_static::lazy_static;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use settings::Setting;
-use siphasher::sip::SipHasher;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::icons::Icon;
 use rook_core::ui::theme::Fill;
@@ -33,6 +31,8 @@ use rookui::{
     AppContext, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WeakViewHandle,
 };
+use settings::Setting;
+use siphasher::sip::SipHasher;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent_conversations_model::{

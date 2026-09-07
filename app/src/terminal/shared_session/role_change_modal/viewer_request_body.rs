@@ -1,4 +1,3 @@
-use session_sharing_protocol::common::Role;
 use rookui::elements::{
     Container, CrossAxisAlignment, Flex, MainAxisAlignment, MouseStateHandle, ParentElement, Text,
 };
@@ -7,6 +6,7 @@ use rookui::platform::Cursor;
 use rookui::ui_components::button::ButtonVariant;
 use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use session_sharing_protocol::common::Role;
 
 use super::{BODY_PADDING, HEADER_FONT_SIZE, MODAL_PADDING, TEXT_FONT_SIZE};
 use crate::appearance::Appearance;

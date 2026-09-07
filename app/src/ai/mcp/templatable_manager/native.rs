@@ -10,9 +10,6 @@ use mcp::oauth::{
 };
 use mcp::runtime::{error_to_user_message, spawn_server};
 use parking_lot::Mutex;
-use simple_logger::manager::LogManager;
-use url::Url;
-use uuid::Uuid;
 use rook_core::channel::ChannelState;
 use rook_core::execution_mode::AppExecutionMode;
 use rook_core::features::FeatureFlag;
@@ -22,6 +19,9 @@ use rook_errors::report_error;
 use rook_server_client::auth::AuthEvent;
 use rookui::windowing::WindowManager;
 use rookui::{AppContext, ModelContext, SingletonEntity};
+use simple_logger::manager::LogManager;
+use url::Url;
+use uuid::Uuid;
 
 use super::{
     MCPServerState, SpawnedServerInfo, TemplatableMCPServerInfo, TemplatableMCPServerManager,

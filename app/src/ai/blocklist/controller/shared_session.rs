@@ -4,13 +4,13 @@
 use std::collections::HashMap;
 
 use itertools::Itertools;
-use session_sharing_protocol::common::{AgentAttachment, ParticipantId, ServerConversationToken};
 use rook_core::features::FeatureFlag;
 use rook_errors::report_error;
+use rookui::{AppContext, ModelContext, SingletonEntity};
+use session_sharing_protocol::common::{AgentAttachment, ParticipantId, ServerConversationToken};
 use warp_multi_agent_api::client_action::Action;
 use warp_multi_agent_api::message::Message;
 use warp_multi_agent_api::response_event::{ClientActions, stream_finished};
-use rookui::{AppContext, ModelContext, SingletonEntity};
 
 use super::response_stream::ResponseStreamId;
 use super::{BlocklistAIController, RequestInput, SessionContext};
@@ -533,7 +533,7 @@ impl BlocklistAIController {
                         .map(|u| u.to_proto_combined())
                         .collect(),
                     tool_usage_metadata: Some(conversation.tool_usage_metadata().into()),
-                    rook_token_usage: conversation
+                    warp_token_usage: conversation
                         .token_usage()
                         .iter()
                         .filter_map(|u| u.to_proto_rook_usage())

@@ -16,12 +16,12 @@ use std::sync::Arc;
 use anyhow::{Context, Result, anyhow};
 use async_trait::async_trait;
 use parking_lot::Mutex;
+use rookui::ModelSpawner;
+use rookui::r#async::SpawnedFutureHandle;
 use serde::{Deserialize, Serialize};
 use tempfile::NamedTempFile;
 use tokio::sync::Mutex as AsyncMutex;
 use uuid::Uuid;
-use rookui::ModelSpawner;
-use rookui::r#async::SpawnedFutureHandle;
 
 use crate::ai::agent_events::{
     AgentEventConsumer, AgentEventConsumerControlFlow, AgentEventDriverConfig,

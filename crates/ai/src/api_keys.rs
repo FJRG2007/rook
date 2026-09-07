@@ -6,15 +6,15 @@ use std::time::{Duration, SystemTime};
 #[cfg(not(target_family = "wasm"))]
 use futures::channel::oneshot;
 use indexmap::IndexMap;
+use rook_core::send_telemetry_from_ctx;
+use rook_errors::report_error;
+use rookui_core::{Entity, ModelContext, SingletonEntity};
+use rookui_extras::secure_storage::{self, AppContextExt};
 use serde::{Deserialize, Deserializer, Serialize};
 use sha2::{Digest, Sha256};
 use url::Url;
 use uuid::Uuid;
-use rook_core::send_telemetry_from_ctx;
-use rook_errors::report_error;
 use warp_multi_agent_api as api;
-use rookui_core::{Entity, ModelContext, SingletonEntity};
-use rookui_extras::secure_storage::{self, AppContextExt};
 
 use crate::LLMProvider;
 pub use crate::aws_credentials::{AwsCredentials, AwsCredentialsState};
@@ -1098,7 +1098,7 @@ impl ApiKeyManager {
                 google,
                 open_router,
                 grok_oauth_access_token,
-                allow_use_of_rook_credits: false,
+                allow_use_of_warp_credits: false,
                 aws_credentials,
                 google_cloud_credentials,
             })

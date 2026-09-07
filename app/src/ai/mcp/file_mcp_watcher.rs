@@ -14,9 +14,9 @@ use repo_metadata::repositories::{
 };
 use repo_metadata::repository::{Repository, RepositorySubscriber, SubscriberId};
 use repo_metadata::watcher::{DirectoryWatcher, RepositoryUpdate};
-use strum::IntoEnumIterator;
 use rook_core::safe_warn;
 use rookui::{Entity, ModelContext, ModelHandle, SingletonEntity};
+use strum::IntoEnumIterator;
 use watcher::HomeDirectoryWatcherEvent;
 
 use crate::HomeDirectoryWatcher;

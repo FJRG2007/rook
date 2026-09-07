@@ -10,8 +10,8 @@ use field_mask::{FieldMaskError, FieldMaskOperation};
 use helper::{MessageExt, SubagentExt, ToolCallExt};
 use itertools::Itertools;
 use prost_types::FieldMask;
-use uuid::Uuid;
 use rook_errors::report_error;
+use uuid::Uuid;
 use warp_multi_agent_api::message::Message;
 use warp_multi_agent_api::message::tool_call::subagent::Metadata;
 use warp_multi_agent_api::{self as api};
@@ -384,7 +384,7 @@ impl Task {
                     Some(Metadata::ComputerUse(_)) => None,
                     Some(Metadata::Summarization(_)) => None,
                     Some(Metadata::ConversationSearch(_)) => None,
-                    Some(Metadata::RookDocumentationSearch(_)) => None,
+                    Some(Metadata::WarpDocumentationSearch(_)) => None,
                     None => None,
                 }),
             TaskImpl::Optimistic(optimistic::Task::CLIAgent(subtask)) => {

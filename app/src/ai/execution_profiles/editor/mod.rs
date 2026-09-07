@@ -3,7 +3,6 @@ use std::path::{Path, PathBuf};
 use ai::api_keys::{ApiKeyManager, ApiKeyManagerEvent};
 use itertools::Itertools;
 use regex::Regex;
-use thousands::Separable;
 use rook_core::ui::theme::color::internal_colors;
 use rookui::elements::{
     Align, Border, ChildView, ClippedScrollStateHandle, ClippedScrollable, ConstrainedBox,
@@ -18,6 +17,7 @@ use rookui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle,
 };
+use thousands::Separable;
 
 use crate::ai::blocklist::BlocklistAIPermissions;
 use crate::ai::execution_profiles::model_menu_items::{

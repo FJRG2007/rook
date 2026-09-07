@@ -3,12 +3,12 @@ use std::path::Path;
 use std::path::PathBuf;
 
 use anyhow::anyhow;
-use ui_components::lightbox::{LightboxImage, LightboxImageSource};
 use rook_errors::report_error;
-use warp_multi_agent_api as api;
 use rookui::SingletonEntity;
 #[cfg(feature = "local_fs")]
 use rookui::platform::SaveFilePickerConfiguration;
+use ui_components::lightbox::{LightboxImage, LightboxImageSource};
+use warp_multi_agent_api as api;
 
 #[cfg(feature = "local_fs")]
 use crate::ai::artifact_download::default_download_filename;

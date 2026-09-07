@@ -16,12 +16,12 @@ pub use convert_from::{
 use futures_lite::Stream;
 pub use r#impl::generate_multi_agent_output;
 use mcp::TemplatableMCPServerInfo;
-use serde::Serialize;
 use rook_core::channel::{Channel, ChannelState};
 use rook_core::execution_mode::AppExecutionMode;
 use rook_core::features::FeatureFlag;
 use rook_core::user_preferences::GetUserPreferences;
 use rookui::{AppContext, EntityId, SingletonEntity as _};
+use serde::Serialize;
 
 use super::{AIAgentInput, MCPContext, MCPServer, RequestMetadata, ServerOutputId, Suggestions};
 use crate::ai::agent::conversation::AIConversationId;
@@ -154,7 +154,7 @@ pub struct RequestParams {
     /// `custom_model_providers`: the selected model's `config_key` indexes into this
     /// registry. `None` when no custom router is selected.
     pub custom_model_routers: Option<warp_multi_agent_api::request::settings::CustomModelRouters>,
-    pub allow_use_of_rook_credits: bool,
+    pub allow_use_of_warp_credits: bool,
     pub autonomy_level: warp_multi_agent_api::AutonomyLevel,
     pub isolation_level: warp_multi_agent_api::IsolationLevel,
     pub web_search_enabled: bool,
@@ -216,7 +216,7 @@ impl RequestParams {
             api_keys: None,
             custom_model_providers: None,
             custom_model_routers: None,
-            allow_use_of_rook_credits: false,
+            allow_use_of_warp_credits: false,
             autonomy_level: Default::default(),
             isolation_level: Default::default(),
             web_search_enabled: false,
@@ -341,7 +341,7 @@ impl RequestParams {
                 &request_input.coding_model_id,
             )
         });
-        let allow_use_of_rook_credits = *AISettings::as_ref(app).can_use_rook_credits_for_fallback;
+        let allow_use_of_warp_credits = *AISettings::as_ref(app).can_use_rook_credits_for_fallback;
 
         let app_execution_mode = AppExecutionMode::as_ref(app);
         let autonomy_level = if app_execution_mode.is_autonomous() {
@@ -419,7 +419,7 @@ impl RequestParams {
             api_keys,
             custom_model_providers,
             custom_model_routers,
-            allow_use_of_rook_credits,
+            allow_use_of_warp_credits,
             autonomy_level,
             isolation_level,
             web_search_enabled,

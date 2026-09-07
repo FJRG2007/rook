@@ -9,8 +9,6 @@ use std::time::Duration;
 
 use anyhow::Context as _;
 use futures::channel::oneshot;
-use session_sharing_protocol::common::{Role, SessionId};
-use session_sharing_protocol::sharer::SessionRetentionReason;
 use rook_cli::share::{ShareAccessLevel, ShareRequest, ShareSubject};
 use rook_completer::completer::CommandOutput;
 use rook_core::command::ExitCode;
@@ -20,6 +18,8 @@ use rook_terminal::model::grid::Dimensions;
 use rook_util::path::ShellFamily;
 use rookui::r#async::FutureExt;
 use rookui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity as _, ViewHandle};
+use session_sharing_protocol::common::{Role, SessionId};
+use session_sharing_protocol::sharer::SessionRetentionReason;
 
 use super::AgentDriverError;
 use crate::ai::agent::redaction::redact_secrets;

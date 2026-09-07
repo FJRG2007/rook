@@ -179,7 +179,7 @@ fn create_finished_event_from_conversation(conversation: &AIConversation) -> Res
                 .map(|u| u.to_proto_combined())
                 .collect(),
             tool_usage_metadata: Some(conversation.tool_usage_metadata().into()),
-            rook_token_usage: conversation
+            warp_token_usage: conversation
                 .token_usage()
                 .iter()
                 .filter_map(|u| u.to_proto_rook_usage())

@@ -60,13 +60,13 @@ impl TryFrom<api::Citation> for AIAgentCitation {
             .unwrap_or(api::DocumentType::Unknown);
 
         match doc_type {
-            api::DocumentType::RookDriveWorkflow
-            | api::DocumentType::RookDriveNotebook
-            | api::DocumentType::RookDriveEnvVar
+            api::DocumentType::WarpDriveWorkflow
+            | api::DocumentType::WarpDriveNotebook
+            | api::DocumentType::WarpDriveEnvVar
             | api::DocumentType::Rule => Ok(AIAgentCitation::RookDriveObject {
                 uid: citation.document_id,
             }),
-            api::DocumentType::RookDocumentation => Ok(AIAgentCitation::RookDocumentation {
+            api::DocumentType::WarpDocumentation => Ok(AIAgentCitation::RookDocumentation {
                 path: citation.document_id,
             }),
             api::DocumentType::WebPage => Ok(AIAgentCitation::WebPage {

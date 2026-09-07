@@ -14,9 +14,9 @@ use repo_metadata::repository::{
 use repo_metadata::{
     CanonicalizedPath, DirectoryWatcher, Repository, RepositoryUpdate, RepositoryWatchMode,
 };
-use settings::Setting as _;
 use rook_errors::report_error;
 use rookui::{Entity, ModelContext, ModelHandle, SingletonEntity};
+use settings::Setting as _;
 
 use super::OutlineStatus;
 use crate::ai::persisted_workspace::all_working_directories;

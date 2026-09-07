@@ -1,4 +1,3 @@
-use settings::Setting as _;
 use rook_core::ui::Icon;
 use rook_errors::report_if_error;
 use rookui::elements::{
@@ -11,6 +10,7 @@ use rookui::{
     AppContext, Element, Entity, EventContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use settings::Setting as _;
 
 use super::inline_action_icons::icon_size;
 use crate::Appearance;

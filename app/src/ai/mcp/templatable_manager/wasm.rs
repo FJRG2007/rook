@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
-use uuid::Uuid;
 use rookui::{AppContext, ModelContext};
+use uuid::Uuid;
 
 use super::TemplatableMCPServerManager;
 use crate::ai::mcp::MCPServerUpdate;

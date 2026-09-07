@@ -4,7 +4,6 @@ use comfy_table::Cell;
 use cynic::QueryBuilder;
 use inquire::error::InquireError;
 use inquire::{Confirm, Select};
-use serde::Serialize;
 use rook_cli::GlobalOptions;
 use rook_cli::agent::OutputFormat;
 use rook_cli::environment::{EnvironmentCommand, ImageCommand};
@@ -16,6 +15,7 @@ use rook_graphql::queries::list_rook_dev_images::{
 use rook_graphql::queries::user_repo_auth_status::UserRepoAuthStatusEnum;
 use rookui::r#async::FutureExt;
 use rookui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use crate::CloudObjectTypeAndId;
 use crate::ai::agent_sdk::driver::ROOK_DRIVE_SYNC_TIMEOUT;

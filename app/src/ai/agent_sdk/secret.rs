@@ -5,7 +5,6 @@ use anyhow::{Context, Result};
 use chrono::{DateTime, Utc};
 use comfy_table::Cell;
 use inquire::{Confirm, InquireError, Password};
-use serde::Serialize;
 use rook_cli::GlobalOptions;
 use rook_cli::agent::OutputFormat;
 use rook_cli::scope::ObjectScope;
@@ -20,6 +19,7 @@ use rook_managed_secrets::client::SecretOwner;
 use rook_managed_secrets::{ManagedSecretManager, ManagedSecretValue};
 use rookui::platform::TerminationMode;
 use rookui::{AppContext, SingletonEntity as _};
+use serde::Serialize;
 
 use super::output::{self, TableFormat};
 use crate::auth::UserUid;

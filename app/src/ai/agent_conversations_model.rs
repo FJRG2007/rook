@@ -16,7 +16,6 @@ use fuzzy_match::FuzzyMatchResult;
 use instant::Instant;
 use itertools::Itertools;
 pub use query::query_conversation_entries;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use rook_cli::agent::Harness;
 use rook_core::execution_mode::AppExecutionMode;
 use rook_core::features::FeatureFlag;
@@ -30,6 +29,7 @@ use rookui::{
     AppContext, Entity, EntityId, ModelContext, ModelHandle, RequestState, SingletonEntity,
     WindowId, duration_with_jitter,
 };
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;
 use crate::ai::agent::api::ServerConversationToken;

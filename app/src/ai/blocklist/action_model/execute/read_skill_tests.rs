@@ -7,7 +7,6 @@ use async_channel::unbounded;
 use repo_metadata::RepoMetadataModel;
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
-use tempfile::TempDir;
 use rook_core::HostId;
 use rook_core::execution_mode::{AppExecutionMode, ExecutionMode};
 use rook_core::features::FeatureFlag;
@@ -15,6 +14,7 @@ use rook_util::local_or_remote_path::LocalOrRemotePath;
 use rook_util::remote_path::RemotePath;
 use rook_util::standardized_path::StandardizedPath;
 use rookui::{App, ModelHandle};
+use tempfile::TempDir;
 use watcher::HomeDirectoryWatcher;
 
 use super::*;
@@ -25,11 +25,11 @@ use crate::ai::agent::{
 };
 use crate::ai::blocklist::action_model::AIConversationId;
 use crate::ai::skills::{BundledSkillActivation, SkillManager};
+use crate::rook_managed_paths_watcher::RookManagedPathsWatcher;
 use crate::settings::AISettings;
 use crate::terminal::model::session::active_session::ActiveSession;
 use crate::terminal::model::session::{BootstrapSessionType, SessionId, SessionInfo, Sessions};
 use crate::terminal::model_events::ModelEventDispatcher;
-use crate::rook_managed_paths_watcher::RookManagedPathsWatcher;
 
 fn initialize_app(app: &mut App) {
     app.add_singleton_model(|ctx| AppExecutionMode::new(ExecutionMode::App, false, ctx));

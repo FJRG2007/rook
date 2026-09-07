@@ -1,7 +1,6 @@
 use anyhow::{Result, anyhow};
 use chrono::{DateTime, Utc};
 use comfy_table::Cell;
-use serde::Serialize;
 use rook_cli::GlobalOptions;
 use rook_cli::agent::OutputFormat;
 use rook_cli::runner::{
@@ -18,6 +17,7 @@ use rook_graphql::queries::get_runners::{
 };
 use rookui::platform::TerminationMode;
 use rookui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use super::output::{self, TableFormat};
 use crate::ai::runner_display::{arch_display, macos_version_display, os_display};

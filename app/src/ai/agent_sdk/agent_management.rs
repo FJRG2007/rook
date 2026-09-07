@@ -5,7 +5,6 @@ use std::io::Write as _;
 
 use anyhow::anyhow;
 use comfy_table::Cell;
-use serde::Serialize;
 use rook_cli::SortOrderArg;
 use rook_cli::agent::{
     AgentCreateArgs, AgentDeleteArgs, AgentGetArgs, AgentListArgs, AgentSortByArg, AgentUpdateArgs,
@@ -14,6 +13,7 @@ use rook_cli::agent::{
 use rook_cli::json_filter::JsonOutput;
 use rookui::platform::TerminationMode;
 use rookui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use super::output::TableFormat;
 use crate::server::server_api::ServerApiProvider;

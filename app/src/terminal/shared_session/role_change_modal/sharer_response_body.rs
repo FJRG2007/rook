@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-use session_sharing_protocol::common::{ParticipantId, Role, RoleRequestId};
 use rook_core::features::FeatureFlag;
 use rookui::elements::{
     ConstrainedBox, Container, CrossAxisAlignment, Flex, MainAxisAlignment, MouseStateHandle,
@@ -11,6 +10,7 @@ use rookui::platform::Cursor;
 use rookui::ui_components::button::ButtonVariant;
 use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use session_sharing_protocol::common::{ParticipantId, Role, RoleRequestId};
 
 use super::{BODY_PADDING, HEADER_FONT_SIZE, MODAL_PADDING, TEXT_FONT_SIZE};
 use crate::appearance::Appearance;

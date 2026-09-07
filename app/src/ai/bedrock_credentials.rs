@@ -13,11 +13,11 @@ use std::time::{Duration, SystemTime};
 
 use ai::api_keys::{ApiKeyManager, AwsCredentials, AwsCredentialsState};
 use anyhow::{Context as _, Result};
-use vec1::vec1;
 use rook_errors::report_error;
 use rook_managed_secrets::ManagedSecretManager;
 use rook_managed_secrets::client::IdentityTokenOptions;
 use rookui::{ModelSpawner, SingletonEntity};
+use vec1::vec1;
 
 use super::agent_sdk::driver::AgentDriver;
 use super::aws_credentials::{

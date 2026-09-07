@@ -2,9 +2,9 @@ use std::cell::Cell;
 use std::rc::Rc;
 
 use ai::api_keys::CustomEndpointSchema;
-use settings::Setting as _;
 use rookui::{App, SingletonEntity as _};
 use rookui_extras::secure_storage;
+use settings::Setting as _;
 
 use super::*;
 use crate::settings::init_and_register_user_preferences;

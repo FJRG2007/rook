@@ -1,11 +1,11 @@
 //! Provider command for linking third-party services.
 use comfy_table::Cell;
-use serde::Serialize;
 use rook_cli::GlobalOptions;
 use rook_cli::provider::{ProviderCommand, ProviderType};
 use rook_core::channel::ChannelState;
 use rookui::platform::TerminationMode;
 use rookui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use crate::ai::agent_sdk::common::describe_sole_team_error;
 use crate::ai::agent_sdk::output::{self, TableFormat};

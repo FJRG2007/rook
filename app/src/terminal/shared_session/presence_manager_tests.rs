@@ -2,11 +2,11 @@ use std::collections::{HashMap, HashSet};
 use std::iter;
 
 use itertools::Itertools;
+use rook_core::command::ExitCode;
+use rookui::App;
 use session_sharing_protocol::common::{
     ParticipantId, ParticipantInfo, ParticipantList, ProfileData, Role, Selection, Sharer, Viewer,
 };
-use rook_core::command::ExitCode;
-use rookui::App;
 
 use crate::auth::UserUid;
 use crate::terminal::model::ansi::{

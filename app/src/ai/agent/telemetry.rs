@@ -1,5 +1,5 @@
-use serde::Serialize;
 use rookui::{AppContext, SingletonEntity};
+use serde::Serialize;
 
 use super::conversation::AIConversationId;
 use super::{AIAgentCitation, AIAgentExchangeId, ServerOutputId};

@@ -4,6 +4,11 @@ use std::sync::Arc;
 use async_broadcast::InactiveReceiver;
 use parking_lot::FairMutex;
 use pathfinder_geometry::vector::Vector2F;
+use rook_errors::report_error;
+use rookui::{
+    AppContext, ModelContext, ModelHandle, SingletonEntity, ViewContext, ViewHandle,
+    WeakViewHandle, WindowId,
+};
 use session_sharing_protocol::common::{
     ActivePrompt, AddGuestsResponse, CLIAgentSessionState, CommandExecutionFailureReason,
     LinkAccessLevelUpdateResponse, LongRunningCommandAgentInteraction, RemoveGuestResponse,
@@ -13,11 +18,6 @@ use session_sharing_protocol::common::{
 use session_sharing_protocol::sharer::SessionSourceType;
 use session_sharing_protocol::viewer::SessionEndedReason;
 use settings::Setting as _;
-use rook_errors::report_error;
-use rookui::{
-    AppContext, ModelContext, ModelHandle, SingletonEntity, ViewContext, ViewHandle,
-    WeakViewHandle, WindowId,
-};
 
 use super::event_loop::SharedSessionInitialLoadMode;
 use super::network::{
@@ -1449,7 +1449,7 @@ impl TerminalManager {
                     };
                     view.update(ctx, |terminal_view, ctx| {
                         let reason_string = match reason {
-                            session_sharing_protocol::common::FailedToAddGuestsReason::NotRookUsers => {
+                            session_sharing_protocol::common::FailedToAddGuestsReason::NotWarpUsers => {
                                 "One or more of the emails are not Rook users.".to_owned()
                             }
                             session_sharing_protocol::common::FailedToAddGuestsReason::GuestAlreadyAdded => {
@@ -1501,7 +1501,7 @@ impl TerminalManager {
     ) {
         let mut model = model.lock();
         match active_prompt {
-            ActivePrompt::RookPrompt(serialized_prompt_snapshot) => {
+            ActivePrompt::WarpPrompt(serialized_prompt_snapshot) => {
                 match serde_json::from_str::<PromptSnapshot>(serialized_prompt_snapshot) {
                     Ok(prompt_snapshot) => {
                         model.block_list_mut().set_honor_ps1(false);
@@ -1511,7 +1511,7 @@ impl TerminalManager {
                                 *snapshot = prompt_snapshot;
                                 ctx.notify();
                             } else {
-                                log::warn!("Received ActivePrompt::RookPrompt updated but prompt type is not Static");
+                                log::warn!("Received ActivePrompt::WarpPrompt updated but prompt type is not Static");
                             }
                         });
                     }

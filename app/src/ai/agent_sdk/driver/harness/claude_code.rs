@@ -7,14 +7,14 @@ use std::sync::Arc;
 use anyhow::{Context, Result};
 use async_trait::async_trait;
 use parking_lot::Mutex;
-use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
-use tempfile::NamedTempFile;
-use uuid::Uuid;
 use rook_cli::agent::Harness;
 use rook_core::safe_info;
 use rook_managed_secrets::ManagedSecretValue;
 use rookui::{ModelHandle, ModelSpawner};
+use serde::{Deserialize, Serialize};
+use serde_json::{Map, Value};
+use tempfile::NamedTempFile;
+use uuid::Uuid;
 
 use super::super::terminal::{CommandHandle, TerminalDriver};
 use super::super::{AgentDriver, AgentDriverError};
@@ -54,11 +54,11 @@ use parent_bridge::{
     write_parent_bridge_event_cursor,
 };
 use parent_bridge::{MessageBridge, MessageBridgeCleanupDisposition};
+use rook_errors::report_error;
 #[cfg(test)]
 use shell_words::quote as shell_quote;
 #[cfg(test)]
 use wake_driver::{CLAUDE_WAKE_PROMPT_FILE_NAME, ClaudeWakeRemoteContext};
-use rook_errors::report_error;
 
 #[cfg(test)]
 use super::super::OZ_MESSAGE_LISTENER_STATE_ROOT_ENV;

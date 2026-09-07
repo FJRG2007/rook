@@ -5,13 +5,13 @@ use ai::api_keys::{
     GeapMintBinding, GeapRefreshOutcome, LoadGeapCredentialsError,
 };
 use futures::channel::oneshot;
-use serde::{Deserialize, Serialize};
-use vec1::vec1;
 use rook_errors::report_error;
 use rook_managed_secrets::ManagedSecretManager;
 use rook_managed_secrets::client::{IdentityTokenOptions, TaskIdentityToken};
 use rookui::r#async::Timer;
 use rookui::{AppContext, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
+use vec1::vec1;
 
 use crate::auth::AuthStateProvider;
 use crate::settings::{AISettings, AISettingsChangedEvent};

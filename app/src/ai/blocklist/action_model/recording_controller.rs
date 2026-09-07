@@ -7,8 +7,8 @@ use std::time::Duration;
 use ai::agent::action_result::StopRecordingResult;
 use futures::channel::oneshot;
 use instant::Instant;
-use thiserror::Error;
 use rookui::{Entity, SingletonEntity};
+use thiserror::Error;
 
 use crate::ai::agent::conversation::AIConversationId;
 

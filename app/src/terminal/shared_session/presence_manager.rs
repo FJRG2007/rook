@@ -7,16 +7,16 @@ use futures_util::future::join_all;
 use itertools::{Either, Itertools};
 use pathfinder_color::ColorU;
 use rand::Rng;
+use rookui::assets::asset_cache::{AssetCache, AssetState};
+use rookui::r#async::SpawnedFutureHandle;
+use rookui::image_cache::ImageType;
+use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
 #[cfg(not(target_arch = "wasm32"))]
 use session_sharing_protocol::common::Viewer;
 use session_sharing_protocol::common::{
     InputReplicaId, ParticipantId, ParticipantInfo, ParticipantList, ParticipantPresenceUpdate,
     PresenceUpdate, Role, RoleRequestId, Selection,
 };
-use rookui::assets::asset_cache::{AssetCache, AssetState};
-use rookui::r#async::SpawnedFutureHandle;
-use rookui::image_cache::ImageType;
-use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
 
 use crate::auth::UserUid;
 use crate::editor::{CursorColors, PeerSelectionData};

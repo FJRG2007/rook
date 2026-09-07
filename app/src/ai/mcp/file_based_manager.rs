@@ -4,18 +4,18 @@ use std::path::{Path, PathBuf};
 
 use itertools::Itertools as _;
 use repo_metadata::repositories::DetectedRepositories;
-use uuid::Uuid;
 use rook_core::features::FeatureFlag;
 use rook_util::local_or_remote_path::LocalOrRemotePath;
 use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
+use uuid::Uuid;
 
 use super::file_mcp_watcher::{FileMCPConfigDiagnostic, PendingScan};
 use super::{FileMCPWatcher, FileMCPWatcherEvent, MCPProvider, home_dir};
 use crate::ai::mcp::ParsedTemplatableMCPServerResult;
 use crate::ai::mcp::templatable_installation::TemplatableMCPServerInstallation;
+use crate::rook_managed_paths_watcher::rook_managed_mcp_config_path;
 use crate::settings::AISettingsChangedEvent;
 use crate::settings::ai::AISettings;
-use crate::rook_managed_paths_watcher::rook_managed_mcp_config_path;
 
 /// Singleton model to manage file-based MCP servers.
 #[derive(Default)]

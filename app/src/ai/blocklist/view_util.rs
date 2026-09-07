@@ -3,7 +3,6 @@ use std::sync::LazyLock;
 
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use thousands::Separable;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::appearance::Appearance;
 use rookui::elements::{
@@ -16,6 +15,7 @@ use rookui::ui_components::button::ButtonVariant;
 use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::ui_components::text::Span;
 use rookui::{AppContext, Element, EntityId, EventContext, SingletonEntity};
+use thousands::Separable;
 
 use crate::ai::AIRequestUsageModel;
 use crate::ai::agent::RenderableAIError;

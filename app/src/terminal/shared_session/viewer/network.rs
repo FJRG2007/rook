@@ -12,6 +12,13 @@ use futures_util::stream::AbortHandle;
 use futures_util::{SinkExt, StreamExt};
 use instant::Instant;
 use parking_lot::FairMutex;
+use rook_core::features::FeatureFlag;
+use rook_errors::report_error;
+use rook_server_client::iap::IapManager;
+use rookui::r#async::{SpawnedFutureHandle, Timer};
+use rookui::{
+    Entity, ModelContext, ModelHandle, RequestState, RetryOption, SingletonEntity, WeakViewHandle,
+};
 use session_sharing_protocol::common::{
     ActivePrompt, ActivePromptUpdate, AddGuestsResponse, AgentAttachment, AgentPromptFailureReason,
     AgentPromptRequest, AgentPromptRequestId, CommandExecutionFailureReason, ControlAction,
@@ -26,13 +33,6 @@ use session_sharing_protocol::common::{
 use session_sharing_protocol::viewer::{
     DownstreamMessage, InitPayload, RoleUpdatedReason, SessionEndedReason, UpstreamMessage,
     ViewerRemovedReason,
-};
-use rook_core::features::FeatureFlag;
-use rook_errors::report_error;
-use rook_server_client::iap::IapManager;
-use rookui::r#async::{SpawnedFutureHandle, Timer};
-use rookui::{
-    Entity, ModelContext, ModelHandle, RequestState, RetryOption, SingletonEntity, WeakViewHandle,
 };
 use websocket::{Message, Sink, Stream, WebsocketMessage as _};
 
@@ -225,7 +225,7 @@ impl Network {
         let session_id = SessionId::new();
         let viewer_id = ParticipantId::new();
         let viewer_firebase_uid = UserUid::new("mock_firebase_uid");
-        let active_prompt = ActivePrompt::RookPrompt("test rook prompt".to_owned());
+        let active_prompt = ActivePrompt::WarpPrompt("test rook prompt".to_owned());
 
         let model = Network {
             session_id,

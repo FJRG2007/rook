@@ -1,13 +1,13 @@
 use std::collections::HashMap;
 
 use itertools::Itertools;
+use rookui::elements::{MouseStateHandle, PartialClickableElement};
+use rookui::platform::Cursor;
 pub use secret_redaction::{
     SECRET_REDACTION_REPLACEMENT_CHARACTER, find_secrets_in_text, find_secrets_in_text_with_levels,
 };
 use similar::DiffableStr;
 use string_offset::StringRange;
-use rookui::elements::{MouseStateHandle, PartialClickableElement};
-use rookui::platform::Cursor;
 
 use super::{AIBlockAction, TextLocation};
 use crate::ai::agent::{AIAgentOutput, AIAgentTextSection, AgentOutputText};

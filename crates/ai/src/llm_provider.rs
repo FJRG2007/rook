@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
 use rook_core::ui::icons::Icon;
 use rook_errors::report_error;
+use serde::{Deserialize, Serialize};
 
 use crate::api_keys::ApiKeys;
 

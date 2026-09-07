@@ -17,12 +17,12 @@ use std::time::Duration;
 pub use codebase_index::{CodebaseIndex, RetrievalID, SyncProgress};
 pub use fragment_metadata::{FragmentLocation as FragmentMetadataLocation, FragmentMetadata};
 pub use merkle_tree::{ContentHash, NodeHash};
+use rook_errors::{AnyhowErrorExt, ErrorExt, register_error};
+use rook_graphql::queries::rerank_fragments::FragmentLocationInput;
 pub use snapshot::SnapshotStorage;
 use string_offset::ByteOffset;
 pub use sync_client::SyncTask;
 use thiserror::Error;
-use rook_errors::{AnyhowErrorExt, ErrorExt, register_error};
-use rook_graphql::queries::rerank_fragments::FragmentLocationInput;
 
 #[derive(Error, Debug)]
 pub enum Error {

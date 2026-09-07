@@ -11,10 +11,10 @@ use itertools::Itertools;
 use rayon::prelude::*;
 use repo_metadata::RepositoryUpdate;
 use repo_metadata::entry::{BudgetExceededBehavior, IgnoredPathStrategy, is_file_parsable};
-use streaming_iterator::StreamingIterator;
-use syntax_tree::TextSlice;
 use rook_errors::report_error;
 use rook_util::standardized_path::StandardizedPath;
+use streaming_iterator::StreamingIterator;
+use syntax_tree::TextSlice;
 
 use crate::index::file_outline::{FileOutline, Outline, Symbol};
 use crate::index::{Entry, FileId, FileMetadata, THREADPOOL};
