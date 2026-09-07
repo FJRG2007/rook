@@ -13,14 +13,14 @@ use super::{
 use crate::terminal::model::session::LocalCommandExecutor;
 use crate::terminal::shell::ShellType;
 
-const PLUGIN_KEY: &str = "rook@claude-code-rook";
-const PLATFORM_PLUGIN_KEY: &str = "oz-harness-support@claude-code-rook";
+const PLUGIN_KEY: &str = "rook@rook";
+const PLATFORM_PLUGIN_KEY: &str = "oz-harness-support@rook";
 
-const MARKETPLACE_REPO: &str = "warpdotdev/claude-code-warp";
-const MARKETPLACE_NAME: &str = "claude-code-rook";
+const MARKETPLACE_REPO: &str = "FJRG2007/rook";
+const MARKETPLACE_NAME: &str = "rook";
 
-// Keep in sync with the plugin version in warpdotdev/claude-code-warp.
-// (See the Versioning section of that repo's README.)
+// Keep in sync with plugins/claude-code/plugins/rook/.claude-plugin/plugin.json,
+// which this repository now ships.
 const MINIMUM_PLUGIN_VERSION: &str = "2.1.0";
 // Keep in sync with the oz-harness-support plugin version in warpdotdev/claude-code-warp.
 const MINIMUM_PLATFORM_PLUGIN_VERSION: &str = "1.1.2";

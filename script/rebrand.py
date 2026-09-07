@@ -24,7 +24,26 @@ SKIP_DIRS = {".git", "references", "target", "node_modules", ".ledger", "__pycac
 SKIP_CONTENT_PATHS = {
     os.path.join("crates", "input_classifier", "models"),
     os.path.join("script", "rebrand.py"),
+    # These describe the relationship to upstream, so they name it on purpose:
+    # which repository this was forked from, which of its issues a bug came
+    # from, where the reference checkout lives. Renaming those turns each one
+    # into a statement about this repository instead, and the result reads as
+    # a fork of itself.
+    "CLAUDE.md",
+    "README.md",
+    "docs",
+    os.path.join(".claude", "commands"),
 }
+
+# A licence names its copyright holder, and both the MIT and AGPL texts require that
+# notice to be kept as it is. Renaming the holder would be a licence violation, not a
+# rebrand, so any file that is one is left alone wherever it sits in the tree.
+LICENCE_FILENAMES = {"LICENSE", "LICENCE", "COPYING", "NOTICE"}
+
+
+def is_licence_file(name: str) -> bool:
+    stem = name.split(".", 1)[0].upper()
+    return stem in LICENCE_FILENAMES
 
 BINARY_SUFFIXES = {
     ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp", ".ico", ".icns",
@@ -116,6 +135,8 @@ def rename_path_component(name: str) -> str:
     return WORD.sub(lambda m: CASE_MAP.get(m.group(0), "rook"), name)
 
 def is_skipped_content(rel_path: str) -> bool:
+    if is_licence_file(os.path.basename(rel_path)):
+        return True
     if os.path.splitext(rel_path)[1].lower() in BINARY_SUFFIXES:
         return True
     return any(

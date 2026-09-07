@@ -1,6 +1,11 @@
 mod v1;
 
+// The sentinel itself is only referenced by tests now that the runtime accepts
+// either it or the upstream one through `is_cli_agent_notification`, but it is
+// re-exported here so those tests keep naming it from one place.
+#[cfg_attr(not(test), allow(unused_imports))]
 pub use rook_core::cli_agent_protocol::CLI_AGENT_NOTIFICATION_SENTINEL;
+pub use rook_core::cli_agent_protocol::is_cli_agent_notification;
 use rook_errors::report_error;
 use serde::Deserialize;
 
@@ -72,7 +77,7 @@ const VERSIONED_PARSERS: &[EventParser] = &[v1::parse];
 /// Dispatches to the correct version-specific parser based on the `"v"` field. Returns `None`
 /// if the title doesn't match the sentinel, the body isn't valid JSON, or the version is unsupported.
 pub fn parse_event(title: Option<&str>, body: &str) -> Option<CLIAgentEvent> {
-    if title? != CLI_AGENT_NOTIFICATION_SENTINEL {
+    if !is_cli_agent_notification(title?) {
         return None;
     }
 

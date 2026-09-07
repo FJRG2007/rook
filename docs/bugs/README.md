@@ -10,6 +10,7 @@ Every entry records the measurement the diagnosis rests on, because the point of
 | [The blocks table has no index](blocks-table-has-no-index.md) | A full table scan after every command and at startup | Fixed |
 | [The session is not saved on shutdown](session-not-saved-on-shutdown.md) | Tabs, names and order lost after a restart | Fixed |
 | [A pane retains every block it ever made](panes-retain-every-block.md) | Gets worse the longer it runs, worse still with more panes and more agent output | Fixed |
+| [The CLI-agent plugin makes everything slower](cli-agent-plugin-hooks-are-slow.md) | Every tool call, prompt and turn pauses once the Claude Code plugin is installed | Fixed |
 
 ## Writing one of these
 

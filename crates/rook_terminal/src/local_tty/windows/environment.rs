@@ -5,7 +5,8 @@ use std::os::windows::ffi::{OsStrExt, OsStringExt};
 use itertools::Itertools;
 use rook_core::channel::ChannelState;
 use rook_core::cli_agent_protocol::{
-    CLI_AGENT_PROTOCOL_VERSION, ROOK_CLI_AGENT_PROTOCOL_VERSION_ENV, ROOK_CLIENT_VERSION_ENV,
+    CLI_AGENT_PROTOCOL_VERSION, COMPAT_CLI_AGENT_PROTOCOL_VERSION_ENV, COMPAT_CLIENT_VERSION_ENV,
+    ROOK_CLI_AGENT_PROTOCOL_VERSION_ENV, ROOK_CLIENT_VERSION_ENV,
 };
 use rook_core::features::FeatureFlag;
 use rook_core::safe_info;
@@ -134,12 +135,30 @@ pub(super) fn get_shell_environment_variables(options: &PtyOptions) -> Vec<u16> 
             value: client_version.into(),
         },
     );
+    // The published CLI-agent plugins read the upstream names to decide whether the
+    // terminal supports structured notifications, and fall back to a plain one when
+    // they find neither. They are separate projects with their own release cadence, so
+    // both names carry the same value rather than the plugins being expected to change.
+    env.insert(
+        map_key(COMPAT_CLIENT_VERSION_ENV.into()),
+        EnvEntry {
+            preferred_key: COMPAT_CLIENT_VERSION_ENV.into(),
+            value: client_version.into(),
+        },
+    );
 
     if FeatureFlag::HOANotifications.is_enabled() {
         env.insert(
             map_key(ROOK_CLI_AGENT_PROTOCOL_VERSION_ENV.into()),
             EnvEntry {
                 preferred_key: ROOK_CLI_AGENT_PROTOCOL_VERSION_ENV.into(),
+                value: CLI_AGENT_PROTOCOL_VERSION.to_string().into(),
+            },
+        );
+        env.insert(
+            map_key(COMPAT_CLI_AGENT_PROTOCOL_VERSION_ENV.into()),
+            EnvEntry {
+                preferred_key: COMPAT_CLI_AGENT_PROTOCOL_VERSION_ENV.into(),
                 value: CLI_AGENT_PROTOCOL_VERSION.to_string().into(),
             },
         );
