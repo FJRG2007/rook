@@ -15,6 +15,43 @@ fn secret_ranges(grid_handler: &GridHandler) -> Vec<RangeInclusive<Point>> {
         .collect_vec()
 }
 
+/// Every test in this file installs its own patterns into `SECRETS_REGEX`,
+/// which is a process-wide global. Two of them running at once therefore
+/// assert against each other's patterns, and one that has finished leaves its
+/// patterns behind for the rest of the binary. libtest runs tests in parallel
+/// by default, so which of them failed depended on scheduling rather than on
+/// anything in the code.
+///
+/// The guard below serializes the tests in this file against each other and
+/// puts the previous regexes back when it drops. parking_lot's mutex does not
+/// poison, so one failing test does not cascade into the others.
+static SECRETS_REGEX_LOCK: parking_lot::Mutex<()> = parking_lot::Mutex::new(());
+
+struct SecretRegexGuard {
+    previous: std::sync::Arc<crate::model::secrets::SecretsRegex>,
+    _lock: parking_lot::MutexGuard<'static, ()>,
+}
+
+impl Drop for SecretRegexGuard {
+    fn drop(&mut self) {
+        *crate::model::secrets::SECRETS_REGEX.lock() = self.previous.clone();
+    }
+}
+
+#[must_use = "the regexes are restored when this drops, so it must outlive the assertions"]
+fn set_secret_regexes<'a>(user_secrets: impl IntoIterator<Item = &'a Regex>) -> SecretRegexGuard {
+    let lock = SECRETS_REGEX_LOCK.lock();
+    let previous = crate::model::secrets::SECRETS_REGEX.lock().clone();
+    crate::model::secrets::set_user_and_enterprise_secret_regexes(
+        user_secrets,
+        std::iter::empty(), // No enterprise secrets
+    );
+    SecretRegexGuard {
+        previous,
+        _lock: lock,
+    }
+}
+
 fn empty_blockgrid(
     rows: usize,
     columns: usize,
@@ -32,10 +69,8 @@ fn empty_blockgrid(
 
 #[test]
 fn test_secret_redacted_after_byte_processing() {
-    crate::model::secrets::set_user_and_enterprise_secret_regexes(
-        [&Regex::new("ABCD").expect("Should be able to construct regex")],
-        std::iter::empty(), // No enterprise secrets
-    );
+    let _secrets =
+        set_secret_regexes([&Regex::new("ABCD").expect("Should be able to construct regex")]);
 
     let mut blockgrid = empty_blockgrid(5, 10, 1, ObfuscateSecrets::Yes);
     let grid_handler = blockgrid.grid_handler_mut();
@@ -67,11 +102,8 @@ fn test_secret_redacted_after_byte_processing() {
 #[test]
 fn test_secret_redacted_after_multibyte_prefix() {
     let secret = "AAAAC3NzaC1lZDI1NTE5AAAAIThisIsNotARealKeyItIsJustForTestingRookRedact";
-    crate::model::secrets::set_user_and_enterprise_secret_regexes(
-        [&Regex::new("AAAAC3NzaC1lZDI1NTE5[A-Za-z0-9+/=]{20,}")
-            .expect("Should be able to construct regex")],
-        std::iter::empty(), // No enterprise secrets
-    );
+    let _secrets = set_secret_regexes([&Regex::new("AAAAC3NzaC1lZDI1NTE5[A-Za-z0-9+/=]{20,}")
+        .expect("Should be able to construct regex")]);
 
     let mut blockgrid = empty_blockgrid(10, 10, 1, ObfuscateSecrets::Yes);
     let grid_handler = blockgrid.grid_handler_mut();
@@ -101,10 +133,9 @@ fn test_secret_redacted_after_multibyte_prefix() {
 
 #[test]
 fn test_secret_with_word_boundaries_redacted_after_multibyte_prefix() {
-    crate::model::secrets::set_user_and_enterprise_secret_regexes(
-        [&Regex::new(r"\bTOKEN123\b").expect("Should be able to construct regex")],
-        std::iter::empty(), // No enterprise secrets
-    );
+    let _secrets = set_secret_regexes([
+        &Regex::new(r"\bTOKEN123\b").expect("Should be able to construct regex")
+    ]);
 
     let mut blockgrid = empty_blockgrid(5, 20, 1, ObfuscateSecrets::Yes);
     let grid_handler = blockgrid.grid_handler_mut();
@@ -133,10 +164,8 @@ fn test_secret_with_word_boundaries_redacted_after_multibyte_prefix() {
 
 #[test]
 fn test_secret_redacted_after_multiple_byte_processing() {
-    crate::model::secrets::set_user_and_enterprise_secret_regexes(
-        [&Regex::new("ABCD").expect("Should be able to construct regex")],
-        std::iter::empty(), // No enterprise secrets
-    );
+    let _secrets =
+        set_secret_regexes([&Regex::new("ABCD").expect("Should be able to construct regex")]);
 
     let mut blockgrid = empty_blockgrid(5, 10, 1, ObfuscateSecrets::Yes);
     let grid_handler = blockgrid.grid_handler_mut();
@@ -173,10 +202,8 @@ fn test_secret_redacted_after_multiple_byte_processing() {
 
 #[test]
 fn test_secret_redaction_unobfuscated_secret_remains_after_byte_processing() -> anyhow::Result<()> {
-    crate::model::secrets::set_user_and_enterprise_secret_regexes(
-        [&Regex::new("ABCD").expect("Should be able to construct regex")],
-        std::iter::empty(), // No enterprise secrets
-    );
+    let _secrets =
+        set_secret_regexes([&Regex::new("ABCD").expect("Should be able to construct regex")]);
 
     let mut blockgrid = empty_blockgrid(5, 10, 1, ObfuscateSecrets::Yes);
     let grid_handler = blockgrid.grid_handler_mut();
@@ -231,10 +258,8 @@ fn test_secret_redaction_unobfuscated_secret_remains_after_byte_processing() -> 
 
 #[test]
 fn test_secret_redaction_secret_remains_after_resize() {
-    crate::model::secrets::set_user_and_enterprise_secret_regexes(
-        [&Regex::new("ABCD").expect("Should be able to construct regex")],
-        std::iter::empty(), // No enterprise secrets
-    );
+    let _secrets =
+        set_secret_regexes([&Regex::new("ABCD").expect("Should be able to construct regex")]);
 
     let mut blockgrid = empty_blockgrid(2, 5, 2, ObfuscateSecrets::Yes);
     let grid_handler = blockgrid.grid_handler_mut();
@@ -268,10 +293,8 @@ fn test_secret_redaction_secret_remains_after_resize() {
 
 #[test]
 fn test_bytes_processed_for_secrets_after_turning_redaction() {
-    crate::model::secrets::set_user_and_enterprise_secret_regexes(
-        [&Regex::new("abcd").expect("Should be able to construct regex")],
-        std::iter::empty(), // No enterprise secrets
-    );
+    let _secrets =
+        set_secret_regexes([&Regex::new("abcd").expect("Should be able to construct regex")]);
 
     let mut blockgrid = empty_blockgrid(2, 4, 2, ObfuscateSecrets::Yes);
     let grid_handler = blockgrid.grid_handler_mut();
@@ -299,10 +322,8 @@ fn test_bytes_processed_for_secrets_after_turning_redaction() {
 
 #[test]
 fn test_bytes_processed_for_secrets_after_turning_redaction_on() {
-    crate::model::secrets::set_user_and_enterprise_secret_regexes(
-        [&Regex::new("abcd").expect("Should be able to construct regex")],
-        std::iter::empty(), // No enterprise secrets
-    );
+    let _secrets =
+        set_secret_regexes([&Regex::new("abcd").expect("Should be able to construct regex")]);
 
     let mut blockgrid = empty_blockgrid(2, 4, 2, ObfuscateSecrets::No);
     let grid_handler = blockgrid.grid_handler_mut();
@@ -325,10 +346,8 @@ fn test_bytes_processed_for_secrets_after_turning_redaction_on() {
 
 #[test]
 fn test_bytes_processed_for_secrets_after_turning_redaction_off_then_on() {
-    crate::model::secrets::set_user_and_enterprise_secret_regexes(
-        [&Regex::new("abcd").expect("Should be able to construct regex")],
-        std::iter::empty(), // No enterprise secrets
-    );
+    let _secrets =
+        set_secret_regexes([&Regex::new("abcd").expect("Should be able to construct regex")]);
 
     let mut blockgrid = empty_blockgrid(3, 4, 2, ObfuscateSecrets::Yes);
     let grid_handler = blockgrid.grid_handler_mut();
@@ -360,10 +379,8 @@ fn test_bytes_processed_for_secrets_after_turning_redaction_off_then_on() {
 
 #[test]
 fn test_bytes_processed_for_secrets_after_turning_redaction_on_then_off() {
-    crate::model::secrets::set_user_and_enterprise_secret_regexes(
-        [&Regex::new("abcd").expect("Should be able to construct regex")],
-        std::iter::empty(), // No enterprise secrets
-    );
+    let _secrets =
+        set_secret_regexes([&Regex::new("abcd").expect("Should be able to construct regex")]);
 
     let mut blockgrid = empty_blockgrid(3, 4, 2, ObfuscateSecrets::No);
     let grid_handler = blockgrid.grid_handler_mut();
