@@ -1,52 +1,74 @@
 # Rook
 
-A terminal for Windows, built from the open-source [Warp](https://github.com/warpdotdev/warp) client and retuned for machines with a discrete GPU.
+A terminal built from the open-source [Warp](https://github.com/warpdotdev/warp) client, with the performance work upstream has not done. Windows, macOS and Linux.
 
-Upstream is an excellent terminal that behaves poorly on some Windows setups: input and scrolling stutter, opening a tab stalls, and the app slows down the longer it has been installed. Rook keeps the terminal and changes the defaults and storage decisions behind those symptoms.
+Upstream is an excellent terminal that behaves poorly under sustained use: input and scrolling stutter on machines with a discrete GPU, opening a tab stalls, tabs vanish after a restart, and it gets slower the longer it stays open. Rook keeps the terminal and fixes what was behind those symptoms.
+
+Every change below rests on a measurement taken on a real machine, not on reasoning about what ought to be faster. `docs/bugs/` records each one: the symptom, the evidence, the cause, and what the fix does not cover.
 
 ## What differs from upstream
 
-**Rendering runs on the discrete GPU.** Upstream sets `prefer_low_power_gpu` to true on Windows, so a machine with a dedicated card renders the terminal on the integrated one. Every repaint pays for it: typing, scrolling, selecting text, switching panes. Rook defaults to the discrete GPU on Windows and keeps the integrated one as the crash fallback, so an unstable driver still recovers on its own. Override it with `system.prefer_low_power_gpu` in settings.
+**Rendering runs on the discrete GPU.** Upstream sets `prefer_low_power_gpu` to true on Windows, so a machine with a dedicated card renders the terminal on the integrated one. Every repaint pays for it: typing, scrolling, selecting text, switching panes. Rook defaults to the discrete GPU there and keeps the integrated one as the crash fallback, so an unstable driver still recovers on its own. Override with `system.prefer_low_power_gpu`.
 
-**The blocks table is indexed.** `blocks` shipped with no index on `pane_leaf_uuid`, so the retention check that runs after every completed command scanned the whole table, as did session restore at startup. On a 76 MB database that measured 2.14 ms per command before the index and 0.02 ms after.
+**The blocks table is indexed.** `blocks` shipped with no index at all, so the retention check that runs after every completed command scanned the whole table, as did session restore at startup. Measured on a 76 MB database: 2.14 ms per command before, 0.02 ms after. Blocks belonging to closed panes are deleted now rather than accumulating forever - 97% of the rows in that database were orphaned.
 
-**Closed panes stop accumulating.** Blocks have no foreign key to their pane, so closing a pane left its captured output in the database permanently. On the machine this was diagnosed on, 1596 of 1640 rows were orphaned and held most of the file. Rook deletes them at startup, when no session is running.
+**A pane stops growing without bound.** Panes kept every block they had ever produced, and each block holds its output as a grid of cells, so a long session with a lot of agent output grew until the pane was closed. That is why it got worse the longer it ran and better after a restart. Panes now keep a budget of output, `terminal.max_retained_output_lines`, and drop their oldest blocks past it.
 
-**No update polling.** Upstream polls its own release host every ten minutes. Rook has no such host, so the flag is off and releases are published here instead.
+**The session is actually saved.** Upstream wrote it on window move, resize, focus change and close, and skipped it entirely while shutting down, so a restart restored whatever the layout happened to be some time earlier. Rook writes it every 15 seconds and again on the way out.
+
+**The CLI-agent plugins cost a fraction of what they did.** The Claude Code, Codex and Gemini CLI integrations spent around 400 ms of process spawning after *every tool call*. They live in `plugins/` now, rewritten to one process per hook: 97 ms.
+
+**No update polling.** Upstream polls its own release host every ten minutes. Rook has none, and publishes releases here instead.
 
 ## Install
 
-Download the Windows installer from [Releases](https://github.com/FJRG2007/rook/releases) and run it.
+Download from [Releases](https://github.com/FJRG2007/rook/releases):
 
-The installer is not code-signed, so SmartScreen shows a warning on first run. Choose "More info" then "Run anyway", or check the file against the checksum on the release page.
+| Platform | File |
+| --- | --- |
+| Windows | `RookOssSetup.exe` |
+| macOS | `.dmg` |
+| Linux | `.AppImage` |
+
+Nothing is code-signed, because this project holds no Apple or Windows certificate. Windows SmartScreen warns on first run: choose "More info" then "Run anyway". macOS refuses an unsigned app until you right-click it and pick Open, or clear the quarantine flag with `xattr -dr com.apple.quarantine /Applications/RookOss.app`. On Linux, `chmod +x` the AppImage and run it.
+
+Verify a download against the checksum on the release page if you would rather not take that on faith.
 
 ## Build from source
 
-Needs Git for Windows (with Git LFS), Visual Studio Build Tools 2022, and Rust, which `rust-toolchain.toml` pins.
+Rust is pinned by `rust-toolchain.toml`, and Git LFS is required for the bundled assets.
 
 ```bash
-./script/bootstrap    # installs the remaining build dependencies
+./script/bootstrap    # installs the platform's build dependencies
 ./script/run          # build and run
 ./script/presubmit    # fmt, clippy, and tests
 ```
 
-To produce the installer:
+Windows additionally needs Git for Windows and Visual Studio Build Tools 2022.
+
+To produce an installer:
+
+```bash
+./script/linux/bundle --channel oss --packages appimage    # Linux
+./script/macos/bundle --channel oss --nosign               # macOS
+```
 
 ```powershell
-.\script\windows\bundle.ps1 -CHANNEL oss -ARCH x64
+.\script\windows\bundle.ps1 -CHANNEL oss -ARCH x64         # Windows
 ```
+
+CI runs fmt, clippy, tests and a release-profile check on all three platforms. Pushing a `v*` tag builds every installer and attaches them to the GitHub release.
+
+## The CLI-agent plugins
+
+`plugins/` holds Rook's integrations for Claude Code, Codex, Gemini CLI and OpenCode, and the terminal installs them from here. They are the upstream plugins with their hook cost removed; Rook does not accept the upstream builds, because those still carry it.
 
 ## Tracking upstream
 
-`script/rebrand.py` performs the rename, so upstream changes can be merged by copying the new files in and running it again:
+`script/rebrand.py` performs the rename, so upstream changes can be merged by copying the new files in and running it again. It preserves what the rename must not touch: third-party repositories under the upstream organization, the external crates whose package names carry the upstream brand, the protobuf identifiers reached through `api::`, licence files, binary assets, and the classifier's tokenizer vocabulary.
 
-```bash
-python script/rebrand.py --dry-run
-python script/rebrand.py
-```
-
-It preserves what the rename must not touch: third-party repositories under the upstream organization, the five external crates whose package names carry the upstream brand, the protobuf types reached through `api::`, binary assets, and the classifier's tokenizer vocabulary. Renaming any of those breaks the build or the model.
+`/catch-up` does the whole pass, and `docs/upstream-sync.md` records where Rook deliberately differs so a port does not silently undo one of these fixes.
 
 ## License and attribution
 
-Rook is a fork of [warpdotdev/warp](https://github.com/warpdotdev/warp) and inherits its licensing. The `rookui_core` and `rookui` crates are [MIT](LICENSE-MIT); everything else is [AGPL v3](LICENSE-AGPL). Warp is a trademark of its owners and this project is not affiliated with or endorsed by them.
+Rook is a fork of [warpdotdev/warp](https://github.com/warpdotdev/warp) and inherits its licensing. The `rookui_core` and `rookui` crates are [MIT](LICENSE-MIT); everything else is [AGPL v3](LICENSE-AGPL). The bundled plugins under `plugins/` are MIT and keep their own licence files. Warp is a trademark of its owners and this project is not affiliated with or endorsed by them.

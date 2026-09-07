@@ -22,48 +22,81 @@ env:
 
 jobs:
   lints:
-    name: Formatting + Clippy
-    runs-on: windows-latest
-    timeout-minutes: 120
+    name: Formatting + Clippy (${{ matrix.name }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows
+            name: Windows
+            runner: windows-latest
+            # rook_js targets wasm and command-signatures-v2 needs its JS
+            # toolchain built first, so neither builds here.
+            clippy_excludes: --exclude rook_js --exclude command-signatures-v2
+          - os: macos
+            name: macOS
+            runner: macos-latest
+            clippy_excludes: --exclude rook_completer
+          - os: linux
+            name: Linux
+            runner: ubuntu-latest
+            clippy_excludes: --exclude rook_completer
     steps:
       - uses: actions/checkout@v7
 
       - uses: ./.github/actions/prepare_environment
         with:
-          target_os: windows
+          target_os: ${{ matrix.os }}
           is_self_hosted: 'false'
-          # Shares the dev-profile cache with the test job; a single key across
+          # One cache per profile, shared with the test job. A single key across
           # every job just meant they overwrote each other and all started cold.
-          cache_key: windows-dev
+          cache_key: ${{ matrix.os }}-dev
 
       - name: Check formatting
+        # Formatting is platform independent, so one job is enough.
+        if: matrix.os == 'linux'
         shell: bash
         run: cargo fmt --all -- --check
 
       - name: Clippy
         shell: bash
-        # The two excluded crates do not build on Windows: rook_js targets wasm,
-        # and command-signatures-v2 needs the JS toolchain built first.
-        # `--all-features` is omitted because pprof and the other profiling
-        # features do not compile here either.
+        # `--all-features` is omitted: pprof and the other profiling features do
+        # not compile on every target.
         run: |
-          cargo clippy --locked --workspace \
-            --exclude rook_js --exclude command-signatures-v2 \
+          cargo clippy --locked --workspace ${{ matrix.clippy_excludes }} \
             --all-targets --tests -- -D warnings
 
   test:
-    name: Tests
-    runs-on: windows-latest
+    name: Tests (${{ matrix.name }})
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows
+            name: Windows
+            runner: windows-latest
+            test_excludes: --exclude command-signatures-v2 --exclude rook_js
+          - os: macos
+            name: macOS
+            runner: macos-latest
+            test_excludes: --exclude command-signatures-v2
+          - os: linux
+            name: Linux
+            runner: ubuntu-latest
+            test_excludes: --exclude command-signatures-v2
     steps:
       - uses: actions/checkout@v7
 
       - uses: ./.github/actions/prepare_environment
         with:
-          target_os: windows
+          target_os: ${{ matrix.os }}
           is_self_hosted: 'false'
           install_test_deps: 'true'
-          cache_key: windows-dev
+          cache_key: ${{ matrix.os }}-dev
 
       - name: Install cargo-nextest
         uses: taiki-e/install-action@v2
@@ -72,30 +105,50 @@ jobs:
 
       - name: Run tests
         shell: bash
-        # The integration package drives a real window and is not run on Windows
-        # upstream either; command-signatures-v2 needs its JS build first.
+        # The integration package drives a real window and is not run in CI
+        # upstream either.
         run: |
-          cargo nextest run --workspace --locked \
-            --exclude command-signatures-v2 \
+          cargo nextest run --workspace --locked ${{ matrix.test_excludes }} \
             -E "not package(integration)"
 
   release-check:
-    name: Release profile compiles
-    runs-on: windows-latest
-    timeout-minutes: 120
+    name: Release profile compiles (${{ matrix.name }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows
+            name: Windows
+            runner: windows-latest
+          - os: macos
+            name: macOS
+            runner: macos-latest
+          - os: linux
+            name: Linux
+            runner: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
 
       - uses: ./.github/actions/prepare_environment
         with:
-          target_os: windows
+          target_os: ${{ matrix.os }}
           is_self_hosted: 'false'
-          cache_key: windows-rlto
+          cache_key: ${{ matrix.os }}-rlto
 
-      # Only the release profile and its feature set are being verified here,
-      # and `cargo check` establishes that without paying for codegen and LTO.
-      # The tag build in release.yml is what actually produces a binary, and it
-      # now reuses the cache this job leaves behind.
-      - name: Check release compilation
+      # Only the release profile and its feature set are verified here, and
+      # `cargo check` establishes that without paying for codegen and LTO. The
+      # tag build in release.yml produces the binaries, and reuses the cache
+      # this job leaves behind.
+      - name: Check release compilation (Windows)
+        if: matrix.os == 'windows'
         shell: pwsh
         run: .\script\windows\bundle.ps1 -CHANNEL oss -ARCH x64 -CHECK_ONLY
+
+      - name: Check release compilation (Unix)
+        if: matrix.os != 'windows'
+        shell: bash
+        run: |
+          cargo check --locked -p rook --profile rlto \
+            --bin rook-oss --features release_bundle,gui

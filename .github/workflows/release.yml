@@ -1,8 +1,8 @@
 name: Release
 
 # Rook has no release host of its own, so GitHub releases are the distribution
-# channel. Push a `v*` tag (or run this by hand) and the Windows installer is
-# built and attached to the release for that tag.
+# channel. Push a `v*` tag (or run this by hand) and the installers for each
+# platform are built and attached to the release for that tag.
 on:
   push:
     tags: ['v*']
@@ -23,14 +23,27 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  windows-installer:
-    name: Windows installer (${{ matrix.arch }})
-    runs-on: windows-latest
-    timeout-minutes: 240
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 300
     strategy:
+      # One platform failing should not deny the others their artifact.
       fail-fast: false
       matrix:
-        arch: [x64]
+        include:
+          - os: windows
+            name: Windows installer (x64)
+            runner: windows-latest
+            artifact: rook-windows-x64
+          - os: macos
+            name: macOS disk image
+            runner: macos-latest
+            artifact: rook-macos
+          - os: linux
+            name: Linux AppImage
+            runner: ubuntu-latest
+            artifact: rook-linux-x86_64
     steps:
       - uses: actions/checkout@v7
         with:
@@ -43,14 +56,15 @@ jobs:
 
       - uses: ./.github/actions/prepare_environment
         with:
-          target_os: windows
+          target_os: ${{ matrix.os }}
           is_self_hosted: 'false'
           install_release_deps: 'true'
           # Same key as CI's release-profile job, so a tag build starts from
           # what that job already compiled instead of from nothing.
-          cache_key: windows-rlto
+          cache_key: ${{ matrix.os }}-rlto
 
       - name: Install Inno Setup
+        if: matrix.os == 'windows'
         shell: pwsh
         run: |
           choco install innosetup --no-progress -y
@@ -65,32 +79,57 @@ jobs:
           if (-not $iscc) { throw 'ISCC.exe not found after installing Inno Setup' }
           $iscc.DirectoryName | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      # Unsigned: code-signing needs a certificate this repository does not hold.
-      # Windows SmartScreen will warn on first run; see docs/INSTALL.md.
-      - name: Build installer
+      # Nothing here is code-signed: this repository holds no Apple certificate
+      # and no Windows one. Both platforms warn on first run as a result, and
+      # docs/INSTALL covers what to do about it.
+      - name: Build installer (Windows)
+        if: matrix.os == 'windows'
         shell: pwsh
         run: |
           .\script\windows\bundle.ps1 `
             -CHANNEL oss `
-            -ARCH ${{ matrix.arch }} `
+            -ARCH x64 `
             -RELEASE_TAG ${{ steps.tag.outputs.value }}
 
-      - name: Locate installer
-        id: installer
+      - name: Build disk image (macOS)
+        if: matrix.os == 'macos'
+        shell: bash
+        env:
+          GIT_RELEASE_TAG: ${{ steps.tag.outputs.value }}
+        run: ./script/macos/bundle --channel oss --nosign
+
+      - name: Build AppImage (Linux)
+        if: matrix.os == 'linux'
+        shell: bash
+        env:
+          GIT_RELEASE_TAG: ${{ steps.tag.outputs.value }}
+        run: ./script/linux/bundle --channel oss --packages appimage
+
+      - name: Locate artifacts
+        id: artifacts
         shell: bash
         run: |
-          path=$(ls script/windows/Output/*.exe | head -1)
-          if [ -z "$path" ]; then
-            echo "::error::bundle.ps1 produced no installer in script/windows/Output"
+          case "${{ matrix.os }}" in
+            windows) pattern='script/windows/Output/*.exe' ;;
+            macos)   pattern='target/**/*.dmg' ;;
+            linux)   pattern='target/**/bundle/linux/*.AppImage' ;;
+          esac
+          # shellcheck disable=SC2086
+          found=$(ls -1 $pattern 2>/dev/null | head -1 || true)
+          if [ -z "$found" ]; then
+            echo "::error::no artifact matched $pattern"
+            find target script/windows/Output -maxdepth 4 \
+              \( -name '*.exe' -o -name '*.dmg' -o -name '*.AppImage' \) 2>/dev/null || true
             exit 1
           fi
-          echo "path=$path" >> "$GITHUB_OUTPUT"
+          echo "path=$found" >> "$GITHUB_OUTPUT"
+          echo "Found $found"
 
       - uses: actions/upload-artifact@v7
         with:
-          name: rook-windows-${{ matrix.arch }}
-          path: ${{ steps.installer.outputs.path }}
-          # One installer, so hand it over as the .exe rather than wrapping it
+          name: ${{ matrix.artifact }}
+          path: ${{ steps.artifacts.outputs.path }}
+          # One file per platform, so hand it over as-is rather than wrapping it
           # in a zip the downloader has to unpack first.
           archive: false
 
@@ -98,6 +137,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.value }}
-          files: ${{ steps.installer.outputs.path }}
+          files: ${{ steps.artifacts.outputs.path }}
           fail_on_unmatched_files: true
           generate_release_notes: true
