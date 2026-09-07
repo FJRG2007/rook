@@ -33,9 +33,14 @@ jobs:
 
       - name: Clippy
         shell: bash
-        # `--all-features` is omitted on Windows because pprof and the other
-        # profiling features do not compile there.
-        run: cargo clippy --workspace --all-targets -- -D warnings
+        # The two excluded crates do not build on Windows: rook_js targets wasm,
+        # and command-signatures-v2 needs the JS toolchain built first.
+        # `--all-features` is omitted because pprof and the other profiling
+        # features do not compile here either.
+        run: |
+          cargo clippy --locked --workspace \
+            --exclude rook_js --exclude command-signatures-v2 \
+            --all-targets --tests -- -D warnings
 
   test:
     name: Tests
@@ -57,7 +62,12 @@ jobs:
 
       - name: Run tests
         shell: bash
-        run: cargo nextest run --workspace --no-fail-fast
+        # The integration package drives a real window and is not run on Windows
+        # upstream either; command-signatures-v2 needs its JS build first.
+        run: |
+          cargo nextest run --workspace --locked \
+            --exclude command-signatures-v2 \
+            -E "not package(integration)"
 
   build:
     name: Release build

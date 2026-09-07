@@ -51,8 +51,16 @@ jobs:
         shell: pwsh
         run: |
           choco install innosetup --no-progress -y
-          # ISCC lives outside the default PATH on the hosted image.
-          "$env:ProgramFiles(x86)\Inno Setup 6" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          # ISCC is not on PATH after install, and it lands in one of two places
+          # depending on whether the package installs per-machine or per-user.
+          $iscc = Get-ChildItem -Path @(
+              "${env:ProgramFiles(x86)}",
+              "$env:ProgramFiles",
+              "$env:LOCALAPPDATA\Programs"
+            ) -Filter ISCC.exe -Recurse -Depth 3 -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+          if (-not $iscc) { throw 'ISCC.exe not found after installing Inno Setup' }
+          $iscc.DirectoryName | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       # Unsigned: code-signing needs a certificate this repository does not hold.
       # Windows SmartScreen will warn on first run; see docs/INSTALL.md.
