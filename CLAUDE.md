@@ -18,6 +18,7 @@ It deliberately leaves some names alone, and every exception exists because rena
 - The five external crates whose package names carry the upstream brand, listed in the script. Their names live in another repository.
 - Protobuf types and fields reached through the `api::` alias, plus the handful reached without it. The wire format owns those names.
 - Binary assets, and the input classifier's tokenizer vocabulary.
+- `warp pointer` in `crates/computer_use/src/linux/x11/`, where it is the English word: X11's `XWarpPointer` teleports the cursor. Local code, not a foreign name, so it is the one exception the reasoning above does not cover.
 
 The script's header explains how the list is maintained: by compiling. Each missing exception shows up as an unknown field or variant on a type this repository does not own.
 
@@ -51,10 +52,12 @@ The second one is what catches errors in tests, and it needs libclang for `bindg
 
 ```bash
 ./script/run                                          # build and run
-.\script\windows\bundle.ps1 -CHANNEL oss -ARCH x64    # the installer
+.\script\windows\bundle.ps1 -CHANNEL oss -ARCH x64    # the Windows installer
+./script/macos/bundle --channel oss --nosign          # the macOS disk image
+./script/linux/bundle --channel oss --packages appimage
 ```
 
-CI runs fmt, clippy, tests and a release-profile check on Windows. Pushing a `v*` tag builds the installer and attaches it to the GitHub release. Installers are unsigned; there is no certificate.
+CI runs clippy, tests and a release-profile check on Windows, macOS and Linux, and `cargo fmt --check` on Linux alone, since formatting is platform independent. Pushing a `v*` tag builds all three installers and attaches them to the GitHub release. All three are unsigned; this repository holds neither an Apple certificate nor a Windows one.
 
 ## Performance work
 
