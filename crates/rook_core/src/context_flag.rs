@@ -43,6 +43,15 @@ fn disable_flag(flag: ContextFlag) {
 
 impl ContextFlag {
     pub fn is_enabled(&self) -> bool {
+        // Version-update prompts are meaningless without autoupdate: the check they trigger is
+        // dropped before it is sent, so the settings entry would read "Up to date" and the
+        // "Check for updates" button and its key binding would do nothing at all.
+        if matches!(self, Self::PromptForVersionUpdates)
+            && !crate::features::FeatureFlag::Autoupdate.is_enabled()
+        {
+            return false;
+        }
+
         FLAG_STATES[*self as usize].load(Ordering::Relaxed)
     }
 
