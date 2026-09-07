@@ -521,6 +521,8 @@ fn enabled_features() -> HashSet<FeatureFlag> {
         FeatureFlag::PromptCacheExpiryWarning,
         #[cfg(feature = "osc_hyperlinks")]
         FeatureFlag::OscHyperlinks,
+        #[cfg(feature = "maximize_flat_storage")]
+        FeatureFlag::MaximizeFlatStorage,
         #[cfg(feature = "terminal_lifecycle_recovery")]
         FeatureFlag::TerminalLifecycleRecovery,
         #[cfg(feature = "ctrl_c_cancels_third_party_harness")]

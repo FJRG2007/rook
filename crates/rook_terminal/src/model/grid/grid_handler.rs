@@ -93,6 +93,10 @@ const URL_SCAN_CHARACTER_MAX_COUNT: usize = 1000;
 /// bounded to prevent denial of service attacks.
 const KEYBOARD_MODE_STACK_MAX_DEPTH: usize = 4096;
 
+/// The number of rows at which compacting a finished block into flat storage
+/// starts to pay for itself. See [`GridHandler::finish`].
+const MIN_ROWS_TO_COMPACT: usize = 5;
+
 /// For escape sequences
 const CSI_START: &str = "\x1b[";
 const SGR_RESET_ATTRIBUTES: &str = "\x1b[0m";
@@ -1854,7 +1858,14 @@ impl GridHandler {
 
         // If we're using flat storage, push as many rows as possible into
         // flat storage to minimize memory consumption.
-        if FeatureFlag::MaximizeFlatStorage.is_enabled() {
+        //
+        // Below `MIN_ROWS_TO_COMPACT` this costs more than it saves: flat
+        // storage carries a fixed per-block overhead for its index and
+        // attribute maps, while grid storage grows a row at a time. Measured
+        // on a 200-column grid, the two break even at five rows, and short
+        // blocks are the common case - most commands print a line or two.
+        if FeatureFlag::MaximizeFlatStorage.is_enabled() && self.total_rows() >= MIN_ROWS_TO_COMPACT
+        {
             self.resize_storage(1, self.columns());
         }
     }
