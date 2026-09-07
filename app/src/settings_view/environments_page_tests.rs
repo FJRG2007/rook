@@ -1191,7 +1191,7 @@ fn test_github_repo_new() {
 #[test]
 fn test_github_repo_display() {
     let repo = GithubRepo::new("warpdotdev".to_string(), "rook-internal".to_string());
-    assert_eq!(repo.to_string(), "warpdotdev/warp-internal");
+    assert_eq!(repo.to_string(), "warpdotdev/rook-internal");
 }
 
 #[test]

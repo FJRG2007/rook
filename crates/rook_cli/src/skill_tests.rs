@@ -20,7 +20,7 @@ fn test_parse_repo_qualified() {
 
 #[test]
 fn test_parse_org_repo_qualified() {
-    let spec: SkillSpec = "warpdotdev/warp-internal:code-review".parse().unwrap();
+    let spec: SkillSpec = "warpdotdev/rook-internal:code-review".parse().unwrap();
     assert_eq!(spec.org, Some("warpdotdev".to_string()));
     assert_eq!(spec.repo, Some("rook-internal".to_string()));
     assert_eq!(spec.skill_identifier, "code-review");
@@ -29,7 +29,7 @@ fn test_parse_org_repo_qualified() {
 
 #[test]
 fn test_parse_full_path_with_org_repo() {
-    let spec: SkillSpec = "warpdotdev/warp-internal:.claude/skills/deploy/SKILL.md"
+    let spec: SkillSpec = "warpdotdev/rook-internal:.claude/skills/deploy/SKILL.md"
         .parse()
         .unwrap();
     assert_eq!(spec.org, Some("warpdotdev".to_string()));
@@ -66,7 +66,7 @@ fn test_display_org_repo_qualified() {
         "rook-internal".to_string(),
         "code-review".to_string(),
     );
-    assert_eq!(spec.to_string(), "warpdotdev/warp-internal:code-review");
+    assert_eq!(spec.to_string(), "warpdotdev/rook-internal:code-review");
 }
 
 #[test]
@@ -78,7 +78,7 @@ fn test_display_full_path() {
     );
     assert_eq!(
         spec.to_string(),
-        "warpdotdev/warp-internal:.claude/skills/deploy/SKILL.md"
+        "warpdotdev/rook-internal:.claude/skills/deploy/SKILL.md"
     );
 }
 

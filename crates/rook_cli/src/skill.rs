@@ -22,18 +22,18 @@ use std::str::FromStr;
 /// ```ignore
 /// code-review                              // searches .agents/skills/, .rook/skills/, .claude/skills/, .codex/skills/
 /// rook-internal:code-review                // searches in "rook-internal" repo
-/// warpdotdev/warp-internal:code-review     // searches in specific org/repo
+/// warpdotdev/rook-internal:code-review     // searches in specific org/repo
 /// ```
 ///
 /// Full paths (resolved directly, no precedence):
 /// ```ignore
 /// .agents/skills/my-skill/SKILL.md                              // directly resolves this path
 /// rook-server:.claude/skills/deploy/SKILL.md                    // exact path in "rook-server" repo
-/// warpdotdev/warp-internal:.claude/skills/code-review/SKILL.md  // exact path in org/repo
+/// warpdotdev/rook-internal:.claude/skills/code-review/SKILL.md  // exact path in org/repo
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SkillSpec {
-    /// Optional GitHub organization (e.g., "warpdotdev" in "warpdotdev/warp-internal:code-review")
+    /// Optional GitHub organization (e.g., "warpdotdev" in "warpdotdev/rook-internal:code-review")
     pub org: Option<String>,
     /// Optional repository name (e.g., "rook-internal")
     pub repo: Option<String>,

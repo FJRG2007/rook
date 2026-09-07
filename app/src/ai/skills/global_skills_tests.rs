@@ -23,7 +23,7 @@ fn resolve_skill_repos_returns_empty_for_empty_input() {
 fn resolve_skill_repos_skips_parse_failures() {
     let (specs, repos) = resolve_skill_repos(&[
         String::new(),
-        "warpdotdev/warp-internal:read-google-doc".to_string(),
+        "warpdotdev/rook-internal:read-google-doc".to_string(),
     ]);
 
     assert_eq!(specs.len(), 1);
@@ -51,8 +51,8 @@ fn resolve_skill_repos_skips_unqualified_and_repo_only_specs() {
 #[test]
 fn resolve_skill_repos_collects_org_qualified_repos() {
     let (_specs, repos) = resolve_skill_repos(&[
-        "warpdotdev/warp-internal:read-google-doc".to_string(),
-        "warpdotdev/warp-server:deploy".to_string(),
+        "warpdotdev/rook-internal:read-google-doc".to_string(),
+        "warpdotdev/rook-server:deploy".to_string(),
     ]);
 
     assert_eq!(
@@ -73,7 +73,7 @@ fn filter_skills_by_spec_only_loads_requested_simple_names() {
         parsed_skill(requested_skill_path.clone(), "read-google-doc"),
         parsed_skill(other_skill_path, "deploy"),
     ];
-    let specs = global_specs(&["warpdotdev/warp-internal:read-google-doc".to_string()]);
+    let specs = global_specs(&["warpdotdev/rook-internal:read-google-doc".to_string()]);
 
     let filtered = filter_skills_by_spec(&LocalOrRemotePath::Local(repo_path), skills, &specs);
 
@@ -95,7 +95,7 @@ fn filter_skills_by_spec_matches_full_path_specs_for_remote_repos() {
         ),
     ];
     let specs =
-        global_specs(&["warpdotdev/warp-internal:.claude/skills/deploy/SKILL.md".to_string()]);
+        global_specs(&["warpdotdev/rook-internal:.claude/skills/deploy/SKILL.md".to_string()]);
 
     let filtered = filter_skills_by_spec(&repo_path, skills, &specs);
 
@@ -116,7 +116,7 @@ fn filter_skills_by_spec_scopes_simple_remote_names_to_the_repo_host() {
             SkillProvider::Claude,
         ),
     ];
-    let specs = global_specs(&["warpdotdev/warp-internal:deploy".to_string()]);
+    let specs = global_specs(&["warpdotdev/rook-internal:deploy".to_string()]);
 
     let filtered = filter_skills_by_spec(&repo_path, skills, &specs);
 
@@ -132,7 +132,7 @@ fn filter_skills_by_spec_matches_simple_names_by_parsed_skill_name() {
         parsed_skill(requested_skill_path.clone(), "read-google-doc"),
         parsed_skill(directory_name_match_path, "unrelated-skill"),
     ];
-    let specs = global_specs(&["warpdotdev/warp-internal:read-google-doc".to_string()]);
+    let specs = global_specs(&["warpdotdev/rook-internal:read-google-doc".to_string()]);
     let filtered = filter_skills_by_spec(&LocalOrRemotePath::Local(repo_path), skills, &specs);
 
     assert_eq!(skill_paths(filtered), vec![requested_skill_path]);
@@ -147,7 +147,7 @@ fn filter_skills_by_spec_uses_provider_precedence_for_simple_names() {
         parsed_skill(claude_skill_path, "deploy"),
         parsed_skill(agents_skill_path.clone(), "deploy"),
     ];
-    let specs = global_specs(&["warpdotdev/warp-internal:deploy".to_string()]);
+    let specs = global_specs(&["warpdotdev/rook-internal:deploy".to_string()]);
     let filtered = filter_skills_by_spec(&LocalOrRemotePath::Local(repo_path), skills, &specs);
 
     assert_eq!(skill_paths(filtered), vec![agents_skill_path]);
@@ -167,7 +167,7 @@ fn filter_skills_by_spec_matches_full_path_specs() {
         parsed_skill(requested_skill_path.clone(), "deploy-from-full-path"),
     ];
     let specs = global_specs(&[format!(
-        "warpdotdev/warp-internal:{}",
+        "warpdotdev/rook-internal:{}",
         requested_relative_path.display()
     )]);
     let filtered = filter_skills_by_spec(&LocalOrRemotePath::Local(repo_path), skills, &specs);

@@ -209,23 +209,35 @@ impl CliAgentPluginManager for ClaudeCodePluginManager {
     }
 }
 
+/// Gives a built string the `'static` lifetime the instruction steps require.
+/// Called once per step, from a `LazyLock`, so the leak is bounded by the
+/// number of steps.
+fn leaked(command: String) -> &'static str {
+    Box::leak(command.into_boxed_str())
+}
+
 static INSTALL_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| PluginInstructions {
     title: "Install Rook Plugin for Claude Code",
     subtitle: "Ensure that jq is installed on your machine. Then, run these commands.",
-    steps: &[
+    // Built from the constants above rather than spelled out, because these are
+    // the commands the user is told to run by hand. Spelled out, they drifted:
+    // they still named upstream's marketplace and the plugin key this fork used
+    // before its plugins moved into this repository, so following them
+    // installed Warp's plugin instead of Rook's.
+    steps: Box::leak(Box::new([
         PluginInstructionStep {
             description: "Add the Rook plugin marketplace repository",
-            command: "claude plugin marketplace add warpdotdev/claude-code-warp",
+            command: leaked(format!("claude plugin marketplace add {MARKETPLACE_REPO}")),
             executable: true,
             link: None,
         },
         PluginInstructionStep {
             description: "Install the Rook plugin",
-            command: "claude plugin install rook@claude-code-rook",
+            command: leaked(format!("claude plugin install {PLUGIN_KEY}")),
             executable: true,
             link: None,
         },
-    ],
+    ])),
     post_install_notes: &[
         "Restart Claude Code to activate the plugin.",
         "There are some known issues with Claude Code's plugin system. \
@@ -236,26 +248,28 @@ static INSTALL_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| Plu
 static UPDATE_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| PluginInstructions {
     title: "Update Rook Plugin for Claude Code",
     subtitle: "Run the following commands.",
-    steps: &[
+    steps: Box::leak(Box::new([
         PluginInstructionStep {
             description: "Remove the existing marketplace (if present)",
-            command: "claude plugin marketplace remove claude-code-rook",
+            command: leaked(format!(
+                "claude plugin marketplace remove {MARKETPLACE_NAME}"
+            )),
             executable: true,
             link: None,
         },
         PluginInstructionStep {
             description: "Re-add the marketplace",
-            command: "claude plugin marketplace add warpdotdev/claude-code-warp",
+            command: leaked(format!("claude plugin marketplace add {MARKETPLACE_REPO}")),
             executable: true,
             link: None,
         },
         PluginInstructionStep {
             description: "Install the latest plugin version",
-            command: "claude plugin install rook@claude-code-rook",
+            command: leaked(format!("claude plugin install {PLUGIN_KEY}")),
             executable: true,
             link: None,
         },
-    ],
+    ])),
     post_install_notes: &["Restart Claude Code to activate the update."],
 });
 

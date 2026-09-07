@@ -614,7 +614,7 @@ fn test_repos_field_error_state_allows_manual_repo_entry() {
                     form,
                     GithubAuthCallState::error("Failed to load GitHub repositories"),
                 );
-                form.repos_input = "warpdotdev/warp-internal".to_string();
+                form.repos_input = "warpdotdev/rook-internal".to_string();
                 form.handle_action(&UpdateEnvironmentFormAction::AddRepo, ctx);
             });
 
@@ -659,8 +659,8 @@ fn test_render_repos_field_with_selected_repos() {
                 "Expected 'Repo(s)' label in rendered content: {text_content}"
             );
             assert!(
-                text_content.contains("warpdotdev/warp-internal"),
-                "Expected 'warpdotdev/warp-internal' in rendered content: {text_content}"
+                text_content.contains("warpdotdev/rook-internal"),
+                "Expected 'warpdotdev/rook-internal' in rendered content: {text_content}"
             );
             assert!(
                 text_content.contains("facebook/react"),
@@ -726,7 +726,7 @@ fn test_selected_repos_as_remote_repo_args_formats_owner_repo_strings() {
             assert_eq!(
                 args,
                 vec![
-                    "warpdotdev/warp-internal".to_string(),
+                    "warpdotdev/rook-internal".to_string(),
                     "facebook/react".to_string(),
                 ]
             );

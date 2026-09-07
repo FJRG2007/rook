@@ -670,7 +670,7 @@ fn clone_requests_reject_an_unrecognized_forge_repository_even_with_unrelated_ov
     assert!(matches!(
         error,
         PrepareEnvironmentError::UnsupportedRepositoryForge { repo_name }
-            if repo_name == "warpdotdev/warp-server"
+            if repo_name == "warpdotdev/rook-server"
     ));
 }
 
