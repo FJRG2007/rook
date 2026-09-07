@@ -1391,6 +1391,12 @@ pub enum ContextMenuAction {
         position: PromptPosition,
         part: PromptPart,
     },
+    /// Opens the prompt's working directory in the platform's file manager.
+    /// Only offered for local sessions, where the path means something on this
+    /// machine.
+    RevealWorkingDirectory {
+        position: PromptPosition,
+    },
     CopyRprompt,
     EditPrompt,
     EditAgentToolbar,
@@ -1524,6 +1530,9 @@ impl fmt::Debug for ContextMenuAction {
             ToggleBookmark => f.write_str("BookmarkBlock"),
             CopyPrompt { position, part } => {
                 write!(f, "CopyPrompt {{ position: {position:?}, part: {part:?} }}")
+            }
+            RevealWorkingDirectory { position } => {
+                write!(f, "RevealWorkingDirectory {{ position: {position:?} }}")
             }
             CopyRprompt => f.write_str("CopyRprompt"),
             // CopyUrl's debug output is limited, since the URLs come from command output
@@ -17205,6 +17214,7 @@ impl TerminalView {
                     let mut prompt_items = self.copy_prompt_menu_items(
                         self.input_is_on_git_branch(&model),
                         self.is_rprompt_shown(&model),
+                        self.is_local_session(ctx),
                         PromptPosition::Block(tail_block_index),
                     );
                     items.append(&mut prompt_items);
@@ -17605,6 +17615,7 @@ impl TerminalView {
         &self,
         is_on_git_branch: bool,
         is_rprompt_shown: bool,
+        is_local_session: bool,
         position: PromptPosition,
     ) -> Vec<MenuItem<TerminalAction>> {
         let mut items = vec![
@@ -17634,6 +17645,16 @@ impl TerminalView {
                 }))
                 .into_item(),
         );
+
+        if is_local_session {
+            items.push(
+                MenuItemFields::new(crate::util::file::reveal_in_file_manager_label())
+                    .with_on_select_action(TerminalAction::ContextMenu(
+                        ContextMenuAction::RevealWorkingDirectory { position },
+                    ))
+                    .into_item(),
+            );
+        }
 
         if is_on_git_branch {
             items.push(
@@ -17795,6 +17816,18 @@ impl TerminalView {
             )
         };
 
+        // Opening the working directory only means something when it is a
+        // directory on this machine, so it is left out over SSH.
+        let reveal_working_directory = self.is_local_session(ctx).then(|| {
+            MenuItemFields::new(crate::util::file::reveal_in_file_manager_label())
+                .with_on_select_action(TerminalAction::ContextMenu(
+                    ContextMenuAction::RevealWorkingDirectory {
+                        position: PromptPosition::Input,
+                    },
+                ))
+                .into_item()
+        });
+
         if *SessionSettings::as_ref(ctx).honor_ps1 {
             let mut items = vec![copy_prompt];
             if self.is_rprompt_shown(&self.model.lock()) {
@@ -17806,6 +17839,7 @@ impl TerminalView {
                         .into_item(),
                 );
             }
+            items.extend(reveal_working_directory);
             if let Some(edit_menu_item) = edit_menu_item {
                 items.extend([MenuItem::Separator, edit_menu_item]);
             }
@@ -17820,11 +17854,43 @@ impl TerminalView {
                 items.push(MenuItem::Separator);
                 items.extend(current_prompt_menu_items);
             }
+            items.extend(reveal_working_directory);
             if let Some(edit_menu_item) = edit_menu_item {
                 items.extend([MenuItem::Separator, edit_menu_item]);
             }
             items
         }
+    }
+
+    /// Whether this pane's session runs on this machine, as opposed to over
+    /// SSH or in a container.
+    fn is_local_session(&self, ctx: &AppContext) -> bool {
+        matches!(
+            self.active_session().as_ref(ctx).session_type(ctx),
+            Some(SessionType::Local)
+        )
+    }
+
+    /// Opens the prompt's working directory in the platform's file manager.
+    ///
+    /// The path comes from the block rather than from the chip, because the
+    /// chip shows it abbreviated with `~`.
+    fn reveal_working_directory(&mut self, position: &PromptPosition, ctx: &mut ViewContext<Self>) {
+        let pwd = position
+            .block(&self.model.lock())
+            .and_then(Block::pwd)
+            .cloned();
+
+        match pwd {
+            Some(pwd) if !pwd.is_empty() => {
+                ctx.open_file_path_in_explorer(std::path::Path::new(&pwd))
+            }
+            _ => log::warn!(
+                "Asked to reveal the working directory, but the prompt does not have one"
+            ),
+        }
+
+        self.close_context_menu(ctx, true);
     }
 
     fn show_prompt_context_menu(&mut self, position: Vector2F, ctx: &mut ViewContext<Self>) {
@@ -25430,6 +25496,7 @@ impl TerminalView {
             ScrollToTopOfBlock => self.scroll_to_top_of_topmost_selected_block(ctx),
             ToggleBookmark => self.bookmark_selected_block(ctx),
             CopyPrompt { position, part } => self.copy_prompt(position, part, ctx),
+            RevealWorkingDirectory { position } => self.reveal_working_directory(position, ctx),
             CopyRprompt => self.copy_rprompt(ctx),
             EditPrompt => self.edit_prompt(ctx),
             EditAgentToolbar => {

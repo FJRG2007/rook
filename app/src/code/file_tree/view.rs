@@ -2391,15 +2391,8 @@ impl FileTreeView {
                 }
             };
 
-            let open_text = if cfg!(target_os = "macos") {
-                "Reveal in Finder"
-            } else if cfg!(target_os = "windows") {
-                "Reveal in Explorer"
-            } else {
-                "Reveal in file manager"
-            };
             items.push(
-                MenuItemFields::new(open_text)
+                MenuItemFields::new(crate::util::file::reveal_in_file_manager_label())
                     .with_on_select_action(FileTreeAction::OpenInFinder { id: id.clone() })
                     .into_item(),
             );

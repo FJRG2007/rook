@@ -11,6 +11,18 @@ use crate::terminal::ShellLaunchData;
 use crate::terminal::model::grid::grid_handler::{ContainsPoint, Link};
 use crate::terminal::model::index::Point;
 
+/// The platform's name for its file manager, for menu items that reveal a
+/// path in it.
+pub fn reveal_in_file_manager_label() -> &'static str {
+    if cfg!(target_os = "macos") {
+        "Reveal in Finder"
+    } else if cfg!(target_os = "windows") {
+        "Reveal in Explorer"
+    } else {
+        "Reveal in file manager"
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum FilePathType {
     Absolute,
