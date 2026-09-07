@@ -40,12 +40,12 @@ use num_traits::FromPrimitive;
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::Vector2F;
 use persistence::model::AMBIENT_AGENT_PANE_KIND;
-use uuid::Uuid;
 use rook_core::features::FeatureFlag;
 use rook_errors::{report_error, report_if_error};
 use rookui::platform::FullscreenState;
 use rookui::windowing::{MIN_WINDOW_HEIGHT, MIN_WINDOW_WIDTH};
 use rookui::{AppContext, SingletonEntity};
+use uuid::Uuid;
 
 use super::agent::{
     backfill_conversation_summaries, delete_agent_conversations, read_agent_conversation_metadata,
@@ -91,7 +91,7 @@ use crate::code::editor_management::CodeSource;
 use crate::drive::OpenRookDriveObjectSettings;
 use crate::notebooks::NotebookId;
 use crate::persistence::block_list::{
-    get_all_restored_blocks, process_ai_queries_for_nld_history_match,
+    delete_orphaned_blocks, get_all_restored_blocks, process_ai_queries_for_nld_history_match,
     process_ai_queries_for_uparrow_prompt, read_recent_ai_queries,
 };
 use crate::persistence::model::{
@@ -443,6 +443,16 @@ fn setup_database(database_path: &Path) -> Result<SqliteConnection> {
     conn.run_pending_migrations(persistence::MIGRATIONS)
         .map_err(|e| anyhow!(e))
         .context("Failed to perform migrations")?;
+
+    // Reclaim blocks left behind by panes that no longer exist. Startup is the one point where no
+    // session is running, so nothing can be mid-write and the set of live panes is settled.
+    match delete_orphaned_blocks(&mut conn) {
+        Ok(0) => {}
+        Ok(deleted) => log::info!("Removed {deleted} orphaned block(s) from the database"),
+        // Losing the cleanup costs disk space, not correctness, so it must not block startup.
+        Err(e) => log::warn!("Failed to remove orphaned blocks: {e:#}"),
+    }
+
     Ok(conn)
 }
 

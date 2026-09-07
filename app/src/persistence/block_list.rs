@@ -245,6 +245,19 @@ pub(super) fn get_all_restored_blocks(
     Ok(all_block_items_by_pane)
 }
 
+/// Deletes blocks whose pane no longer exists, returning how many rows were removed.
+///
+/// `blocks.pane_leaf_uuid` has no foreign key (see the note on [`model::NewBlock`]), so closing a
+/// pane leaves its blocks behind forever. Nothing reads them - [`get_all_restored_blocks`] only
+/// looks at panes that still exist - but they keep their captured output alive, which is most of
+/// what the database grows into, and they are scanned by every query over the table.
+pub(super) fn delete_orphaned_blocks(conn: &mut SqliteConnection) -> Result<usize, Error> {
+    diesel::sql_query(
+        "DELETE FROM blocks WHERE pane_leaf_uuid NOT IN (SELECT uuid FROM terminal_panes)",
+    )
+    .execute(conn)
+}
+
 pub(super) fn save_block(
     conn: &mut SqliteConnection,
     pane_id: Vec<u8>,
