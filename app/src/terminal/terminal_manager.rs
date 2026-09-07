@@ -99,6 +99,9 @@ pub(super) fn compute_block_size(
         block_padding: block_spacing.block_padding,
         size: size_info,
         max_block_scroll_limit: maximum_grid_size,
+        max_retained_output_lines: *TerminalSettings::as_ref(ctx)
+            .max_retained_output_lines
+            .value(),
         rook_prompt_height_lines: block_spacing.rook_prompt_height_lines,
     }
 }

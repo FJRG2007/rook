@@ -289,6 +289,9 @@ pub struct BlockList {
 
     /// The max scroll limit for each block.
     max_grid_size_limit: usize,
+    /// Lines of output this pane keeps across all of its blocks, after which the
+    /// oldest are dropped. 0 retains everything.
+    max_retained_output_lines: usize,
 
     /// The event proxy that proxies terminal events (such as wakeups) to the view.
     event_proxy: ChannelEventListener,
@@ -684,6 +687,7 @@ impl BlockList {
             size: sizes.size,
             next_gap_height_in_lines: None,
             max_grid_size_limit: sizes.max_block_scroll_limit,
+            max_retained_output_lines: sizes.max_retained_output_lines,
             event_proxy: event_proxy.clone(),
             selection: None,
             rich_content_selections: Vec::new(),
@@ -1587,6 +1591,56 @@ impl BlockList {
         }
 
         self.remove_command_blocks_at_indices(indices_to_remove);
+    }
+
+    /// Drops the oldest blocks until this pane's retained output fits its budget.
+    ///
+    /// Nothing else ever frees a block. A pane accumulates one per command for as long as it
+    /// lives, each holding its output as a grid of cells, so a session that prints a lot -
+    /// a coding agent, a build, a long tail of logs - grows until the pane is closed. The cap
+    /// of 100 blocks per pane applies to what reaches the database, not to what is held in
+    /// memory, which is why restarting frees so much and staying open does not.
+    ///
+    /// Called when a block is created, so the check runs once per command rather than per
+    /// write, and costs one pass over a list the budget itself keeps short.
+    fn evict_blocks_past_retention_budget(&mut self) {
+        let budget = self.max_retained_output_lines;
+        if budget == 0 {
+            return;
+        }
+
+        let line_count = |block: &Block| block.output_grid_full_content_height().as_f64() as usize;
+        let mut retained: usize = self.blocks.iter().map(line_count).sum();
+        if retained <= budget {
+            return;
+        }
+
+        // The active block is the one being written to, and a pane always keeps at least one.
+        let active_block_index = self.active_block_index();
+        let mut evicted = Vec::new();
+        for (offset, block) in self.blocks.iter().enumerate() {
+            if retained <= budget {
+                break;
+            }
+            let index: BlockIndex = offset.into();
+            if index == active_block_index {
+                break;
+            }
+            // Only blocks that are done. The active block is being written to, and the
+            // background block sits directly before it and may still be receiving output;
+            // both are at the end, so stopping here leaves them alone.
+            if !block.finished() {
+                break;
+            }
+            retained = retained.saturating_sub(line_count(block));
+            evicted.push(index);
+        }
+
+        if !evicted.is_empty() {
+            // Goes through the shared path, which drops the selection and the saved scroll
+            // position before removing: both can point into a block that is about to go.
+            self.remove_command_blocks_at_indices(evicted);
+        }
     }
 
     /// Removes command blocks at stable pre-removal indices.
@@ -2909,6 +2963,8 @@ impl BlockList {
             .insert(block.id().clone(), block.index());
         self.blocks.push(block);
 
+        self.evict_blocks_past_retention_budget();
+
         if let Some(prompt_metadata) = prompt_metadata {
             delegate_to_block!(self.prompt_only_precmd(prompt_metadata));
         }
@@ -3028,6 +3084,7 @@ impl BlockList {
             block_padding: self.padding,
             size: self.size,
             max_block_scroll_limit: self.max_grid_size_limit,
+            max_retained_output_lines: self.max_retained_output_lines,
             rook_prompt_height_lines: self.rook_prompt_height_lines,
         }
     }

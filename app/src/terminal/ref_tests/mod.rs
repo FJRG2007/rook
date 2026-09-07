@@ -119,6 +119,7 @@ fn ref_test(dir: &Path) {
         block_padding,
         size,
         max_block_scroll_limit: history_size as usize,
+        max_retained_output_lines: 0,
         rook_prompt_height_lines: 0.1,
     };
     let mut terminal = TerminalModel::new(

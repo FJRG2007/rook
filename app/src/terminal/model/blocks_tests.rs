@@ -2493,6 +2493,64 @@ fn test_interleaves_background_with_gaps() {
 }
 
 #[test]
+fn test_retention_budget_stops_a_pane_growing_without_bound() {
+    // Without a budget a pane keeps one block per command for as long as it lives, which is
+    // what makes a long session with a lot of output get slower the longer it runs.
+    let sizes = BlockSize {
+        max_retained_output_lines: 6,
+        ..test_utils::block_size()
+    };
+    let mut block_list =
+        new_bootstrapped_block_list(Some(sizes), None, ChannelEventListener::new_for_test());
+
+    const COMMANDS: usize = 40;
+    let blocks_before = block_list.blocks.len();
+    for i in 0..COMMANDS {
+        insert_block(
+            &mut block_list,
+            &format!("echo {i}"),
+            "one
+two
+three",
+        );
+    }
+
+    // The exact count depends on how the budget divides into block heights; what matters is
+    // that it stops growing with the number of commands rather than tracking it.
+    assert!(
+        block_list.blocks.len() < blocks_before + COMMANDS,
+        "blocks grew to {} over {COMMANDS} commands, so nothing was evicted",
+        block_list.blocks.len()
+    );
+}
+
+#[test]
+fn test_retention_budget_of_zero_retains_everything() {
+    // 0 is the opt out, and it has to keep meaning "retain everything" - test_utils uses it,
+    // so every other test in this file depends on eviction staying out of the way.
+    let sizes = BlockSize {
+        max_retained_output_lines: 0,
+        ..test_utils::block_size()
+    };
+    let mut block_list =
+        new_bootstrapped_block_list(Some(sizes), None, ChannelEventListener::new_for_test());
+
+    const COMMANDS: usize = 10;
+    let blocks_before = block_list.blocks.len();
+    for i in 0..COMMANDS {
+        insert_block(
+            &mut block_list,
+            &format!("echo {i}"),
+            "one
+two
+three",
+        );
+    }
+
+    assert_eq!(block_list.blocks.len(), blocks_before + COMMANDS);
+}
+
+#[test]
 fn test_remove_background_block_with_active_gap() {
     let mut block_list =
         new_bootstrapped_block_list(None, None, ChannelEventListener::new_for_test());

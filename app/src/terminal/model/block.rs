@@ -616,6 +616,8 @@ pub struct BlockSize {
     pub block_padding: BlockPadding,
     pub size: SizeInfo,
     pub max_block_scroll_limit: usize,
+    /// Lines of output a pane keeps across all of its blocks. 0 retains everything.
+    pub max_retained_output_lines: usize,
     pub rook_prompt_height_lines: f32,
 }
 

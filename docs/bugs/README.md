@@ -1,0 +1,16 @@
+# Diagnosed bugs
+
+What Rook was forked to fix, how each cause was established, and what was changed. One file per bug.
+
+Every entry records the measurement the diagnosis rests on, because the point of these notes is to be able to tell later whether a change actually helped, and to avoid re-deriving the same investigation.
+
+| Bug | Symptom it caused | State |
+| --- | --- | --- |
+| [Windows renders on the integrated GPU](windows-renders-on-the-integrated-gpu.md) | Typing, scrolling, selecting text and switching panes all stutter | Fixed |
+| [The blocks table has no index](blocks-table-has-no-index.md) | A full table scan after every command and at startup | Fixed |
+| [The session is not saved on shutdown](session-not-saved-on-shutdown.md) | Tabs, names and order lost after a restart | Fixed |
+| [A pane retains every block it ever made](panes-retain-every-block.md) | Gets worse the longer it runs, worse still with more panes and more agent output | Fixed |
+
+## Writing one of these
+
+Keep the measurement. "It felt faster" cannot be checked by the next person; `2.14 ms -> 0.02 ms on a 76 MB database` can. State what was ruled out as well as what was found, and say plainly what a fix does not cover.

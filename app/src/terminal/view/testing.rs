@@ -77,6 +77,7 @@ impl TerminalView {
             block_padding,
             size: size_info,
             max_block_scroll_limit,
+            max_retained_output_lines: 0,
             rook_prompt_height_lines: ROOK_PROMPT_HEIGHT_LINES,
         };
 

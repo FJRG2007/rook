@@ -160,6 +160,22 @@ define_settings_group!(TerminalSettings, settings: [
         toml_path: "terminal.maximum_grid_size",
         description: "The maximum number of rows in the terminal grid.",
     },
+    max_retained_output_lines: MaxRetainedOutputLines {
+        type: usize,
+        // A pane keeps every block it has ever produced, and a block holds its output as a
+        // grid of cells, so retained output is what a long-lived pane actually costs. At
+        // roughly 32 bytes a cell and a typical width, this budget is about 75 MB of output
+        // per pane, which stays affordable across many panes on a 16 GB machine while
+        // keeping far more scrollback than the 100 blocks per pane that reach disk.
+        // Set to 0 to retain everything, at the cost of growing until the pane closes.
+        default: 20_000,
+        supported_platforms: SupportedPlatforms::ALL,
+        sync_to_cloud: SyncToCloud::Globally(RespectUserSyncSetting::Yes),
+        surface: settings::SettingSurfaces::GUI,
+        private: false,
+        toml_path: "terminal.max_retained_output_lines",
+        description: "How many lines of command output a single pane keeps in memory before the oldest blocks are dropped. 0 keeps everything.",
+    },
     alt_screen_padding: AltScreenPadding {
         type: AltScreenPaddingMode,
         default: AltScreenPaddingMode::default(),
