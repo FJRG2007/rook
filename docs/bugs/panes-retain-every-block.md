@@ -19,9 +19,9 @@ The per-pane cap of 100 blocks that does exist, `MAX_TERMINAL_BLOCKS_TO_PERSIST_
 Each block holds its output as a grid of cells, and `maximum_grid_size` - 50,000 rows - is the limit **per block**, not per pane. Deriving the cost from the actual structures:
 
 ```
-Cell = char(4) + fg(8) + bg(8) + Flags:u16(2) + Option<Box<CellExtra>>(8)  ->  ~32 bytes
-row of 120 columns                                                        ->  ~3.75 KB
-one block at its cap                                                      ->  ~187 MB
+Cell = char(4) + fg(5) + bg(5) + Flags:u16(2) + Option<Box<CellExtra>>(8)  ->  24 bytes
+row of 120 columns                                                        ->  ~2.8 KB
+one block at its cap                                                      ->  ~140 MB
 ```
 
 That is not theoretical: one block in the real database held 9.76 MB of serialized output, roughly 10 MB as a live grid.
@@ -39,11 +39,13 @@ A pane now has a budget for retained output, and drops its oldest blocks when it
 
 The budget is **lines of output, not a block count**, because a block count says nothing about memory: five hundred `ls` blocks and five hundred agent blocks differ by orders of magnitude. Lines are proportional to what is actually held.
 
-`terminal.max_retained_output_lines` defaults to 20,000 - about 75 MB of output per pane, so many panes stay affordable on a 16 GB machine, while still keeping far more scrollback than the 100 blocks per pane that reach disk. For scale, Windows Terminal ships 9,001 lines and iTerm2 1,000. Set it to 0 to retain everything.
+`terminal.max_retained_output_lines` defaults to 20,000 - about 56 MB of output per pane, so many panes stay affordable on a 16 GB machine, while still keeping far more scrollback than the 100 blocks per pane that reach disk. For scale, Windows Terminal ships 9,001 lines and iTerm2 1,000. Set it to 0 to retain everything.
 
 Eviction runs when a block is created, so the check happens once per command rather than per write, and costs one pass over a list the budget itself keeps short. It goes through `remove_command_blocks_at_indices`, the same path block removal already used, which drops the selection and the saved scroll position before removing - both can point into a block that is about to go.
 
 `app/src/terminal/settings.rs`, `app/src/terminal/model/block.rs`, `app/src/terminal/model/blocks.rs`, `app/src/terminal/terminal_manager.rs`.
+
+Those per-pane figures are the pre-compaction cost of a retained line. [Compacting a finished block](finished-blocks-keep-dense-cell-storage.md) cuts it by roughly an order of magnitude, so the same 20,000-line budget now costs a few MB a pane rather than tens.
 
 ### Two decisions made while implementing
 

@@ -11,6 +11,7 @@ Every entry records the measurement the diagnosis rests on, because the point of
 | [The session is not saved on shutdown](session-not-saved-on-shutdown.md) | Tabs, names and order lost after a restart | Fixed |
 | [A pane retains every block it ever made](panes-retain-every-block.md) | Gets worse the longer it runs, worse still with more panes and more agent output | Fixed |
 | [The CLI-agent plugin makes everything slower](cli-agent-plugin-hooks-are-slow.md) | Every tool call, prompt and turn pauses once the Claude Code plugin is installed | Fixed |
+| [A finished block keeps its output in dense cell storage](finished-blocks-keep-dense-cell-storage.md) | Memory far above what the visible text accounts for, growing with everything ever printed | Fixed |
 
 ## Writing one of these
 

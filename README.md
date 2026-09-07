@@ -14,11 +14,13 @@ Every change below rests on a measurement taken on a real machine, not on reason
 
 **A pane stops growing without bound.** Panes kept every block they had ever produced, and each block holds its output as a grid of cells, so a long session with a lot of agent output grew until the pane was closed. That is why it got worse the longer it ran and better after a restart. Panes now keep a budget of output, `terminal.max_retained_output_lines`, and drop their oldest blocks past it.
 
+**Finished output costs a fraction of what it did.** A block held its output as a grid of 24-byte cells, which is what a live block needs and pure waste once it has finished. Upstream has the code to compact one into its run-length-encoded form on finish, behind a flag only its feature-flag server can turn on - so in a fork it never ran. Rook turns it on, above a five-row threshold upstream does not have, because below that the compaction costs more than it saves and most blocks are one-line blocks. A 300-row block: 251 kB, now 18.7 kB.
+
 **The session is actually saved.** Upstream wrote it on window move, resize, focus change and close, and skipped it entirely while shutting down, so a restart restored whatever the layout happened to be some time earlier. Rook writes it every 15 seconds and again on the way out.
 
 **The CLI-agent plugins cost a fraction of what they did.** The Claude Code, Codex and Gemini CLI integrations spent around 400 ms of process spawning after *every tool call*. They live in `plugins/` now, rewritten to one process per hook: 97 ms.
 
-**No update polling.** Upstream polls its own release host every ten minutes. Rook has none, and publishes releases here instead.
+**Updates come from GitHub.** Upstream's version server refuses the `oss` channel that Rook ships on, so its update pipeline could never have served this fork. Rook asks the GitHub releases API instead and tells you when a newer release exists. It does not install it: there is no unattended installer here, and the button opens the releases page.
 
 ## Install
 
