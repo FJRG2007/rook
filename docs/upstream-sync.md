@@ -17,8 +17,10 @@ Taking an upstream change on top of one of these would silently undo it. Check b
 | Block retention | A pane drops its oldest blocks past `terminal.max_retained_output_lines`. Upstream evicts nothing, so a pane grows for as long as it is open. | `app/src/terminal/model/blocks.rs`, `app/src/terminal/settings.rs` |
 | Finished-block storage | Compacted into flat storage on finish, above a five-row threshold that upstream does not have. Upstream gates the compaction on `MaximizeFlatStorage`, which only their feature-flag server can turn on, so in a fork it never runs at all. | `app/Cargo.toml`, `app/src/features.rs`, `crates/rook_terminal/src/model/grid/grid_handler.rs` |
 | CLI-agent plugins | Vendored under `plugins/`, one process per hook. Rook installs these and refuses the upstream builds, which still carry the per-tool-call cost. | `plugins/` |
+| Working-directory chip | Clicking it opens the directory in the file manager when it has no menu to show. Upstream leaves that branch of the chip with no click handler at all, which is what it renders while a CLI agent session is running - so for anyone running an agent in the terminal the path is inert. | `app/src/context_chips/display_chip.rs`, `app/src/terminal/view.rs` |
+| Tab rename shortcut | F2 renames the focused tab. Upstream ships the action with no default binding. | `app/src/util/bindings.rs` |
 | Community link | Discord, not the upstream Slack workspace. | `app/src/util/links.rs` |
-| CI and release | Rewritten for this fork: Windows build, test and release to GitHub releases. Upstream's pipelines drive their own infrastructure and cannot run here. | `.github/workflows/` |
+| CI and release | Rewritten for this fork: fmt, clippy, tests and a release-profile check on Windows, macOS and Linux, publishing installers to GitHub releases. Upstream's pipelines drive their own infrastructure and cannot run here. Tests run with `--no-fail-fast`, because the default hides every failure behind the first. | `.github/workflows/` |
 
 ## What the rename must not touch
 
