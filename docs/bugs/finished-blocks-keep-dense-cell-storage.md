@@ -39,9 +39,26 @@ Measured on a 200-column grid, total bytes for one finished block:
 | 50 | 64.3 kB | 8.0 kB | 8.1x |
 | 300 | 251.0 kB | 18.7 kB | 13.4x |
 
+### Against a real session
+
+Applying that cost curve to the block-size distribution in a real 76 MB database - 1,618 blocks across four panes:
+
+```
+lines per block   median 3   p90 26   p99 2453   max 5002
+under the five-row threshold   988 blocks (61%)
+
+dense        127.0 MB
+compacted     12.7 MB
+saved        114.3 MB   (10.0x)
+```
+
+This is the measured per-block curve applied to real block sizes, not a reading of live RSS. It is also a floor: the database keeps at most 100 blocks per pane, while a live pane held every block it had ever produced, so the session this came from was carrying considerably more than 1,618.
+
+The distribution is the argument for the threshold on its own: **61% of real blocks are under five rows.**
+
 ### The threshold is Rook's, not upstream's
 
-Compaction is not free below about five rows, and upstream applies it unconditionally. Flat storage carries a fixed per-block overhead for its index and attribute maps, while grid storage grows a row at a time, so for a one-line block compaction *costs* 2.6 kB. Most blocks are one-line blocks - `cd`, `git status`, anything that prints a line and exits - so applied unconditionally this would have been a real regression across the most common case.
+Compaction is not free below about five rows, and upstream applies it unconditionally. Flat storage carries a fixed per-block overhead for its index and attribute maps, while grid storage grows a row at a time, so for a one-line block compaction *costs* 2.6 kB. Most blocks are one-line blocks - `cd`, `git status`, anything that prints a line and exits; the real database above says 61% of them - so applied unconditionally this would have been a real regression across the majority of blocks.
 
 `MIN_ROWS_TO_COMPACT` is 5, the measured break-even. Below it the block is left in grid storage. The table above shows the result: no size is a net loss, and nothing above the threshold gives up any of the saving.
 
