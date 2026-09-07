@@ -8,7 +8,13 @@ on:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  # Superseded runs are cancelled on every branch, main included. CI publishes
+  # nothing, so an older run has no value once a newer commit exists, and
+  # letting it finish only makes the run that matters queue behind it for the
+  # better part of an hour. Release keeps the opposite setting, because
+  # cancelling a half-finished release build would leave the tag without an
+  # installer.
+  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always
