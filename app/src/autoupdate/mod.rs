@@ -1080,6 +1080,10 @@ fn manually_download_version(channel: &Channel, version: &VersionInfo, ctx: &mut
 
     #[cfg(target_os = "macos")]
     mac::manually_download_version(channel, version, ctx);
+
+    // Only macOS ever had an in-app download, and only for upstream's channels.
+    #[cfg(not(target_os = "macos"))]
+    log::warn!("no in-app download on this platform for this channel");
 }
 
 pub(crate) fn check_and_report_update_errors(_ctx: &mut AppContext) {
