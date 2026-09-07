@@ -5,8 +5,8 @@ use anyhow::{Result, anyhow};
 pub mod root_view;
 
 extern crate rookui;
-use rust_embed::RustEmbed;
 use rookui::{AssetProvider, platform};
+use rust_embed::RustEmbed;
 
 #[derive(Clone, Copy, RustEmbed)]
 #[folder = "examples/assets"]

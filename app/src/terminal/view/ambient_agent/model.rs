@@ -3,7 +3,6 @@ use std::time::Duration;
 #[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
 use futures::channel::oneshot;
 use instant::Instant;
-use session_sharing_protocol::common::SessionId;
 use rook_cli::agent::Harness;
 use rook_core::features::FeatureFlag;
 use rook_core::send_telemetry_from_ctx;
@@ -11,6 +10,7 @@ use rook_errors::report_error;
 use rook_terminal::model::BlockId;
 use rookui::r#async::{SpawnedFutureHandle, Timer};
 use rookui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity, WeakViewHandle};
+use session_sharing_protocol::common::SessionId;
 
 use super::AmbientAgentProgressUIState;
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;

@@ -1,7 +1,7 @@
-use settings::Setting as _;
 use rook_errors::report_if_error;
 use rookui::keymap::FixedBinding;
 use rookui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use settings::Setting as _;
 
 use crate::Appearance;
 use crate::chip_configurator::{

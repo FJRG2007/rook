@@ -13,15 +13,15 @@ use persistence::model::{
 use repo_metadata::RepoMetadataModel;
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
-use session_sharing_protocol::common::SessionId;
-use shared_session::permissions_manager::SessionPermissionsManager;
-use uuid::Uuid;
 use rook_core::features::FeatureFlag;
 use rook_server_client::iap::IapManager;
 use rookui::platform::{WindowBounds, WindowStyle};
 use rookui::windowing::WindowManager;
 use rookui::windowing::state::ApplicationStage;
 use rookui::{App, ModelHandle};
+use session_sharing_protocol::common::SessionId;
+use shared_session::permissions_manager::SessionPermissionsManager;
+use uuid::Uuid;
 use watcher::HomeDirectoryWatcher;
 
 use super::child_agent::restoration::is_stale_ancestor_list_completion;
@@ -72,6 +72,7 @@ use crate::notebooks::manager::NotebookManager;
 use crate::notebooks::notebook::NotebookView;
 use crate::pricing::PricingInfoModel;
 use crate::resource_center::TipsCompleted;
+use crate::rook_managed_paths_watcher::RookManagedPathsWatcher;
 use crate::search::files::model::FileSearchModel;
 use crate::server::cloud_objects::listener::Listener;
 use crate::server::cloud_objects::update_manager::UpdateManager;
@@ -99,7 +100,6 @@ use crate::terminal::shared_session::{
 use crate::test_util::assert_eventually;
 use crate::test_util::settings::initialize_settings_for_tests;
 use crate::undo_close::UndoCloseStack;
-use crate::rook_managed_paths_watcher::RookManagedPathsWatcher;
 use crate::workflows::local_workflows::LocalWorkflows;
 use crate::workspace::sync_inputs::SyncedInputState;
 use crate::workspace::{ActiveSession, OneTimeModalModel, WorkspaceRegistry};

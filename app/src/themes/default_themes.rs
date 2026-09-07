@@ -4,8 +4,8 @@ use rook_core::ui::color::blend::Blend;
 use rook_core::ui::color::{OPAQUE, coloru_with_opacity};
 use rook_core::ui::theme::color::CustomDetails;
 use rook_core::ui::theme::{
-    AnsiColor, AnsiColors, Details, Fill, HorizontalGradient, Image, TerminalColors,
-    VerticalGradient, RookTheme,
+    AnsiColor, AnsiColors, Details, Fill, HorizontalGradient, Image, RookTheme, TerminalColors,
+    VerticalGradient,
 };
 
 const DARK_MODE_NORMAL_COLORS: AnsiColors = AnsiColors::new(

@@ -6,7 +6,6 @@ use pathfinder_geometry::vector::vec2f;
 use repo_metadata::RepoMetadataModel;
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
-use string_offset::CharOffset;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::appearance::Appearance;
 use rook_editor::render::model::BlockItem;
@@ -14,6 +13,7 @@ use rook_editor::render::model::BlockItem;
 use rook_files::FileModel;
 use rookui::platform::WindowStyle;
 use rookui::{App, SingletonEntity, View};
+use string_offset::CharOffset;
 
 use super::{FileNotebookAction, FileNotebookView, FileState, MarkdownDisplayMode, SourceFile};
 use crate::auth::AuthStateProvider;

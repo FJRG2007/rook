@@ -16,12 +16,12 @@ use anyhow::Context;
 pub use artifacts::ARTIFACTS_DIR_ENV_VAR;
 pub use driver::{Builder, RERUN_EXIT_CODE, RUNTIME_TAG_FAILURE_REASON, SetupFn, TestDriver};
 pub use overlay::OverlayLog;
+use rook_errors::report_if_error;
 pub use step::{
     AssertionCallback, AssertionOutcome, AssertionWithDataCallback, IntegrationTestEvent,
     PersistedDataMap, StepData, StepDataMap, TestStep,
 };
 pub use video_recorder::{VideoRecorder, save_captured_frame_as_png};
-use rook_errors::report_if_error;
 
 #[macro_export]
 macro_rules! async_assert {

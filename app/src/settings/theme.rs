@@ -1,7 +1,7 @@
-use settings::macros::define_settings_group;
-use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
 use rookui::AppContext;
 use rookui::platform::SystemTheme;
+use settings::macros::define_settings_group;
+use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
 
 use crate::themes::theme::{RespectSystemTheme, SelectedSystemThemes, ThemeKind};
 

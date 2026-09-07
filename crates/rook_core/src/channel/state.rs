@@ -8,8 +8,8 @@ use url::{Origin, ParseError, Url};
 use super::Channel;
 use crate::AppId;
 use crate::channel::config::{
-    ChannelConfig, IapConfig, McpOAuthProviderConfig, OzConfig, RudderStackDestination,
-    RookServerConfig,
+    ChannelConfig, IapConfig, McpOAuthProviderConfig, OzConfig, RookServerConfig,
+    RudderStackDestination,
 };
 use crate::features::FeatureFlag;
 

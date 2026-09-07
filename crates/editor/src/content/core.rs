@@ -3,9 +3,9 @@ use std::sync::Arc;
 
 use enum_iterator::all;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
+use rookui_core::elements::ListIndentLevel;
 use string_offset::CharOffset;
 use sum_tree::SumTree;
-use rookui_core::elements::ListIndentLevel;
 
 use super::buffer::{Buffer, EditOrigin, EditResult};
 use super::cursor::BufferSumTree;

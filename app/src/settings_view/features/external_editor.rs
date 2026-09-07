@@ -1,13 +1,13 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-use settings::{Setting, ToggleableSetting};
 use rook_core::features::FeatureFlag;
 use rook_errors::report_if_error;
 use rookui::elements::{Flex, MouseStateHandle, ParentElement};
 use rookui::ui_components::components::UiComponent;
 use rookui::ui_components::switch::SwitchStateHandle;
 use rookui::{Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
+use settings::{Setting, ToggleableSetting};
 
 use crate::appearance::Appearance;
 use crate::send_telemetry_from_ctx;

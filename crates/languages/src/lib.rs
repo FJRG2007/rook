@@ -5,10 +5,10 @@ use std::sync::{Arc, Mutex};
 
 use arborium::tree_sitter::{Language as ParserGrammar, Query};
 use lazy_static::lazy_static;
-use rust_embed::RustEmbed;
-use serde::{Deserialize, Serialize};
 use rook_editor::content::text::IndentUnit;
 use rook_util::standardized_path::StandardizedPath;
+use rust_embed::RustEmbed;
+use serde::{Deserialize, Serialize};
 
 #[derive(RustEmbed)]
 #[folder = "grammars"]

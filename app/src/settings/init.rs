@@ -1,12 +1,12 @@
 use std::path::Path;
 
-use settings::{Setting as _, SettingsManager};
 use rook_core::features::FeatureFlag;
 use rook_core::semantic_selection::SemanticSelection;
 use rook_errors::report_if_error;
 use rookui::rendering::GPUPowerPreference;
 use rookui::{AppContext, SingletonEntity};
 use rookui_extras::user_preferences;
+use settings::{Setting as _, SettingsManager};
 
 use super::app_icon::AppIconSettings;
 use super::app_installation_detection::UserAppInstallDetectionSettings;
@@ -17,10 +17,10 @@ use super::{
     AISettings, AccessibilitySettings, AliasExpansionSettings, AppEditorSettings,
     BlockVisibilitySettings, ChangelogSettings, CodeSettings, DebugSettings, EmacsBindingsSettings,
     FontSettings, FontSettingsChangedEvent, GPUSettings, InputBoxType, InputModeSettings,
-    InputSettings, LocalControlSettings, PaneSettings, SameLinePromptBlockSettings, ScrollSettings,
-    SelectionSettings, SharedObjectLimitBannerSettings, SshSettings, ThemeSettings,
-    TuiAutoupdateSettings, TuiThemeSettings, TuiVoiceSettings, TuiZeroStateSettings,
-    VimBannerSettings, RookDrivePrivacySettings,
+    InputSettings, LocalControlSettings, PaneSettings, RookDrivePrivacySettings,
+    SameLinePromptBlockSettings, ScrollSettings, SelectionSettings,
+    SharedObjectLimitBannerSettings, SshSettings, ThemeSettings, TuiAutoupdateSettings,
+    TuiThemeSettings, TuiVoiceSettings, TuiZeroStateSettings, VimBannerSettings,
 };
 use crate::ai::cloud_agent_settings::CloudAgentSettings;
 use crate::appearance;
@@ -33,11 +33,11 @@ use crate::terminal::alt_screen_reporting::AltScreenReporting;
 use crate::terminal::general_settings::GeneralSettings;
 use crate::terminal::keys_settings::KeysSettings;
 use crate::terminal::ligature_settings::LigatureSettings;
+use crate::terminal::rookify::settings::RookifySettings;
 use crate::terminal::safe_mode_settings::SafeModeSettings;
 use crate::terminal::session_settings::{SessionSettings, SessionSettingsChangedEvent};
 use crate::terminal::settings::TerminalSettings;
 use crate::terminal::shared_session::settings::SharedSessionSettings;
-use crate::terminal::rookify::settings::RookifySettings;
 use crate::undo_close::UndoCloseSettings;
 use crate::window_settings::WindowSettings;
 use crate::workflows::aliases::WorkflowAliases;

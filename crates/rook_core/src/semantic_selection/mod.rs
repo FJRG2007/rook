@@ -3,12 +3,12 @@ use std::ops::Range;
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use settings::macros::define_settings_group;
-use settings::{Setting, SupportedPlatforms, SyncToCloud};
-use string_offset::ByteOffset;
 use rookui_core::elements::SmartSelectFn;
 use rookui_core::text::word_boundaries::WordBoundariesPolicy;
 use rookui_core::text::words::{DEFAULT_WORD_BOUNDARY_CHARS, is_default_word_boundary};
+use settings::macros::define_settings_group;
+use settings::{Setting, SupportedPlatforms, SyncToCloud};
+use string_offset::ByteOffset;
 
 /// Upper limit for how many characters in either direction we'll search for patterns. Need to
 /// limit this to avoid running regex on absurdly long words

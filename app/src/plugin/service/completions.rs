@@ -3,8 +3,8 @@
 //!
 //! This IPC is hosted by the rust app process and called by the plugin process when plugins
 //! register command signatures.
-use serde::{Deserialize, Serialize};
 use rook_completer::signatures::CommandSignature;
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct RegisterCommandSignatureRequest {

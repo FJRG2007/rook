@@ -2,12 +2,12 @@ mod params;
 pub mod themes;
 
 pub use params::*;
-pub use themes::Theme;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::color::ContrastingColor as _;
 use rook_core::ui::color::contrast::MinimumAllowedContrast;
 use rookui_core::elements::{MouseState, MouseStateHandle};
 use rookui_core::prelude::*;
+pub use themes::Theme;
 
 use crate::{keyboard_shortcut, tooltip};
 

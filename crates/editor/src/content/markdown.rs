@@ -13,10 +13,10 @@ use markdown_parser::{
     FormattedTextLine, OrderedFormattedIndentTextInline,
 };
 use markup5ever::ns;
-use string_offset::CharOffset;
 use rookui_core::elements::{ListIndentLevel, ListNumbering};
 use rookui_core::text::point::Point;
 use rookui_core::{AppContext, ModelContext, ModelHandle};
+use string_offset::CharOffset;
 
 use super::buffer::{
     ActionWithSelectionDelta, Buffer, EditOrigin, EditResult, StyledBufferBlock,

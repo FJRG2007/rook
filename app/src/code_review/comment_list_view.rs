@@ -3,8 +3,6 @@ use std::borrow::Cow;
 use indexmap::IndexMap;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use string_offset::CharOffset;
-use vec1::vec1;
 use rook_core::ui::color::blend::Blend;
 use rook_core::ui::theme::Fill;
 use rook_core::ui::theme::color::internal_colors::{
@@ -34,6 +32,8 @@ use rookui::{
     AppContext, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle,
 };
+use string_offset::CharOffset;
+use vec1::vec1;
 
 use crate::ai::request_usage_model::{AIRequestUsageModel, AIRequestUsageModelEvent};
 use crate::appearance::Appearance;

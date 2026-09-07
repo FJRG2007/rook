@@ -13,8 +13,6 @@ use ::ai::api_keys::ApiKeyManager;
 use itertools::Itertools;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use regex::Regex;
-use settings::{Setting, ToggleableSetting};
-use strum::IntoEnumIterator;
 use rook_core::features::FeatureFlag;
 use rook_errors::{report_error, report_if_error};
 use rookui::elements::{
@@ -30,6 +28,8 @@ use rookui::{
     Action, AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
     WeakViewHandle, id,
 };
+use settings::{Setting, ToggleableSetting};
+use strum::IntoEnumIterator;
 
 use super::ai_shared::{
     render_ai_setting_description, render_ai_setting_label, render_ai_setting_toggle,

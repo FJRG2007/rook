@@ -1,4 +1,3 @@
-use settings::Setting;
 use rook_core::send_telemetry_from_ctx;
 use rook_core::ui::Icon;
 use rook_core::ui::appearance::Appearance;
@@ -14,6 +13,7 @@ use rookui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakModelHandle,
 };
+use settings::Setting;
 
 use super::super::{AmbientAgentViewModelEvent, Status};
 use crate::ai::agent::conversation::ConversationStatus;

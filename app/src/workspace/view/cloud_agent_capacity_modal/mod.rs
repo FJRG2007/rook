@@ -2,7 +2,6 @@ use asset_macro::bundled_or_fetched_asset;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use thousands::Separable;
 use rook_core::channel::ChannelState;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::Fill;
@@ -19,6 +18,7 @@ use rookui::platform::Cursor;
 use rookui::ui_components::button::ButtonVariant;
 use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use thousands::Separable;
 
 use crate::auth::AuthStateProvider;
 use crate::pricing::PricingInfoModel;

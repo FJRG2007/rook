@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 use std::time::Duration;
 
-use settings::Setting as _;
 use rook_errors::report_if_error;
 use rookui::r#async::SpawnedFutureHandle;
 use rookui::{Entity, ModelContext, ModelHandle, SingletonEntity as _};
+use settings::Setting as _;
 
 use super::GitHubRepoEvent;
 use crate::code_review::git_repo_model::{GitRepoStatusEvent, GitRepoStatusModel};

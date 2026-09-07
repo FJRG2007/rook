@@ -10,11 +10,11 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use async_trait::async_trait;
-use smol_str::SmolStr;
-use typed_path::{TypedPath, TypedPathBuf};
 use rook_core::command::ExitCode;
 use rook_util::path::{EscapeChar, ShellFamily};
 use rookui_core::platform::OperatingSystem;
+use smol_str::SmolStr;
+use typed_path::{TypedPath, TypedPathBuf};
 
 use super::engine::EngineDirEntry;
 use crate::completer::TopLevelCommandCaseSensitivity;

@@ -4,9 +4,8 @@ use rook_errors::report_error;
 use rookui::AppContext;
 #[cfg(feature = "release_bundle")]
 use {
-    service_impl::forward_uri_to_sole_running_instance,
+    rook_core::channel::ChannelState, service_impl::forward_uri_to_sole_running_instance,
     single_instance_manager::SingleInstanceManager, thiserror::Error, url::Url,
-    rook_core::channel::ChannelState,
 };
 
 mod registry;

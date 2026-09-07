@@ -14,16 +14,16 @@
 //! - Scroll helpers (`center_cursor_vertically`, `scroll_half_page_*`) — no-op.
 //!
 
-use vim::vim::{
-    BracketChar, CharacterMotion, Direction, FindCharMotion, FirstNonWhitespaceMotion,
-    InsertPosition, LineMotion, ModeTransition, MotionType, VimHandler, VimMode, VimMotion,
-    VimOperand, VimOperator, VimTextObject, WordMotion,
-};
 use rook::editor::{CodeEditorModel, LineBound};
 use rook_editor::content::buffer::AutoScrollBehavior;
 use rook_editor::model::{CoreEditorModel, PlainTextEditorModel};
 use rook_editor::selection::{TextDirection, TextUnit};
 use rookui_core::{ModelContext, ViewContext};
+use vim::vim::{
+    BracketChar, CharacterMotion, Direction, FindCharMotion, FirstNonWhitespaceMotion,
+    InsertPosition, LineMotion, ModeTransition, MotionType, VimHandler, VimMode, VimMotion,
+    VimOperand, VimOperator, VimTextObject, WordMotion,
+};
 
 use super::TuiInputView;
 const MAX_VIM_PASTE_BYTES: usize = 1024 * 1024;

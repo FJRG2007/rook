@@ -19,8 +19,6 @@ use mio::Interest;
 use mio::unix::SourceFd;
 use nix::pty::openpty;
 use nix::sys::termios::{self, InputFlags, SetArg};
-use serde::{Deserialize, Serialize};
-use signal_hook_mio::v1_0::Signals;
 use rook_core::channel::ChannelState;
 use rook_core::cli_agent_protocol::{
     CLI_AGENT_PROTOCOL_VERSION, ROOK_CLI_AGENT_PROTOCOL_VERSION_ENV, ROOK_CLIENT_VERSION_ENV,
@@ -29,6 +27,8 @@ use rook_core::features::FeatureFlag;
 use rook_core::safe_error;
 use rook_errors::report_if_error;
 use rookui_core::{AppContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
+use signal_hook_mio::v1_0::Signals;
 
 use super::event_loop::{PTY_TOKEN, SIGNALS_TOKEN};
 use super::spawner::{PtyHandle, PtySpawnHooks, PtySpawnInfo, PtySpawner};

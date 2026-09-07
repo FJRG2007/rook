@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use serde::{Deserialize, Serialize};
 use rook_editor::content::text::BufferBlockItem;
 use rookui::elements::{
     AnchorPair, Border, Container, CornerRadius, MouseStateHandle, OffsetPositioning, OffsetType,
@@ -11,6 +10,7 @@ use rookui::presenter::ChildView;
 use rookui::ui_components::button::ButtonTooltipPosition;
 use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::{AppContext, Element, SingletonEntity, ViewContext, ViewHandle};
+use serde::{Deserialize, Serialize};
 
 use super::BlockType;
 use super::embedded_item::EmbeddedWorkflow;

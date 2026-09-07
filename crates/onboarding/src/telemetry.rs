@@ -1,8 +1,8 @@
+use rook_core::features::FeatureFlag;
+use rook_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use strum_macros::{EnumDiscriminants, EnumIter};
-use rook_core::features::FeatureFlag;
-use rook_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 
 pub const ACCOUNT_FIRST_FLOW_VERSION: &str = "account_first_v1";
 

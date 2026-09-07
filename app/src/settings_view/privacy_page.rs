@@ -6,7 +6,6 @@ use std::time::Duration;
 
 use pathfinder_geometry::vector::vec2f;
 use regex::Regex;
-use settings::Setting as _;
 use rook_core::context_flag::ContextFlag;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::theme::RookTheme;
@@ -29,6 +28,7 @@ use rookui::{
     Action, AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView,
     UpdateModel, View, ViewContext, ViewHandle, id,
 };
+use settings::Setting as _;
 
 use super::privacy::{AddRegexModal, AddRegexModalEvent};
 use super::settings_page::{

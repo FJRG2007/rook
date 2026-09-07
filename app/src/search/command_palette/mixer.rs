@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
-use strum_macros::IntoStaticStr;
 use rook_util::path::LineAndColumnArg;
 use rookui::keymap::BindingId;
 use rookui::{EntityId, WindowId};
+use strum_macros::IntoStaticStr;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::drive::CloudObjectTypeAndId;

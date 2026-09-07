@@ -8,8 +8,8 @@ use std::sync::Arc;
 
 use futures::future::{AbortHandle, Abortable};
 use futures::{Future, FutureExt};
-use thiserror::Error;
 use rook_errors::report_error;
+use thiserror::Error;
 
 use super::handle::{
     AnyViewHandle, ReadView, UpdateView, ViewAsRef, ViewHandle, ViewUpdateError, WeakViewHandle,

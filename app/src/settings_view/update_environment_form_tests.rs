@@ -1,4 +1,3 @@
-use url::Url;
 use rook_core::ui::appearance::Appearance;
 use rookui::elements::{Empty, MouseStateHandle};
 use rookui::platform::WindowStyle;
@@ -6,6 +5,7 @@ use rookui::{
     AddSingletonModel, App, AppContext, Element, Entity, SingletonEntity, TypedActionView, View,
     WindowId,
 };
+use url::Url;
 
 use super::{
     EnvironmentFormCopy, EnvironmentFormInitArgs, EnvironmentFormValues, SuggestImageState,

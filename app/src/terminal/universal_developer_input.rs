@@ -5,8 +5,6 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use pathfinder_color::ColorU;
-#[cfg(not(target_family = "wasm"))]
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::color::contrast::{
@@ -28,6 +26,8 @@ use rookui::{
     AppContext, Element, Entity, EntityId, ModelHandle, SingletonEntity as _, TypedActionView,
     View, ViewAsRef, ViewContext, ViewHandle, WeakViewHandle,
 };
+#[cfg(not(target_family = "wasm"))]
+use settings::Setting as _;
 
 use crate::BlocklistAIHistoryModel;
 use crate::ai::AIRequestUsageModel;

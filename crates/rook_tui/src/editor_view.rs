@@ -4,7 +4,6 @@
 //! input-mode, inline-menu, or form policy. Embedding views provide that chrome
 //! and behavior while reusing model-backed editing and focus handling.
 
-use string_offset::CharOffset;
 use rook::editor::{CodeEditorModel, CodeEditorModelEvent};
 use rook_editor::content::buffer::InitialBufferState;
 use rook_editor::model::CoreEditorModel;
@@ -14,6 +13,7 @@ use rookui_core::{
     AppContext, BlurContext, Entity, FocusContext, ModelHandle, TuiView, TypedActionView,
     ViewContext,
 };
+use string_offset::CharOffset;
 
 use crate::editor_element::{TuiEditorAction, TuiEditorElement};
 use crate::editor_interaction::{

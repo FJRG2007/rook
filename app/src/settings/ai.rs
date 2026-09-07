@@ -14,6 +14,12 @@ pub use cloud_object_models::{
 };
 use indexmap::IndexMap;
 use regex::Regex;
+use rook_core::execution_mode::AppExecutionMode;
+use rook_core::features::FeatureFlag;
+use rook_errors::report_if_error;
+use rookui::platform::OperatingSystem;
+use rookui::platform::keyboard::KeyCode;
+use rookui::{AppContext, Entity, ModelContext, SingletonEntity, UpdateModel, WeakViewHandle};
 use serde::de::Deserializer;
 use serde::{Deserialize, Serialize};
 use settings::{
@@ -21,12 +27,6 @@ use settings::{
 };
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use rook_core::execution_mode::AppExecutionMode;
-use rook_core::features::FeatureFlag;
-use rook_errors::report_if_error;
-use rookui::platform::OperatingSystem;
-use rookui::platform::keyboard::KeyCode;
-use rookui::{AppContext, Entity, ModelContext, SingletonEntity, UpdateModel, WeakViewHandle};
 
 use crate::ai::execution_profiles::ExecutionProfilesConfig;
 use crate::ai::request_usage_model::RequestLimitInfo;

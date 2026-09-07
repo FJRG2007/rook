@@ -1,7 +1,7 @@
 use anyhow::{Context as AnyhowContext, Result};
 use async_channel::Receiver;
-use rquickjs::{Context, Function, Runtime};
 use rook_js::JsFunctionId;
+use rquickjs::{Context, Function, Runtime};
 
 use super::js_api;
 use super::plugin::{AppServiceCallers, PluginHandle};

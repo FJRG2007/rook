@@ -1,11 +1,11 @@
 use std::future::Future;
 
 use ai::api_keys::ApiKeyManager;
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rook_core::send_telemetry_from_ctx;
 use rook_util::sync::Condition;
 use rookui::{AppContext, Entity, ModelContext, SingletonEntity, WindowId};
+use settings::Setting as _;
 
 use super::hoa_onboarding;
 use super::view::feature_intro_modal::{FEATURE_INTROS, FeatureIntroId};

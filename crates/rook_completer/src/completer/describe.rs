@@ -1,6 +1,6 @@
 use itertools::Itertools;
-use string_offset::ByteOffset;
 use rookui_core::platform::OperatingSystem;
+use string_offset::ByteOffset;
 
 use super::context::CompletionContext;
 use super::suggest::{CompleterOptions, CompletionsFallbackStrategy, SuggestionType, suggestions};

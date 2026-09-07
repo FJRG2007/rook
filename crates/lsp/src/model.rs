@@ -13,8 +13,6 @@ use lsp_types::{
     PublishDiagnosticsParams, WorkDoneProgress,
 };
 #[cfg(not(target_arch = "wasm32"))]
-use simple_logger::manager::LogManager;
-#[cfg(not(target_arch = "wasm32"))]
 use rook_core::features::FeatureFlag;
 #[cfg(not(target_arch = "wasm32"))]
 use rook_errors::report_error;
@@ -22,6 +20,8 @@ use rook_errors::report_error;
 use rookui_core::SingletonEntity;
 use rookui_core::r#async::executor::Background;
 use rookui_core::{Entity, ModelContext};
+#[cfg(not(target_arch = "wasm32"))]
+use simple_logger::manager::LogManager;
 
 use crate::config::{LanguageId, lsp_uri_to_path};
 use crate::server_repo_watcher::LspRepoWatcher;

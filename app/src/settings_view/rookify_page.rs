@@ -4,8 +4,6 @@ use std::fmt::Display;
 
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use regex::Regex;
-use settings::{Setting, ToggleableSetting};
-use strum::IntoEnumIterator;
 use rook_core::features::FeatureFlag;
 use rook_errors::report_if_error;
 use rookui::elements::{
@@ -19,6 +17,8 @@ use rookui::{
     Action, AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use settings::{Setting, ToggleableSetting};
+use strum::IntoEnumIterator;
 
 use super::settings_page::{
     Category, CategoryHeader, HEADER_FONT_SIZE, HEADER_PADDING, LocalOnlyIconState, MatchData,
@@ -32,8 +32,8 @@ use crate::send_telemetry_from_ctx;
 use crate::server::telemetry::TelemetryEvent;
 use crate::settings::{ReuseExistingSshControlMaster, SshSettings};
 use crate::terminal::rookify::settings::{
-    EnableSshRookification, SshExtensionInstallMode, SshExtensionInstallModeSetting,
-    RookifySettings, RookifySettingsChangedEvent,
+    EnableSshRookification, RookifySettings, RookifySettingsChangedEvent, SshExtensionInstallMode,
+    SshExtensionInstallModeSetting,
 };
 use crate::ui_components::blended_colors;
 use crate::view_components::dropdown::{Dropdown, DropdownItem};

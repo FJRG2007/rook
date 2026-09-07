@@ -11,6 +11,9 @@ use futures::FutureExt as _;
 use instant::Instant;
 use itertools::Itertools;
 use parking_lot::{Mutex, RwLock};
+use rook_errors::report_error;
+use rookui_core::r#async::executor::Background;
+use rookui_core::r#async::{Timer, block_on};
 use sha2::{Digest, Sha256};
 use string_offset::ByteOffset;
 use strum_macros::Display;
@@ -25,9 +28,6 @@ use tantivy::schema::{
 use tantivy::snippet::SnippetGenerator;
 use tantivy::tokenizer::{Token, TokenStream, Tokenizer};
 use tantivy::{Index, IndexReader, IndexWriter, ReloadPolicy, TantivyDocument, Term};
-use rook_errors::report_error;
-use rookui_core::r#async::executor::Background;
-use rookui_core::r#async::{Timer, block_on};
 
 pub type FullTextSearchDocumentEntry = HashMap<String, FullTextSearchFieldValue>;
 

@@ -6,8 +6,8 @@ use std::sync::Arc;
 use anyhow::Result;
 use futures::FutureExt;
 use futures::stream::{AbortHandle, Abortable};
-use thiserror::Error;
 use rook_errors::report_error;
+use thiserror::Error;
 
 use crate::accessibility::AccessibilityContent;
 use crate::r#async::{

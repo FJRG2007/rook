@@ -15,8 +15,8 @@
 //!
 //! To serialize input/deserialize output, callers are expected to use `bincode`.
 use async_trait::async_trait;
-use serde::{Deserialize, Serialize};
 use rook_js::{JsFunctionId, SerializedJsValue};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct CallJsFunctionRequest {

@@ -3,10 +3,10 @@ use std::sync::Arc;
 
 use chrono::{DateTime, Local, TimeZone as _};
 use futures::Future;
-use serde::{Deserialize, Serialize};
 use rook_core::command::ExitCode;
 use rook_errors::report_error;
 use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
 
 use super::model::block::{AgentInteractionMetadata, Block, SerializedAIMetadata, SerializedBlock};
 use super::shell::ShellType;

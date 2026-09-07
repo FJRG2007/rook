@@ -4,11 +4,11 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use anyhow::anyhow;
 use chrono::{DateTime, Duration, Utc};
 use parking_lot::RwLock;
-use uuid::Uuid;
 use rook_core::channel::{Channel, ChannelState};
 use rook_errors::report_error;
 use rook_graphql::object_permissions::OwnerType;
 use rookui_core::{AppContext, Entity, SingletonEntity};
+use uuid::Uuid;
 
 use super::UserUid;
 use super::anonymous_id::get_or_create_anonymous_id;

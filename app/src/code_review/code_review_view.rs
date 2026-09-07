@@ -14,8 +14,6 @@ use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
 use rand::Rng;
 use rand::distributions::Alphanumeric;
-use string_offset::CharOffset;
-use vec1::Vec1;
 use rook_core::channel::{Channel, ChannelState};
 use rook_core::features::FeatureFlag;
 use rook_core::ui::theme::color::internal_colors;
@@ -53,6 +51,8 @@ use rookui::{
     AppContext, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle, WindowId,
 };
+use string_offset::CharOffset;
+use vec1::Vec1;
 
 use super::code_review_header::CodeReviewHeader;
 use super::comment_list_view::{CommentListDebugState, CommentListEvent, CommentListView};

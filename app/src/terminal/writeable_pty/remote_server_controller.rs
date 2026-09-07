@@ -7,9 +7,9 @@ use remote_server::setup::{
     PreinstallCheckResult, PreinstallStatus, RemoteLibc, RemotePlatform, UnsupportedReason,
 };
 use remote_server::transport::Error;
-use settings::Setting;
 use rook_core::SessionId;
 use rookui::{Entity, ModelContext, ModelHandle, SingletonEntity, WeakModelHandle};
+use settings::Setting;
 
 use super::pty_controller::{EventLoopSender, PtyController};
 use crate::auth::auth_state::AuthStateProvider;
@@ -20,7 +20,7 @@ use crate::server::server_api::ServerApiProvider;
 use crate::settings::PrivacySettings;
 use crate::terminal::model::session::{IsSSHWrapperSession, SessionInfo};
 use crate::terminal::model_events::{ModelEvent, ModelEventDispatcher};
-use crate::terminal::rookify::settings::{SshExtensionInstallMode, RookifySettings};
+use crate::terminal::rookify::settings::{RookifySettings, SshExtensionInstallMode};
 use crate::{TelemetryEvent, send_telemetry_from_ctx};
 
 /// Per-SSH-init state machine. Encoding the state as an enum makes invalid

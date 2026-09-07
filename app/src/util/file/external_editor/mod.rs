@@ -8,10 +8,10 @@ mod windows;
 
 use std::path::PathBuf;
 
-use serde::{Deserialize, Serialize};
-use settings::EditorChoice;
 use rook_util::path::LineAndColumnArg;
 use rookui::{AppContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
+use settings::EditorChoice;
 
 pub use self::settings::{EditorLayout, EditorSettings};
 

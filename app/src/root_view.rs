@@ -14,10 +14,6 @@ use onboarding::{
 use parking_lot::Mutex;
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use serde::{Deserialize, Serialize};
-use session_sharing_protocol::common::SessionId;
-use settings::Setting as _;
-use url::Url;
 use rook_core::context_flag::ContextFlag;
 use rook_core::safe_error;
 use rook_core::user_preferences::GetUserPreferences as _;
@@ -36,6 +32,10 @@ use rookui::{
     NextNewWindowsHasThisWindowsBoundsUponClose, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WindowId, id,
 };
+use serde::{Deserialize, Serialize};
+use session_sharing_protocol::common::SessionId;
+use settings::Setting as _;
+use url::Url;
 
 use crate::ai::AIRequestUsageModel;
 use crate::ai::agent::api::ServerConversationToken;
@@ -95,7 +95,7 @@ use crate::terminal::keys_settings::KeysSettings;
 use crate::terminal::shell::ShellType;
 use crate::terminal::view::{TerminalAction, cell_size_and_padding};
 use crate::themes::onboarding_theme_picker_themes;
-use crate::themes::theme::{AnsiColorIdentifier, Blend, Fill, ThemeKind, RookThemeConfig};
+use crate::themes::theme::{AnsiColorIdentifier, Blend, Fill, RookThemeConfig, ThemeKind};
 use crate::uri::{OpenMCPSettingsArgs, OpenSettingsArgs, url_reports_checkout_success};
 use crate::util::bindings::{self, is_binding_pty_compliant};
 use crate::util::traffic_lights::{TrafficLightData, TrafficLightMouseStates, traffic_light_data};
@@ -3829,8 +3829,8 @@ impl RootView {
         key_code: &rookui::platform::keyboard::KeyCode,
         ctx: &mut ViewContext<Self>,
     ) -> bool {
-        use voice_input::{VoiceInput, VoiceInputState, VoiceInputToggledFrom};
         use rookui::event::KeyState;
+        use voice_input::{VoiceInput, VoiceInputState, VoiceInputToggledFrom};
 
         use crate::settings::AISettings;
 

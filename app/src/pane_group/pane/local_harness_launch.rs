@@ -3,9 +3,9 @@ use std::ffi::OsString;
 use std::path::PathBuf;
 use std::sync::Arc;
 
+use rook_cli::agent::Harness;
 use shell_words::quote as shell_quote;
 use uuid::Uuid;
-use rook_cli::agent::Harness;
 
 use crate::ai::agent_sdk::driver::AgentDriverError;
 use crate::ai::agent_sdk::driver::harness::claude_code::prepare_claude_environment_config;

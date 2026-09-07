@@ -6,8 +6,8 @@ use cloud_object_client::MockObjectClient;
 use lazy_static::lazy_static;
 use mockall::Sequence;
 use rand::Rng;
-use settings::{RespectUserSyncSetting, SyncToCloud};
 use rookui::{App, ModelHandle};
+use settings::{RespectUserSyncSetting, SyncToCloud};
 
 use super::*;
 use crate::auth::auth_manager::AuthManager;

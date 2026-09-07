@@ -2,7 +2,6 @@ use std::fmt::Debug;
 
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use sharing::SharedPaneContent;
 use rook_core::features::FeatureFlag;
 use rook_core::settings::Setting;
 use rook_errors::report_error;
@@ -18,6 +17,7 @@ use rookui::{
     AppContext, Element, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use sharing::SharedPaneContent;
 
 use super::PaneDropTargetData;
 use super::header_content::{HeaderContent, HeaderRenderContext, StandardHeaderOptions};

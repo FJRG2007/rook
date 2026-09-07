@@ -3,9 +3,9 @@ pub mod settings;
 pub mod terminal;
 mod virtual_fs;
 
+pub use rook_terminal::test_util::mock_blockgrid;
 pub use terminal::add_window_with_terminal;
 pub use virtual_fs::{Stub, VirtualFS};
-pub use rook_terminal::test_util::mock_blockgrid;
 
 macro_rules! assert_eventually {
     ($cond:expr_2021, $($arg:tt)+) => {

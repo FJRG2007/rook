@@ -13,10 +13,10 @@ use cloud_object_models::{StaticEnvVar, TransportType};
 use futures::FutureExt as _;
 use rmcp::ServiceExt as _;
 use rmcp::transport::ConfigureCommandExt as _;
+use rook_errors::report_error;
 use simple_logger::SimpleLogger;
 use tokio::io::AsyncBufReadExt as _;
 use uuid::Uuid;
-use rook_errors::report_error;
 
 use super::TemplatableMCPServerInfo;
 

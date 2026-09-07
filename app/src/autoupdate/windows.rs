@@ -10,9 +10,9 @@ use channel_versions::VersionInfo;
 use command::blocking::Command;
 use lazy_static::lazy_static;
 use parking_lot::Mutex;
-use tempfile::TempPath;
 use rook_core::channel::{Channel, ChannelState};
 use rookui::AppContext;
+use tempfile::TempPath;
 
 use super::{DownloadReady, release_assets_directory_url};
 use crate::server::telemetry::TelemetryEvent;

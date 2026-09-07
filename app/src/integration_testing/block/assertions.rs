@@ -1,7 +1,7 @@
-use settings::Setting as _;
 use rookui::integration::{AssertionCallback, AssertionOutcome};
 use rookui::units::{IntoPixels, Lines};
 use rookui::{AppContext, SingletonEntity, WindowId, async_assert, async_assert_eq};
+use settings::Setting as _;
 
 use crate::integration_testing::terminal::util::ExpectedOutput;
 use crate::integration_testing::view_getters::{

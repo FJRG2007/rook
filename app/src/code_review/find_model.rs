@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::ops::Range;
 
-use string_offset::CharOffset;
 #[cfg(not(target_family = "wasm"))]
 use rook_core::channel::ChannelState;
 use rook_core::send_telemetry_from_ctx;
@@ -14,6 +13,7 @@ use rook_editor::search::{RestorableSearchResults, SelectedResult};
 use rook_errors::report_error;
 use rookui::r#async::SpawnedFutureHandle;
 use rookui::{AppContext, Entity, EntityId, ModelContext, ViewHandle, WeakViewHandle};
+use string_offset::CharOffset;
 
 use crate::code::local_code_editor::LocalCodeEditorView;
 use crate::code_review::code_review_view::CodeReviewView;

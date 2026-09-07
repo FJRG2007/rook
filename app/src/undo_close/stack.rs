@@ -1,10 +1,10 @@
-use uuid::Uuid;
 use rook_errors::report_error;
 use rookui::r#async::SpawnedFutureHandle;
 use rookui::{
     AppContext, ClosedWindowData, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity,
     ViewHandle, WeakViewHandle, WindowId,
 };
+use uuid::Uuid;
 
 use super::UndoCloseSettings;
 use super::settings::UndoCloseSettingsChangedEvent;

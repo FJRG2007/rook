@@ -1,6 +1,6 @@
-use settings::Setting as _;
 use rook_errors::report_if_error;
 use rookui::{App, SingletonEntity as _};
+use settings::Setting as _;
 
 use super::{ParsedSlashCommandInput, SlashCommandEntryState};
 use crate::ai::agent::conversation::AIConversationId;

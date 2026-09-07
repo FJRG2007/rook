@@ -4,7 +4,6 @@ use std::path::{Path, PathBuf};
 use ai::index::full_source_code_embedding::manager::{
     CodebaseIndexManager, CodebaseIndexManagerEvent,
 };
-use settings::Setting;
 use rook_util::path::user_friendly_path;
 use rookui::elements::{
     Border, ChildView, ConstrainedBox, Container, CrossAxisAlignment, Flex, Hoverable,
@@ -14,6 +13,7 @@ use rookui::platform::Cursor;
 use rookui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use settings::Setting;
 
 use crate::ai::persisted_workspace::{PersistedWorkspace, PersistedWorkspaceEvent};
 use crate::appearance::Appearance;

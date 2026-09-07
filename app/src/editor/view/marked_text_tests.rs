@@ -1,8 +1,8 @@
-use vim::vim::VimMode;
 use rook_core::features::FeatureFlag;
 use rookui::App;
 use rookui::keymap::Keystroke;
 use rookui::platform::WindowStyle;
+use vim::vim::VimMode;
 
 use super::initialize_app;
 use crate::editor::{DisplayPoint, EditorOptions, EditorView};

@@ -51,13 +51,6 @@ use parking_lot::FairMutex;
 #[cfg(feature = "local_fs")]
 use parking_lot::Mutex;
 use regex::Regex;
-use serde::{Deserialize, Serialize};
-use serde_json::json;
-use session_sharing_protocol::common::{AgentAttachment, ParticipantId, ServerConversationToken};
-use settings::{Setting as _, ToggleableSetting};
-use string_offset::{ByteOffset, CharOffset};
-use vec1::Vec1;
-use vim::vim::{VimHandler, VimMode};
 use rook_cli::agent::Harness;
 use rook_completer::completer::{
     self, CompleterOptions, CompletionContext, CompletionsFallbackStrategy, Description,
@@ -104,6 +97,13 @@ use rookui::{
     AppContext, Entity, EntityId, FocusContext, ModelAsRef, ModelHandle, SingletonEntity,
     TypedActionView, View, ViewContext, ViewHandle, WeakViewHandle, end_trace, start_trace,
 };
+use serde::{Deserialize, Serialize};
+use serde_json::json;
+use session_sharing_protocol::common::{AgentAttachment, ParticipantId, ServerConversationToken};
+use settings::{Setting as _, ToggleableSetting};
+use string_offset::{ByteOffset, CharOffset};
+use vec1::Vec1;
+use vim::vim::{VimHandler, VimMode};
 
 use self::decorations::InputBackgroundJobOptions;
 pub use self::handoff_compose::{HandoffComposeState, HandoffComposeStateEvent};
@@ -120,6 +120,7 @@ use super::prompt_render_helper::{
     PromptRenderHelper, SameLinePromptElements, should_render_prompt_on_same_line,
     should_render_prompt_using_editor_decorator_elements,
 };
+use super::rookify::SubshellSource;
 use super::safe_mode_settings::{
     SafeModeSettings, SafeModeSettingsChangedEvent, get_secret_obfuscation_mode,
 };
@@ -143,7 +144,6 @@ use super::view::queued_prompts_panel::{QueuedPromptsPanelEvent, QueuedPromptsPa
 use super::view::{
     ExecuteCommandEvent, PADDING_LEFT as TERMINAL_VIEW_PADDING_LEFT, SyncInputType, TerminalAction,
 };
-use super::rookify::SubshellSource;
 use super::{
     History, HistoryEntry, SizeInfo, TerminalModel, UpArrowHistoryConfig, prompt,
     should_right_click_paste,

@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use anyhow::Context;
-use url::Url;
 use rookui::{AppContext, ModelHandle, SingletonEntity, ViewContext, ViewHandle};
+use url::Url;
 
 use super::super::{DefaultSessionModeBehavior, Direction};
 use super::view::PaneView;

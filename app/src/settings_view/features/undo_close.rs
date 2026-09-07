@@ -2,7 +2,6 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::time::Duration;
 
-use settings::{Setting, ToggleableSetting};
 use rook_errors::report_if_error;
 use rookui::elements::{
     Container, CrossAxisAlignment, Flex, MainAxisAlignment, MouseStateHandle, ParentElement, Text,
@@ -12,6 +11,7 @@ use rookui::ui_components::switch::SwitchStateHandle;
 use rookui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use settings::{Setting, ToggleableSetting};
 
 use crate::appearance::Appearance;
 use crate::editor::{self, EditorView, SingleLineEditorOptions, TextOptions};

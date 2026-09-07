@@ -31,7 +31,7 @@ use super::utils::{
 use crate::ai::AIRequestUsageModel;
 use crate::appearance::Appearance;
 use crate::send_telemetry_from_ctx;
-use crate::server::telemetry::{SaveAsWorkflowModalSource, TelemetryEvent, RookAIActionType};
+use crate::server::telemetry::{RookAIActionType, SaveAsWorkflowModalSource, TelemetryEvent};
 use crate::ui_components::blended_colors;
 use crate::workspaces::user_workspaces::UserWorkspaces;
 

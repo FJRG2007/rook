@@ -22,15 +22,15 @@ pub use markdown_parser::{
 };
 use pathfinder_color::ColorU;
 use rand::Rng;
-use serde::{Deserialize, Serialize};
-use string_offset::{ByteOffset, CharOffset, impl_offset};
-use sum_tree::{Cursor, SeekBias, SumTree};
 use rook_core::features::FeatureFlag;
 use rookui_core::AppContext;
 use rookui_core::elements::ListIndentLevel;
 use rookui_core::fonts::{Properties, Style, Weight};
 use rookui_core::text::BlockHeaderSize as HeaderSize;
 use rookui_core::text::point::Point;
+use serde::{Deserialize, Serialize};
+use string_offset::{ByteOffset, CharOffset, impl_offset};
+use sum_tree::{Cursor, SeekBias, SumTree};
 
 use super::buffer::Buffer;
 use super::core::CursorType;

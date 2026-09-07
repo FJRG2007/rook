@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
-use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
 use rookui_core::color::ColorU;
+use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
 
 use super::OPAQUE;
 

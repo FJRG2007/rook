@@ -5,13 +5,13 @@ use std::sync::Arc;
 
 use ordered_float::OrderedFloat;
 use parking_lot::Once;
-use vec1::{Vec1, vec1};
 use rookui_core::color::ColorU;
 use rookui_core::elements::{Border, Fill, ListIndentLevel};
 use rookui_core::fonts::{FamilyId, Weight};
 use rookui_core::geometry::vector::vec2f;
 use rookui_core::text_layout::{CaretPosition, Glyph, Line, Run, TextFrame};
 use rookui_core::units::{IntoPixels, Pixels};
+use vec1::{Vec1, vec1};
 
 use super::{
     BlockItem, BrokenLinkStyle, CheckBoxStyle, DEFAULT_BLOCK_SPACINGS, HorizontalRuleStyle,

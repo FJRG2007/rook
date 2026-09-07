@@ -1,8 +1,8 @@
 use std::ops::Deref;
 
-use serde::{Serialize, Serializer};
 use rookui::ViewContext;
 use rookui::platform::Cursor;
+use serde::{Serialize, Serializer};
 
 use crate::terminal::TerminalModel;
 use crate::terminal::model::RespectObfuscatedSecrets;

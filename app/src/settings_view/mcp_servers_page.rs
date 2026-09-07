@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 
-use uuid::Uuid;
 use rook_errors::report_error;
 use rookui::elements::{ChildView, Container};
 use rookui::ui_components::components::{Coords, UiComponentStyles};
 use rookui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use uuid::Uuid;
 
 use crate::ai::mcp::gallery::MCPGalleryManager;
 use crate::ai::mcp::templatable_installation::VariableValue;

@@ -1,10 +1,5 @@
 use std::time::Duration;
 
-use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
-use session_sharing_protocol::common::{ParticipantId, Role, SessionId as SharedSessionId};
-use session_sharing_protocol::sharer::{SessionEndedReason, SessionSourceType};
-use strum_macros::{EnumDiscriminants, EnumIter};
 use rook_completer::completer::MatchType;
 use rook_core::command::ExitCode;
 use rook_core::interval_timer::TimingDataPoint;
@@ -15,6 +10,11 @@ pub use rook_terminal::ImageProtocol;
 use rookui::keymap::Keystroke;
 use rookui::notification::{NotificationSendError, RequestPermissionsOutcome};
 use rookui::rendering::ThinStrokes;
+use serde::{Deserialize, Serialize};
+use serde_json::{Value, json};
+use session_sharing_protocol::common::{ParticipantId, Role, SessionId as SharedSessionId};
+use session_sharing_protocol::sharer::{SessionEndedReason, SessionSourceType};
+use strum_macros::{EnumDiscriminants, EnumIter};
 
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::agent::conversation::AIConversationId;

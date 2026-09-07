@@ -6,8 +6,6 @@ use itertools::Itertools;
 use markdown_parser::html_parser::ROOK_EMBED_ATTRIBUTE_NAME;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use serde_yaml::Mapping;
-use string_offset::ByteOffset;
 use rook_core::ui::appearance::Appearance;
 use rook_editor::content::markdown::MarkdownStyle;
 use rook_editor::content::text::TextStylesWithMetadata;
@@ -26,6 +24,8 @@ use rookui::elements::{Border, ConstrainedBox, CornerRadius, Empty, Margin, Padd
 use rookui::text_layout::TextFrame;
 use rookui::units::{IntoPixels, Pixels};
 use rookui::{AppContext, Element, LayoutContext, SingletonEntity, SizeConstraint};
+use serde_yaml::Mapping;
+use string_offset::ByteOffset;
 
 use crate::cloud_object::CloudObject;
 use crate::cloud_object::model::persistence::CloudModel;

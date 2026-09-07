@@ -7,7 +7,6 @@ use std::time::Duration;
 
 use lazy_static::lazy_static;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use settings::ToggleableSetting;
 use rook::cmd_or_ctrl_shift;
 use rook::features::FeatureFlag;
 use rook::integration_testing::clipboard::assert_clipboard_contains_string;
@@ -18,10 +17,11 @@ use rook::integration_testing::terminal::{
 };
 use rook::integration_testing::view_getters::single_terminal_view_for_tab;
 use rook::settings::SelectionSettings;
-use warp_multi_agent_api as api;
 use rookui_core::integration::TestStep;
 use rookui_core::text::SelectionType;
 use rookui_core::{Event, SingletonEntity, async_assert};
+use settings::ToggleableSetting;
+use warp_multi_agent_api as api;
 
 use super::new_builder;
 use crate::Builder;

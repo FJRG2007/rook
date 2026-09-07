@@ -10,7 +10,6 @@ use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
 use regex::Regex;
-use serde::{Deserialize, Serialize};
 use rook_core::features::FeatureFlag;
 use rook_core::ui::theme::color::internal_colors;
 use rook_errors::report_error;
@@ -33,6 +32,7 @@ use rookui::{
     AppContext, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WeakViewHandle,
 };
+use serde::{Deserialize, Serialize};
 
 use super::SettingsSection;
 use super::admin_actions::AdminActions;

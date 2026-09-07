@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-use settings::Setting as _;
 use rook::integration_testing::command_search::{
     assert_command_search_has_results, assert_command_search_is_open,
     assert_history_filter_is_active,
@@ -18,6 +17,7 @@ use rook::terminal::input::Input;
 use rook::terminal::model::session::get_local_hostname;
 use rook::terminal::shell::ShellType;
 use rookui_core::{ViewHandle, async_assert};
+use settings::Setting as _;
 
 use super::{TEST_ONLY_ASSETS, new_builder};
 use crate::Builder;

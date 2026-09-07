@@ -1,14 +1,14 @@
 use anyhow::Error;
 use itertools::Itertools;
 use pathfinder_geometry::vector::vec2f;
-use settings::ToggleableSetting;
-use unindent::Unindent;
 use rook_errors::report_if_error;
 use rookui::color::ColorU;
 use rookui::platform::WindowStyle;
 use rookui::text_layout::TextFrame;
 use rookui::windowing::WindowManager;
 use rookui::{AddSingletonModel, App, UpdateModel, UpdateView};
+use settings::ToggleableSetting;
+use unindent::Unindent;
 
 use super::*;
 use crate::auth::AuthStateProvider;

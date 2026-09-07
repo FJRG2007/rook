@@ -1,8 +1,8 @@
-use uuid::Uuid;
 use rook::appearance::Appearance;
 use rook::editor::CodeEditorModel;
 use rook::tui_export::{TuiMcpInstallRequest, TuiMcpServerId, TuiMcpTemplateVariable};
 use rookui_core::App;
+use uuid::Uuid;
 
 use super::{TuiMcpInstallFlowAction, TuiMcpInstallFlowModel, TuiMcpInstallStep};
 use crate::input_suggestions_mode::TuiInputSuggestionsModeModel;

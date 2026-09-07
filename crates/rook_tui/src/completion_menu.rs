@@ -2,9 +2,9 @@
 
 use std::ops::Range;
 
-use string_offset::CharOffset;
 use rook_completer::completer::{EngineFileType, PreparedSuggestion};
 use rookui_core::{AppContext, Entity, ModelContext, ModelHandle};
+use string_offset::CharOffset;
 
 use crate::inline_menu::{
     MAX_INLINE_MENU_ROWS, TuiInlineMenuAccepted, TuiInlineMenuHandle, TuiInlineMenuListState,

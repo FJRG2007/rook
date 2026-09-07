@@ -5,12 +5,12 @@ use std::sync::Arc;
 
 use repo_metadata::RepoMetadataModel;
 use repo_metadata::repositories::DetectedRepositories;
-use tempfile::tempdir;
 use rookui::r#async::block_on;
 use rookui::elements::Empty;
 use rookui::platform::WindowStyle;
 use rookui::windowing::WindowManager;
 use rookui::{App, AppContext, Element, Entity, SingletonEntity, TypedActionView, View};
+use tempfile::tempdir;
 
 use crate::search::ai_context_menu::files::data_source::{
     FileSnapshot, file_data_source_for_pwd, fuzzy_match_files,

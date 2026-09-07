@@ -2,13 +2,13 @@ use std::cell::Cell;
 use std::sync::Arc;
 
 use pathfinder_color::ColorU;
-use string_offset::CharOffset;
 use rookui_core::elements::{Axis, scroll_delta_for_pointer_movement};
 use rookui_core::fonts::FamilyId;
 use rookui_core::geometry::rect::RectF;
 use rookui_core::geometry::vector::vec2f;
 use rookui_core::text_layout::TextFrame;
 use rookui_core::units::{IntoPixels, Pixels};
+use string_offset::CharOffset;
 
 use crate::content::text::{FormattedTable, table_cell_offset_maps};
 use crate::render::element::table::{

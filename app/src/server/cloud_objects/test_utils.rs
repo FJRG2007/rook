@@ -3,9 +3,9 @@ use std::sync::Arc;
 use std::sync::mpsc::{Receiver, sync_channel};
 
 use cloud_object_client::{MockObjectClient, ObjectClient};
-use settings::manager::SettingsManager;
 use rook_core::execution_mode::{AppExecutionMode, ExecutionMode};
 use rookui::{App, ModelHandle, SingletonEntity};
+use settings::manager::SettingsManager;
 
 use super::update_manager::UpdateManager;
 use crate::auth::AuthStateProvider;

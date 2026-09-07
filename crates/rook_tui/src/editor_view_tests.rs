@@ -1,6 +1,5 @@
 use std::collections::HashSet;
 
-use string_offset::CharOffset;
 use rook::tui_export::Appearance;
 use rook_editor::model::{CoreEditorModel, PlainTextEditorModel};
 use rookui::platform::WindowStyle;
@@ -11,6 +10,7 @@ use rookui_core::elements::tui::{
 };
 use rookui_core::keymap::{Keystroke, Trigger};
 use rookui_core::{App, TuiView as _, TypedActionView as _};
+use string_offset::CharOffset;
 
 use super::{TuiEditorView, TuiEditorViewAction};
 use crate::editor_element::TuiEditorAction;

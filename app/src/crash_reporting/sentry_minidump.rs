@@ -22,11 +22,11 @@ use command::blocking::Command;
 use crash_handler::{CrashContext, CrashHandler};
 use lazy_static::lazy_static;
 use parking_lot::Mutex;
+use rook_errors::report_error;
 use sentry::protocol::{Attachment, AttachmentType};
 use sentry::{Breadcrumb, Level};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use rook_errors::report_error;
 
 use super::ToSentryTags;
 

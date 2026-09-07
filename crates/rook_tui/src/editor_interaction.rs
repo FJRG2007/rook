@@ -1,12 +1,12 @@
 use std::ops::Range;
 
-use string_offset::CharOffset;
 use rook::editor::CodeEditorModel;
 use rook_editor::model::{CoreEditorModel, PlainTextEditorModel};
 use rook_editor::render::model::CharCellState;
 use rook_editor::selection::{TextDirection, TextUnit};
 use rookui_core::text::word_boundaries::WordBoundariesPolicy;
 use rookui_core::{AppContext, ModelHandle};
+use string_offset::CharOffset;
 
 use crate::clipboard::{copy_to_clipboard, read_from_clipboard};
 use crate::editor_element::TuiEditorAction;

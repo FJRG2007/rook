@@ -1,9 +1,9 @@
 use std::fs;
 
-use virtual_fs::{Stub, VirtualFS};
 use rook_util::local_or_remote_path::LocalOrRemotePath;
 use rook_util::standardized_path::StandardizedPath;
 use rookui_core::App;
+use virtual_fs::{Stub, VirtualFS};
 
 use crate::repositories::{DetectedRepositories, RepoDetectionSource, stub_git_repository};
 use crate::watcher::DirectoryWatcher;

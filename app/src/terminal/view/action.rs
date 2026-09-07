@@ -6,13 +6,13 @@ use ai::skills::SkillReference;
 use command_corrections::Correction;
 pub use onboarding::OnboardingIntention;
 use pathfinder_geometry::vector::Vector2F;
-use session_sharing_protocol::common::Role;
-use session_sharing_protocol::sharer::RoleUpdateReason;
 use rook_util::user_input::UserInput;
 use rookui::EntityId;
 use rookui::elements::HyperlinkUrl;
 use rookui::event::ModifiersState;
 use rookui::units::Lines;
+use session_sharing_protocol::common::Role;
+use session_sharing_protocol::sharer::RoleUpdateReason;
 
 use super::inline_banner::{
     AwsBedrockLoginBannerAction, AwsCliNotInstalledBannerAction, OpenInRookBannerAction,

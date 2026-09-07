@@ -4,7 +4,6 @@ use std::sync::Arc;
 use num_traits::Float as _;
 use parking_lot::FairMutex;
 use pathfinder_geometry::vector::vec2f;
-use vec1::Vec1;
 use rook_core::features::FeatureFlag;
 use rook_util::user_input::UserInput;
 use rookui::elements::new_scrollable::{NewScrollableElement, ScrollableAxis};
@@ -21,6 +20,7 @@ use rookui::{
     LayoutContext, ModelHandle, PaintContext, SizeConstraint, end_trace, record_trace_event,
     start_trace,
 };
+use vec1::Vec1;
 
 use super::should_intercept_mouse;
 use crate::appearance::Appearance;

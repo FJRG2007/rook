@@ -1,6 +1,6 @@
 use chrono::Local;
-use session_sharing_protocol::common::SessionId;
 use rookui::{App, SingletonEntity, TypedActionView, ViewHandle};
+use session_sharing_protocol::common::SessionId;
 
 use super::{SharingDialog, SharingDialogAction, SharingDialogMode};
 use crate::auth::UserUid;

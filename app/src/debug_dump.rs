@@ -58,8 +58,8 @@ pub(crate) fn run() -> anyhow::Result<()> {
     {
         use std::ops::Deref as _;
 
-        use settings::Setting as _;
         use rookui::rendering::GPUPowerPreference;
+        use settings::Setting as _;
 
         use crate::settings::{
             PreferLowPowerGPU, PreferredGraphicsBackend, init_private_user_preferences,

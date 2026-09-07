@@ -4,8 +4,8 @@ use std::marker::PhantomData;
 use std::sync::{Arc, Weak};
 
 use parking_lot::Mutex;
-use thiserror::Error;
 use rook_errors::{ErrorExt, register_error};
+use thiserror::Error;
 
 use super::context::ViewContext;
 use crate::core::RefCounts;

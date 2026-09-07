@@ -1,8 +1,3 @@
-use settings::Setting as _;
-use voice_input::{
-    StartListeningError, VoiceInput, VoiceInputLifecycle, VoiceInputLifecycleState,
-    VoiceSessionResult,
-};
 use rook_core::send_telemetry_from_ctx;
 use rook_core::ui::theme::AnsiColorIdentifier;
 use rook_core::ui::theme::color::internal_colors;
@@ -13,6 +8,11 @@ use rookui::platform::Cursor;
 use rookui::ui_components::button::ButtonTooltipPosition;
 use rookui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use rookui::{AppContext, Element, SingletonEntity, ViewContext, ViewHandle, elements};
+use settings::Setting as _;
+use voice_input::{
+    StartListeningError, VoiceInput, VoiceInputLifecycle, VoiceInputLifecycleState,
+    VoiceSessionResult,
+};
 
 use super::{EditorAction, EditorView, VoiceTranscriber, VoiceTranscriptionOptions};
 use crate::ai::blocklist::InputType;

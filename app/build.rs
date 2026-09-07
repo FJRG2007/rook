@@ -9,13 +9,13 @@ use std::{env, fs};
 
 use anyhow::Result;
 use cfg_aliases::cfg_aliases;
-use sha2::Digest;
-use walkdir::WalkDir;
 use rook_util::assets::{
     ASSETS_DIR, ASYNC_ASSETS_DIR, CONPTY_DLL_FILE, DXCOMPILER_DLL_FILE, DXIL_DLL_FILE,
     OPEN_CONSOLE_EXE_FILE, REMOTE_ASSETS_DIR, WINDOWS_ASSETS_DIR,
 };
 use rook_util::path::app_target_dir;
+use sha2::Digest;
+use walkdir::WalkDir;
 
 fn main() -> Result<()> {
     cfg_aliases! {

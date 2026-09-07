@@ -20,10 +20,6 @@ use ::ai::grok_subscription::oauth::{
 use chrono::{DateTime, Local};
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use pathfinder_geometry::vector::vec2f;
-use settings::{Setting, ToggleableSetting};
-use strum::IntoEnumIterator;
-#[cfg(not(target_family = "wasm"))]
-use uuid::Uuid;
 use rook_core::channel::ChannelState;
 use rook_core::context_flag::ContextFlag;
 use rook_core::features::FeatureFlag;
@@ -45,6 +41,10 @@ use rookui::{
     Action, AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle, WindowId, id,
 };
+use settings::{Setting, ToggleableSetting};
+use strum::IntoEnumIterator;
+#[cfg(not(target_family = "wasm"))]
+use uuid::Uuid;
 
 use super::ai_shared::{
     render_ai_feature_switch, render_ai_setting_description, render_ai_setting_label,

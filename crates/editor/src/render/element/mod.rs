@@ -7,9 +7,6 @@ use std::time::Duration;
 use float_cmp::ApproxEq;
 use instant::Instant;
 use parking_lot::Mutex;
-use string_offset::CharOffset;
-use temporary_block::RenderableTemporaryBlock;
-use vim::vim::VimMode;
 use rook_core::ui::theme::Fill as ThemeFill;
 use rook_errors::report_error;
 use rookui_core::color::ColorU;
@@ -26,6 +23,9 @@ use rookui_core::{
     AfterLayoutContext, AppContext, Element, Event, EventContext, LayoutContext, ModelHandle,
     PaintContext, SizeConstraint, WeakViewHandle,
 };
+use string_offset::CharOffset;
+use temporary_block::RenderableTemporaryBlock;
+use vim::vim::VimMode;
 
 use self::empty::Empty;
 use self::header::RenderableHeader;

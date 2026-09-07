@@ -6,8 +6,6 @@ use ai::workspace::WorkspaceMetadata;
 use csv::Writer;
 use enclose::enclose;
 use itertools::Itertools;
-use settings::Setting as _;
-use settings::manager::SettingsManager;
 use rook_core::context_flag::ContextFlag;
 use rook_errors::{report_error, report_if_error};
 use rook_util::path::user_friendly_path;
@@ -18,6 +16,8 @@ use rookui::platform::menu::{
 };
 use rookui::windowing::WindowManager;
 use rookui::{AppContext, SingletonEntity};
+use settings::Setting as _;
+use settings::manager::SettingsManager;
 
 use crate::ai::persisted_workspace::PersistedWorkspace;
 use crate::auth;

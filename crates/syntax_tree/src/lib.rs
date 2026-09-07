@@ -11,7 +11,6 @@ use queries::highlight_query::HighlightQuery;
 pub use queries::highlight_query::{ColorMap, TextSlice};
 use queries::indent_query::{IndentDelta, indentation_delta};
 use rangemap::{RangeMap, RangeSet};
-use string_offset::{ByteOffset, CharOffset};
 use rook_editor::content::buffer::{Buffer, BufferSnapshot};
 use rook_editor::content::edit::PreciseDelta;
 use rook_editor::content::text::IndentUnit;
@@ -20,6 +19,7 @@ use rook_editor::decoration::DecorationLayer;
 use rookui_core::color::ColorU;
 use rookui_core::text::point::Point;
 use rookui_core::{AppContext, Entity, ModelContext, WeakModelHandle};
+use string_offset::{ByteOffset, CharOffset};
 
 const MAX_SYNTAX_TREES: usize = 3;
 

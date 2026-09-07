@@ -7,11 +7,11 @@ use itertools::Itertools;
 use parking_lot::Mutex;
 #[cfg(feature = "local_fs")]
 use repo_metadata::DirectoryWatcher;
-use settings::Setting as _;
 use rook_completer::completer::{CommandExitStatus, CommandOutput};
 use rook_core::command::ExitCode;
 use rookui::{App, SingletonEntity};
 use rookui_extras::user_preferences;
+use settings::Setting as _;
 
 use super::{ActiveChipSurfaces, ChipUpdateStatus, CurrentPrompt, PromptContext};
 use crate::CLIAgentSessionsModel;

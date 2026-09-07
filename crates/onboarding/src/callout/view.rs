@@ -1,4 +1,3 @@
-use ui_components::Component;
 use rook_core::ui::appearance::Appearance;
 use rookui_core::elements::Empty;
 use rookui_core::keymap::macros::*;
@@ -7,6 +6,7 @@ use rookui_core::{
     AppContext, Element, Entity, EventContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext,
 };
+use ui_components::Component;
 
 /// Display strings for keybindings shown in the onboarding callout.
 #[derive(Clone, Debug)]

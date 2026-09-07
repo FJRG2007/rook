@@ -1,6 +1,6 @@
+use rookui::{AppContext, SingletonEntity};
 use settings::macros::define_settings_group;
 use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
-use rookui::{AppContext, SingletonEntity};
 
 use crate::features::FeatureFlag;
 

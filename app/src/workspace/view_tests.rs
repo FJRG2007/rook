@@ -9,16 +9,16 @@ use repo_metadata::CanonicalizedPath;
 use repo_metadata::RepoMetadataModel;
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
-use session_sharing_protocol::common::SessionId;
-#[cfg(feature = "local_fs")]
-use tempfile::TempDir;
-use terminal::shared_session::permissions_manager::SessionPermissionsManager;
-use terminal::view::ActiveSessionState;
 use rook_editor::editor::NavigationKey;
 #[cfg(feature = "local_fs")]
 use rook_files::FileModel;
 use rookui::platform::WindowStyle;
 use rookui::{AddSingletonModel, App, ViewHandle};
+use session_sharing_protocol::common::SessionId;
+#[cfg(feature = "local_fs")]
+use tempfile::TempDir;
+use terminal::shared_session::permissions_manager::SessionPermissionsManager;
+use terminal::view::ActiveSessionState;
 use watcher::HomeDirectoryWatcher;
 
 use super::*;
@@ -55,6 +55,7 @@ use crate::pricing::PricingInfoModel;
 #[cfg(not(target_family = "wasm"))]
 use crate::remote_server::codebase_index_model::RemoteCodebaseIndexModel;
 use crate::resource_center::Tip;
+use crate::rook_managed_paths_watcher::RookManagedPathsWatcher;
 use crate::server::cloud_objects::listener::Listener;
 use crate::server::cloud_objects::update_manager::UpdateManager;
 use crate::server::experiments::ServerExperiments;
@@ -81,7 +82,6 @@ use crate::undo_close::UndoCloseSettings;
 use crate::user_config::tab_configs_dir;
 #[cfg(windows)]
 use crate::util::traffic_lights::windows::RendererState;
-use crate::rook_managed_paths_watcher::RookManagedPathsWatcher;
 use crate::workflows::local_workflows::LocalWorkflows;
 use crate::workspaces::team_tester::TeamTesterStatus;
 use crate::workspaces::update_manager::TeamUpdateManager;
@@ -5193,8 +5193,8 @@ fn test_tools_panel_rook_drive_toggle_updates_available_views() {
 #[cfg(target_family = "wasm")]
 mod simplified_wasm_tab_bar {
     use chrono::Utc;
-    use uuid::Uuid;
     use rookui::{AppContext, View, ViewContext};
+    use uuid::Uuid;
 
     use super::*;
     use crate::ai::agent::api::ServerConversationToken;

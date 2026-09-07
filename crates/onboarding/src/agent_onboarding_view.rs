@@ -27,7 +27,6 @@ const PLAN_ACTIVATED_TOAST_DURATION: Duration = Duration::from_secs(5);
 
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use ui_components::{Component as _, Options as _, button};
 use rook_core::ui::Icon;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::{Fill, RookTheme};
@@ -45,6 +44,7 @@ use rookui_core::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity as _, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use ui_components::{Component as _, Options as _, button};
 
 #[derive(Clone, Debug)]
 pub enum AgentOnboardingEvent {

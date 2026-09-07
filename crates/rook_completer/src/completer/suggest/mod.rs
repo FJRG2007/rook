@@ -13,9 +13,9 @@ use async_recursion::async_recursion;
 use imp::*;
 use itertools::Itertools;
 pub use priority::Priority;
+use rook_core::ui::theme::AnsiColorIdentifier;
 use smol_str::SmolStr;
 use warp_command_signatures::IconType;
-use rook_core::ui::theme::AnsiColorIdentifier;
 
 use super::EngineFileType;
 use super::coalesce::coalesce_completion_results;

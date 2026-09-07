@@ -5,9 +5,9 @@ use std::sync::Once;
 use futures_lite::future;
 use itertools::Itertools;
 use rangemap::RangeSet;
+use rookui_core::App;
 use string_offset::CharOffset;
 use sum_tree::SumTree;
-use rookui_core::App;
 
 use super::{Engine, Match, SearchConfig};
 use crate::content::buffer::Buffer;

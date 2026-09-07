@@ -4,13 +4,13 @@ use std::borrow::Cow;
 use std::collections::HashMap;
 
 use itertools::Itertools;
+use rook_core::features::FeatureFlag;
+use rook_util::path::ShellFamily;
 use smol_str::SmolStr;
 use warp_command_signatures::{
     Argument, ArgumentType, DynamicCompletionData, Generator, GeneratorProcess, Signature,
     Template, TemplateFilter, TemplateType,
 };
-use rook_core::features::FeatureFlag;
-use rook_util::path::ShellFamily;
 
 use super::add_extra_positional;
 use crate::completer::context::CompletionContext;

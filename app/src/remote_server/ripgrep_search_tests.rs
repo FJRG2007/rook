@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
-use string_offset::ByteOffset;
 use rook_ripgrep::search::{Match as RipgrepMatch, Submatch};
+use string_offset::ByteOffset;
 
 use super::ripgrep_match_to_proto;
 

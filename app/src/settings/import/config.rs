@@ -3,14 +3,14 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use pathfinder_color::ColorU;
-use serde::Serialize;
-use strum_macros::EnumIter;
-use thiserror::Error;
 use rook_core::ui::color::hex_color::HexColorError as UiHexColorError;
 use rook_core::ui::theme::{AnsiColors, RookTheme};
 use rookui::DisplayIdx;
 use rookui::fonts::FontInfo;
 use rookui::keymap::Keystroke;
+use serde::Serialize;
+use strum_macros::EnumIter;
+use thiserror::Error;
 
 use super::alacritty_parser::AlacrittyConfig;
 #[cfg(target_os = "macos")]

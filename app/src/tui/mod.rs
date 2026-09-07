@@ -15,13 +15,13 @@ pub use mcp::{
     TuiMcpServerStatus, TuiMcpSnapshot, TuiMcpSyncedTemplateProvenance, TuiMcpTemplateVariable,
     TuiMcpTransport, TuiMcpVariableValue,
 };
+use rook_core::telemetry::TelemetryEvent as _;
+use rookui::{AppContext, Entity, SingletonEntity};
 use telemetry::{
     AbandonmentPhase, AuthenticationEntrypoint, TuiOnboardingTelemetry, TuiOnboardingTelemetryEvent,
 };
 use url::Url;
 pub use user_info::{TuiUserInfoManager, TuiUserInfoManagerEvent, TuiUserInfoSnapshot};
-use rook_core::telemetry::TelemetryEvent as _;
-use rookui::{AppContext, Entity, SingletonEntity};
 
 use crate::TuiMountFn;
 use crate::ai::mcp::FileBasedMCPManager;

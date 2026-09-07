@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
 use rook_graphql::scalars::time::ServerTimestamp;
 use rookui_core::AppContext;
 use rookui_extras::secure_storage::{self, AppContextExt};
+use serde::{Deserialize, Serialize};
 
 use super::{AnonymousUserType, FirebaseAuthTokens, PersonalObjectLimits, UserMetadata};
 use crate::UserUid;

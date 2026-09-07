@@ -1,6 +1,6 @@
+use rook_core::define_settings_group;
 use serde::{Deserialize, Serialize};
 use settings::{RespectUserSyncSetting, SupportedPlatforms, SyncToCloud};
-use rook_core::define_settings_group;
 
 #[derive(
     Debug,

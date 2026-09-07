@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+use rook_core::features::FeatureFlag;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use rook_core::features::FeatureFlag;
 
 use super::{Availability, SlashCommandKind, SlashCommandSurfaces};
 use crate::search::slash_command_menu::StaticCommand;

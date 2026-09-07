@@ -10,8 +10,6 @@ use markdown_parser::{
     CodeBlockText, FormattedText, FormattedTextFragment, FormattedTextLine, parse_markdown,
 };
 use pathfinder_geometry::vector::Vector2F;
-use string_offset::CharOffset;
-use vec1::vec1;
 use rook_core::features::FeatureFlag;
 use rook_editor::content::buffer::{AutoScrollBehavior, BufferSelectAction, SelectionOffsets};
 use rook_editor::content::text::{BlockType, BufferBlockStyle, CodeBlockType, TextStyles};
@@ -28,6 +26,8 @@ use rookui::{
     AddSingletonModel, App, AppContext, Element, Entity, ModelHandle, SingletonEntity,
     TypedActionView, View, ViewHandle,
 };
+use string_offset::CharOffset;
+use vec1::vec1;
 
 use super::super::rich_text_styles;
 use super::NotebooksEditorModel;

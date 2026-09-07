@@ -8,9 +8,9 @@ mod resize;
 use std::cmp::min;
 use std::ops::{Index, IndexMut, Range};
 
-use serde::{Deserialize, Serialize};
 use rook_core::features::FeatureFlag;
 use rook_errors::report_error;
+use serde::{Deserialize, Serialize};
 
 use crate::model::ansi::{CharsetIndex, StandardCharset};
 use crate::model::cell::{Cell, Flags};

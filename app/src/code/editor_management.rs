@@ -3,9 +3,9 @@ use std::collections::hash_map::Entry;
 use std::path::{Path, PathBuf};
 
 use ai::skills::SkillReference;
-use serde::{Deserialize, Serialize};
 use rook_util::path::LineAndColumnArg;
 use rookui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity, ViewHandle, WindowId};
+use serde::{Deserialize, Serialize};
 
 use super::buffer_location::LocalOrRemotePath;
 use super::view::CodeView;

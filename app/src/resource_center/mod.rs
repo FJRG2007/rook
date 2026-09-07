@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
 use chrono::{DateTime, FixedOffset};
-use settings::Setting as _;
 use rook_errors::report_if_error;
+use settings::Setting as _;
 
 use crate::terminal::general_settings::GeneralSettings;
 use crate::util::bindings::trigger_to_keystroke;
@@ -16,10 +16,10 @@ mod section_views;
 pub use section_views::{ChangelogSectionView, ContentSectionView, FeatureSectionView};
 pub mod sections;
 mod view;
-use serde::{Deserialize, Serialize};
-pub use view::{ResourceCenterAction, ResourceCenterEvent, ResourceCenterPage, ResourceCenterView};
 use rookui::keymap::Keystroke;
 use rookui::{AppContext, Entity, SingletonEntity};
+use serde::{Deserialize, Serialize};
+pub use view::{ResourceCenterAction, ResourceCenterEvent, ResourceCenterPage, ResourceCenterView};
 
 use self::section_views::feature_section::FeatureSection;
 

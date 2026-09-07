@@ -6,13 +6,13 @@ use std::sync::Arc;
 use ai::document::DEFAULT_PLANNING_DOCUMENT_TITLE;
 use itertools::Itertools;
 use prost::Message;
-use vec1::Vec1;
 use rook_core::channel::ChannelState;
 use rook_core::features::FeatureFlag;
 use rook_errors::report_error;
-use warp_multi_agent_api as api;
 use rookui::units::IntoPixels;
 use rookui::{EntityId, ModelHandle, SingletonEntity, ViewContext};
+use vec1::Vec1;
+use warp_multi_agent_api as api;
 
 use super::DEFAULT_AI_BLOCK_HEIGHT;
 use super::blocklist_filter::exchanges_for_blocklist;

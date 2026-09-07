@@ -5,15 +5,15 @@ use onboarding::components::onboarding_callout::{
     Button as CalloutButton, OnboardingCallout, Options as CalloutOptions, Params as CalloutParams,
     StepStatus,
 };
-use rust_embed::RustEmbed;
-use ui_components::Component as _;
 use rook_core::ui::appearance::Appearance;
-use rook_core::ui::theme::{AnsiColor, AnsiColors, Details, Fill, TerminalColors, RookTheme};
+use rook_core::ui::theme::{AnsiColor, AnsiColors, Details, Fill, RookTheme, TerminalColors};
 use rookui_core::color::ColorU;
 use rookui_core::elements::{Rect, Stack};
 use rookui_core::fonts::{Cache, FamilyId, Weight};
 use rookui_core::prelude::*;
 use rookui_core::{AddWindowOptions, AssetProvider, ModelContext, platform};
+use rust_embed::RustEmbed;
+use ui_components::Component as _;
 
 #[derive(Clone, Copy, RustEmbed)]
 #[folder = "../../app/assets"]

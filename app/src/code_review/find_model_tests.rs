@@ -2,13 +2,13 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use repo_metadata::repositories::DetectedRepositories;
-use string_offset::CharOffset;
 use rook_core::ui::appearance::Appearance;
 use rook_editor::content::buffer::InitialBufferState;
 use rook_editor::render::element::VerticalExpansionBehavior;
 use rookui::elements::Empty;
 use rookui::platform::WindowStyle;
 use rookui::{App, Element as _, ModelHandle, SingletonEntity, ViewHandle};
+use string_offset::CharOffset;
 
 use super::*;
 use crate::NotebookKeybindings;

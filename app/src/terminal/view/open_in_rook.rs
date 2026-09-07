@@ -4,7 +4,6 @@ use std::sync::Arc;
 
 use itertools::Itertools;
 use lazy_static::lazy_static;
-use settings::Setting as _;
 use rook_completer::completer::TopLevelCommandCaseSensitivity;
 use rook_completer::parsers::classify_command;
 use rook_completer::parsers::hir::{Command, Expression};
@@ -14,6 +13,7 @@ use rook_errors::report_if_error;
 use rook_util::path::EscapeChar;
 use rookui::accessibility::{AccessibilityContent, ActionAccessibilityContent, RookA11yRole};
 use rookui::{SingletonEntity, ViewContext};
+use settings::Setting as _;
 
 use super::{Event, InlineBannerItem, InlineBannerType, TerminalView};
 #[cfg(feature = "local_fs")]

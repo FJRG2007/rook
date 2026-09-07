@@ -5,13 +5,13 @@ use std::sync::Arc;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use pathfinder_color::ColorU;
-use serde::{Deserialize, Serialize};
 use rook_core::command::ExitCode;
 use rook_graphql::ai::{
     RequestLimitInfo as RequestLimitInfoGraphql,
     RequestLimitRefreshDuration as RequestLimitRefreshDurationGraphql,
 };
 use rook_graphql::mutations::generate_commands::{GenerateCommandsFailureType, GeneratedCommand};
+use serde::{Deserialize, Serialize};
 
 use crate::ai::{RequestLimitInfo, RequestLimitRefreshDuration};
 use crate::server::telemetry::OpenedRookAISource;

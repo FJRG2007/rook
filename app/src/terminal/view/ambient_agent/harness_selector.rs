@@ -5,7 +5,6 @@
 use std::sync::Arc;
 
 use pathfinder_geometry::vector::vec2f;
-use settings::Setting as _;
 use rook_cli::agent::Harness;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::Fill;
@@ -19,6 +18,7 @@ use rookui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use settings::Setting as _;
 
 use crate::ai::blocklist::agent_view::agent_input_footer::AgentInputButtonTheme;
 use crate::ai::cloud_agent_settings::CloudAgentSettings;

@@ -14,9 +14,6 @@ use std::sync::Arc;
 use lazy_static::lazy_static;
 use parking_lot::{Mutex, RwLock};
 use regex::Regex;
-use sentry::{ClientInitGuard, IntoDsn, SessionMode};
-#[cfg(linux_or_windows)]
-pub use sentry_minidump::run_server as run_minidump_server;
 use rook_core::channel::Channel;
 use rook_server_auth::anonymous_id::get_or_create_anonymous_id;
 use rookui::r#async::block_on;
@@ -24,6 +21,9 @@ use rookui::rendering::GPUDeviceInfo;
 use rookui::windowing::state::ApplicationStage;
 use rookui::windowing::{self, StateEvent, WindowManager};
 use rookui::{AppContext, SingletonEntity};
+use sentry::{ClientInitGuard, IntoDsn, SessionMode};
+#[cfg(linux_or_windows)]
+pub use sentry_minidump::run_server as run_minidump_server;
 
 use crate::antivirus::{AntivirusInfo, AntivirusInfoEvent};
 use crate::auth::{AuthStateProvider, UserUid};

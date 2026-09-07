@@ -1,7 +1,5 @@
 use itertools::Itertools;
 use pathfinder_geometry::vector::vec2f;
-use serde::Serialize;
-use settings::Setting as _;
 use rook_core::ui::theme::Fill;
 use rook_errors::report_if_error;
 use rookui::elements::{
@@ -16,6 +14,8 @@ use rookui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use rookui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use serde::Serialize;
+use settings::Setting as _;
 
 use crate::appearance::AppearanceEvent;
 use crate::chip_configurator::{ChipConfigurator, ChipConfiguratorAction, ChipConfiguratorLayout};

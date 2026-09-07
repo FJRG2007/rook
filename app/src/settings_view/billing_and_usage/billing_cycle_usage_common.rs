@@ -3,7 +3,6 @@ use std::collections::HashMap;
 
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use thousands::Separable;
 use rook_core::ui::appearance::Appearance;
 use rookui::Element;
 use rookui::elements::{
@@ -12,6 +11,7 @@ use rookui::elements::{
     Text,
 };
 use rookui::fonts::{Properties, Weight};
+use thousands::Separable;
 
 use crate::settings_view::billing_and_usage_page_v2::{
     AGGREGATE_CREDITS_DOT_COLOR, AMBIENT_CREDITS_DOT_COLOR, BASE_CREDITS_DOT_COLOR,

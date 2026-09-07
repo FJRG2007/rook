@@ -20,9 +20,6 @@ use futures::future::{BoxFuture, Shared};
 use instant::Instant;
 use once_cell::sync::OnceCell;
 use parking_lot::{Mutex, RwLock};
-use smol_str::SmolStr;
-use typed_path::{TypedPath, TypedPathBuf, WindowsPath};
-use version_compare::Version;
 use rook_completer::completer::{
     CommandExitStatus, CommandOutput, PathSeparators, TopLevelCommandCaseSensitivity,
 };
@@ -33,6 +30,9 @@ use rook_util::path::{
 };
 use rookui::platform::OperatingSystem;
 use rookui::{Entity, ModelContext, SingletonEntity};
+use smol_str::SmolStr;
+use typed_path::{TypedPath, TypedPathBuf, WindowsPath};
+use version_compare::Version;
 
 use super::ansi::{BootstrappedValue, InitShellValue, SSHValue};
 use super::terminal_model::{HistoryEntry, SubshellInitializationInfo};
@@ -42,8 +42,8 @@ use crate::features::FeatureFlag;
 use crate::remote_server::manager::{RemoteServerManager, RemoteServerManagerEvent};
 use crate::server::telemetry::{BootstrappingInfo, TelemetryEvent};
 use crate::terminal::event::{ExecutedExecutorCommandEvent, RemoteServerSetupState};
-use crate::terminal::shell::{Shell, ShellType};
 use crate::terminal::rookify::SubshellSource;
+use crate::terminal::shell::{Shell, ShellType};
 use crate::terminal::{History, ShellHost, ShellLaunchData};
 
 #[derive(thiserror::Error, Debug)]

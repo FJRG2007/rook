@@ -1,4 +1,3 @@
-use vec1::{Vec1, vec1};
 use rook_core::features::FeatureFlag;
 use rook_core::ui::builder::AnimatedButtonOptions;
 use rookui::elements::{
@@ -15,6 +14,7 @@ use rookui::{
     AppContext, Entity, EntityId, FocusContext, ModelHandle, SingletonEntity, TypedActionView,
     View, ViewContext, ViewHandle, WindowId,
 };
+use vec1::{Vec1, vec1};
 
 use super::keybindings_page::KeybindingsEvent;
 use super::section_views::{

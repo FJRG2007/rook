@@ -23,8 +23,6 @@
 use std::ops::Range;
 use std::rc::Rc;
 
-use string_offset::{ByteOffset, CharOffset};
-use vim::vim::{MotionType, VimMode, VimModel, VimSubscriber as _};
 use rook::editor::{CodeEditorModel, CodeEditorModelEvent};
 use rook::settings::AppEditorSettings;
 #[cfg(feature = "voice_input")]
@@ -50,6 +48,8 @@ use rookui_core::{
     AppContext, BlurContext, Entity, FocusContext, ModelHandle, TuiView, TypedActionView,
     ViewContext,
 };
+use string_offset::{ByteOffset, CharOffset};
+use vim::vim::{MotionType, VimMode, VimModel, VimSubscriber as _};
 
 use crate::completion_menu::TuiCompletionAcceptance;
 use crate::editor_element::{TuiEditorAction, TuiEditorElement, TuiEditorStyles};

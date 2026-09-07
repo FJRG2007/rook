@@ -1,11 +1,11 @@
 use itertools::Itertools;
 use markdown_parser::parse_markdown;
-use string_offset::CharOffset;
 use rook_core::features::FeatureFlag;
 use rookui_core::App;
 use rookui_core::text::TextBuffer;
 use rookui_core::text::point::Point;
 use rookui_core::text::word_boundaries::WordBoundariesPolicy;
+use string_offset::CharOffset;
 
 use crate::content::buffer::{Buffer, EditOrigin};
 use crate::content::selection_model::BufferSelectionModel;

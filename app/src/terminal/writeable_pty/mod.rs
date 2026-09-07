@@ -8,5 +8,5 @@ pub mod terminal_manager_util;
 pub(crate) mod terminal_surface;
 
 pub use pty_controller::{PtyController, PtyControllerEvent};
-pub use terminal_surface::{PtyIntent, PtyIntentEvent, TerminalSurface};
 pub use rook_terminal::writeable_pty::Message;
+pub use terminal_surface::{PtyIntent, PtyIntentEvent, TerminalSurface};

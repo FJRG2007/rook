@@ -1,5 +1,5 @@
-use tests::buffer::RangesWhenEditing;
 use rookui::App;
+use tests::buffer::RangesWhenEditing;
 
 use super::*;
 use crate::editor::EditOrigin;

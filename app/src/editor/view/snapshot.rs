@@ -11,7 +11,6 @@ use instant::Instant;
 use parking_lot::Mutex;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
 use rayon::prelude::*;
-use string_offset::ByteOffset;
 use rook_completer::completer::Description;
 use rook_errors::report_error;
 use rookui::fonts::{Cache as FontCache, FamilyId, Properties};
@@ -22,6 +21,7 @@ use rookui::text_layout::{
     StyleAndFont, TextAlignment, TextStyle, default_compute_baseline_position_fn,
 };
 use rookui::{AppContext, EntityId, ModelHandle};
+use string_offset::ByteOffset;
 
 use super::model::EditorModel;
 use super::{

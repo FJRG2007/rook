@@ -14,8 +14,8 @@ use rook_graphql::billing::{
     EnterprisePayAsYouGoPolicy as GqlEnterprisePayAsYouGoPolicy, InstanceShape as GqlInstanceShape,
     ManagedByokByoePolicy as GqlManagedByokByoePolicy, MultiAdminPolicy as GqlMultiAdminPolicy,
     NativeWorkspacesPolicy as GqlNativeWorkspacesPolicy,
-    PurchaseAddOnCreditsPolicy as GqlPurchaseAddOnCreditsPolicy, ServiceAgreementType,
-    SessionSharingPolicy as GqlSessionSharingPolicy,
+    PurchaseAddOnCreditsPolicy as GqlPurchaseAddOnCreditsPolicy, RookAiPolicy as GqlRookAiPolicy,
+    ServiceAgreementType, SessionSharingPolicy as GqlSessionSharingPolicy,
     SharedNotebooksPolicy as GqlSharedNotebooksPolicy,
     SharedWorkflowsPolicy as GqlSharedWorkflowsPolicy, StripeSubscriptionPlan,
     TeamSizePolicy as GqlTeamSizePolicy,
@@ -23,7 +23,7 @@ use rook_graphql::billing::{
     UgcDataCollectionPolicy as GqlUgcDataCollectionPolicy,
     UsageBasedPricingPolicy as GqlUsageBasedPricingPolicy,
     UsageVisibilityGranularity as GqlUsageVisibilityGranularity,
-    UsageVisibilityPolicy as GqlUsageVisibilityPolicy, RookAiPolicy as GqlRookAiPolicy,
+    UsageVisibilityPolicy as GqlUsageVisibilityPolicy,
 };
 use rook_graphql::queries::get_conversation_usage as gql_usage;
 use rook_graphql::queries::get_workspaces_metadata_for_user::User as GqlUser;
@@ -57,13 +57,13 @@ use super::workspace::{
     ByoFirstPartyKey, CloudConversationStorageSettings, CodebaseContextSettings, CustomerType,
     DelinquencyStatus, EmailInvite, EnforceableSetting, EnterpriseSecretRegex,
     HostEnablementSetting, InstanceShape, InviteLinkDomainRestriction, LinkSharingSettings,
-    LlmSettings, MaxPriorCycles, SandboxedAgentSettings, SecretRedactionSettings,
+    LlmSettings, MaxPriorCycles, RookAiPolicy, SandboxedAgentSettings, SecretRedactionSettings,
     SessionSharingPolicy, SharedNotebooksPolicy, SharedWorkflowsPolicy, SplitListSetting,
     TeamAiAutonomySettings, TeamAiPermissionsSettings, TeamByoSettings, TeamLinkSharingSettings,
     TeamSandboxedAgentSettings, TeamSecretRedactionSettings, TeamSettings,
     TelemetryDataCollectionPolicy, TelemetrySettings, Tier, UgcCollectionEnablementSetting,
     UgcCollectionSettings, UgcDataCollectionPolicy, UsageBasedPricingPolicy,
-    UsageVisibilityGranularity, UsageVisibilityPolicy, RookAiPolicy, Workspace, WorkspaceMember,
+    UsageVisibilityGranularity, UsageVisibilityPolicy, Workspace, WorkspaceMember,
     WorkspaceMemberUsageInfo, WorkspaceSettings, WorkspaceSizePolicy,
 };
 use crate::ai::blocklist::usage::conversation_usage_view::ConversationUsageInfo;

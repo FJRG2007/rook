@@ -1,5 +1,5 @@
-use uuid::Uuid;
 use rookui_core::App;
+use uuid::Uuid;
 
 use super::{
     CALLBACK_FAILURE_MESSAGE, MANUAL_FAILURE_MESSAGE, TuiGrokOAuthController, TuiGrokOAuthPhase,

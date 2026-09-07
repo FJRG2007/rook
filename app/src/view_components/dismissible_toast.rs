@@ -3,7 +3,6 @@ use std::time::Duration;
 
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use uuid::Uuid;
 use rook_core::ui::builder::UiBuilder;
 use rook_core::ui::theme::color::internal_colors;
 use rookui::accessibility::{AccessibilityContent, ActionAccessibilityContent, RookA11yRole};
@@ -22,6 +21,7 @@ use rookui::{
     Action, AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use uuid::Uuid;
 
 use super::action_button::ActionButton;
 use crate::appearance::Appearance;

@@ -1,8 +1,8 @@
 use std::time::Duration;
 
 use instant::Instant;
-use serde::{Deserialize, Serialize};
 use rookui_core::{Entity, SingletonEntity};
+use serde::{Deserialize, Serialize};
 
 /// This represents one interval, i.e. one stage in a multiple-stage timer.
 struct TimingInterval {

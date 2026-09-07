@@ -9,7 +9,6 @@ use languages::language_by_local_filename;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use settings::Setting as _;
 use rook_core::context_flag::ContextFlag;
 use rook_core::telemetry::TelemetryEvent as _;
 use rook_core::ui::Icon as RookIcon;
@@ -34,6 +33,7 @@ use rookui::text_layout::ClipConfig;
 use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::ui_components::text_input::TextInput;
 use rookui::{AppContext, EntityId, SingletonEntity, ViewHandle, WindowId};
+use settings::Setting as _;
 
 use super::{render_group_member_icon_collage, select_unique_pane_kinds};
 use crate::ai::agent::conversation::{ConversationStatus, StatusColorStyle};

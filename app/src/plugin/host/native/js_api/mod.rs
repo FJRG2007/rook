@@ -1,5 +1,5 @@
-use rquickjs::{Ctx, Function, Object};
 use rook_errors::report_error;
+use rquickjs::{Ctx, Function, Object};
 
 use super::plugin::PluginHandle;
 

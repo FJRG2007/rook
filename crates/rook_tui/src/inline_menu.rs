@@ -3,7 +3,6 @@ use std::cell::RefCell;
 use std::ops::Range;
 use std::rc::Rc;
 
-use string_offset::CharOffset;
 use rook::tui_export::{
     AcceptSlashCommandOrSavedPrompt, AgentConversationEntryId, LLMId, ServerId, TuiMcpAction,
     TuiUpArrowHistoryItemKind,
@@ -16,6 +15,7 @@ use rookui_core::elements::tui::{
 };
 use rookui_core::elements::{CrossAxisAlignment, MouseStateHandle};
 use rookui_core::{AppContext, ModelHandle};
+use string_offset::CharOffset;
 
 use crate::api_keys_menu::TuiApiKeysMenuModel;
 use crate::completion_menu::TuiCompletionAcceptance;

@@ -1,11 +1,11 @@
 use std::path::Path;
 
 use futures::channel::oneshot;
-use vec1::vec1;
 use rook_editor::content::buffer::{InitialBufferState, SelectionOffsets};
 use rook_editor::multiline::MultilineString;
 use rook_util::content_version::ContentVersion;
 use rookui::App;
+use vec1::vec1;
 
 use super::*;
 use crate::code::editor::line::EditorLineLocation;

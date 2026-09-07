@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use serde::{Deserialize, Serialize};
 use rook_core::user_preferences::GetUserPreferences as _;
 use rookui::{Entity, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
 
 use crate::auth::AuthStateProvider;
 use crate::safe_info;

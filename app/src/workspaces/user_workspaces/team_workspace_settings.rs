@@ -16,11 +16,11 @@ use std::rc::Rc;
 use std::sync::OnceLock;
 
 use regex::Regex;
-use settings::Setting;
 #[cfg(not(target_family = "wasm"))]
 use rook_cli::scope::{ObjectScope, TeamSelection};
 use rook_core::features::FeatureFlag;
 use rookui::{AppContext, Entity, SingletonEntity, ViewContext, WeakViewHandle, WindowId};
+use settings::Setting;
 
 #[cfg(not(target_family = "wasm"))]
 use super::SoleTeamError;

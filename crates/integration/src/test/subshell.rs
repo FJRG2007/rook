@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-use settings::Setting as _;
 use rook::integration_testing::step::new_step_with_default_assertions;
 use rook::integration_testing::subshell::util::ssh_command;
 use rook::integration_testing::subshell::{
@@ -12,12 +11,13 @@ use rook::integration_testing::terminal::util::current_shell_starter_and_version
 use rook::integration_testing::terminal::wait_until_bootstrapped_single_pane_for_tab;
 use rook::integration_testing::view_getters::single_input_view_for_tab;
 use rook::root_view::SubshellCommandArg;
-use rook::terminal::shell::ShellType;
 use rook::terminal::rookify::settings::AddedSubshellCommands;
+use rook::terminal::shell::ShellType;
 use rookui_core::integration::{AssertionOutcome, TestStep};
 use rookui_core::windowing::WindowManager;
 use rookui_core::windowing::state::ApplicationStage;
 use rookui_core::{UpdateModel, async_assert};
+use settings::Setting as _;
 
 use super::{Builder, new_builder};
 use crate::util::skip_if_powershell_core_2303;

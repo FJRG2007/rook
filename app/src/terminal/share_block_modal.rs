@@ -5,7 +5,6 @@ use anyhow::Result;
 use parking_lot::FairMutex;
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use serde::Serialize;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::theme::Fill;
 use rook_errors::report_error;
@@ -32,6 +31,7 @@ use rookui::{
     LayoutContext, PaintContext, SingletonEntity, SizeConstraint, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use serde::Serialize;
 
 use super::grid_renderer::CellGlyphCache;
 use super::model::grid::RespectDisplayedOutput;

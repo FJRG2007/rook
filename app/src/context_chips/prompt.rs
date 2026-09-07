@@ -1,9 +1,9 @@
 use itertools::Itertools;
-use serde::{Deserialize, Serialize};
-use settings::Setting as _;
 use rookui::{
     Entity, GetSingletonModelHandle, ModelContext, ModelHandle, SingletonEntity, UpdateModel,
 };
+use serde::{Deserialize, Serialize};
+use settings::Setting as _;
 
 pub use super::ContextChipKind;
 use crate::settings::{

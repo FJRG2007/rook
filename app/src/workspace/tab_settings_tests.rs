@@ -1,5 +1,5 @@
-use settings::Setting;
 use rookui::{App, SingletonEntity};
+use settings::Setting;
 
 use super::*;
 use crate::test_util::settings::initialize_settings_for_tests;

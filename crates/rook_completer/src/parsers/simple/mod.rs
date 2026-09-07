@@ -8,8 +8,8 @@ mod token;
 
 use lexer::Lexer;
 use parser::Parser;
-use string_offset::ByteOffset;
 use rook_util::path::EscapeChar;
+use string_offset::ByteOffset;
 
 use crate::parsers::LiteCommand;
 

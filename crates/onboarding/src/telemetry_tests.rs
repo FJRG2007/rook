@@ -1,6 +1,6 @@
-use serde_json::json;
 use rook_core::features::FeatureFlag;
 use rook_core::telemetry::TelemetryEvent;
+use serde_json::json;
 
 use super::{ACCOUNT_FIRST_FLOW_VERSION, OnboardingEvent};
 

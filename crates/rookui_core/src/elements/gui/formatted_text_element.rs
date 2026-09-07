@@ -10,9 +10,9 @@ use itertools::Itertools;
 use markdown_parser::{Action, FormattedText, FormattedTextFragment, FormattedTextLine, Hyperlink};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
+use rook_errors::report_error;
 use string_offset::{ByteOffset, CharOffset, StringRange};
 use vec1::vec1;
-use rook_errors::report_error;
 
 use super::{Highlight, ListNumbering, Selection};
 use crate::elements::{

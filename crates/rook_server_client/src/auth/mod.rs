@@ -10,9 +10,6 @@ use firebase::FirebaseError;
 use instant::Duration;
 #[cfg(any(test, feature = "test-util"))]
 use mockall::automock;
-pub use session::*;
-use thiserror::Error;
-pub use user_uid::{TEST_USER_EMAIL, TEST_USER_UID, UserUid};
 use rook_errors::{AnyhowErrorExt, ErrorExt, register_error};
 use rook_graphql::client::Operation;
 use rook_graphql::mutations::create_anonymous_user::{
@@ -39,6 +36,9 @@ use rook_graphql::queries::get_user::{GetUser, GetUserVariables, UserOutput as G
 use rook_graphql::queries::get_user_settings::{GetUserSettings, GetUserSettingsVariables};
 use rook_server_auth::credentials::{AuthToken, Credentials, FirebaseToken, LoginToken};
 pub use rook_server_auth::user_uid;
+pub use session::*;
+use thiserror::Error;
+pub use user_uid::{TEST_USER_EMAIL, TEST_USER_UID, UserUid};
 
 use crate::base_client::BaseClient;
 use crate::graphql_helpers::send_graphql_request;

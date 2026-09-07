@@ -4,10 +4,10 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use itertools::Itertools;
 use ordered_float::OrderedFloat;
-use serde_json::json;
 use rook_core::ui::builder;
 use rookui::elements::{ConstrainedBox, Container, Text};
 use rookui::{AppContext, Element, SingletonEntity};
+use serde_json::json;
 
 use super::workflows::{WorkflowIdentity, WorkflowSearchItem};
 use crate::ai::AIRequestUsageModel;

@@ -19,14 +19,6 @@ use nav::{SettingsNavItem, SettingsUmbrella};
 use pathfinder_geometry::vector::Vector2F;
 use privacy_page::{PrivacyPageView, PrivacyPageViewEvent};
 use referrals_page::{ReferralsPageEvent, ReferralsPageView};
-use scripting_page::ScriptingSettingsPageView;
-use settings_file_footer::{SettingsFooterKind, SettingsFooterMouseStates, render_footer};
-use settings_page::{
-    HEADER_PADDING, MatchData, SettingsPage, SettingsPageEvent, SettingsPageMeta,
-    SettingsPageViewHandle,
-};
-use show_blocks_view::{ShowBlocksEvent, ShowBlocksView};
-use teams_page::{TeamsPageView, TeamsPageViewEvent};
 use rook_agent_page::{RookAgentPageAction, RookAgentPageEvent, RookAgentPageView};
 use rook_core::channel::ChannelState;
 use rook_core::context_flag::ContextFlag;
@@ -49,6 +41,14 @@ use rookui::{
     Action, AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView,
     UpdateView as _, View, ViewContext, ViewHandle, id,
 };
+use scripting_page::ScriptingSettingsPageView;
+use settings_file_footer::{SettingsFooterKind, SettingsFooterMouseStates, render_footer};
+use settings_page::{
+    HEADER_PADDING, MatchData, SettingsPage, SettingsPageEvent, SettingsPageMeta,
+    SettingsPageViewHandle,
+};
+use show_blocks_view::{ShowBlocksEvent, ShowBlocksView};
+use teams_page::{TeamsPageView, TeamsPageViewEvent};
 
 use self::telemetry::SettingsTelemetryEvent;
 use crate::ai::custom_model_routers::CustomModelRouter;
@@ -110,6 +110,9 @@ mod privacy;
 mod privacy_page;
 mod referrals_page;
 mod remove_custom_endpoint_confirmation_dialog;
+mod rook_agent_page;
+mod rook_drive_page;
+mod rookify_page;
 mod scripting_page;
 mod set_default_model_modal;
 mod settings_file_footer;
@@ -120,9 +123,6 @@ mod teams_page;
 mod telemetry;
 mod transfer_ownership_confirmation_modal;
 pub mod update_environment_form;
-mod rook_agent_page;
-mod rook_drive_page;
-mod rookify_page;
 
 #[cfg(feature = "tui")]
 pub(crate) use billing_and_usage::billing_cycle_usage_common::{format_cost_cents, format_credits};
@@ -133,12 +133,12 @@ pub use code_indexing_page::CodeIndexingPageView;
 pub use features_page::FeaturesPageAction;
 pub use main_page::handle_experiment_change;
 pub use privacy_page::PrivacyPageAction;
+pub(crate) use rook_agent_page::custom_model_routers_widget_id;
 pub use settings_page::{
     AdditionalInfo, InputListItem, LocalOnlyIconState, ToggleState, render_body_item_label,
     render_info_icon, render_input_list, render_separator,
 };
 pub use teams_page::{OpenTeamsSettingsModalArgs, TeamsInviteOption};
-pub(crate) use rook_agent_page::custom_model_routers_widget_id;
 
 /// Original sidebar width used when the settings-file footer is not
 /// enabled. Preserved for Preview/Stable until `FeatureFlag::SettingsFile`

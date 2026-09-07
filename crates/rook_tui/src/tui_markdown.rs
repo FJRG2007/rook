@@ -9,7 +9,6 @@ use markdown_parser::{
     CodeBlockText, FormattedImage, FormattedText, FormattedTextFragment, FormattedTextInline,
     FormattedTextLine, Hyperlink,
 };
-use unicode_width::UnicodeWidthStr;
 use rookui_core::AppContext;
 use rookui_core::elements::tui::{
     Modifier, TuiConstraint, TuiContainer, TuiElement, TuiFlex, TuiLayoutContext, TuiPaintContext,
@@ -17,6 +16,7 @@ use rookui_core::elements::tui::{
     TuiSize, TuiStyle, TuiText,
 };
 use rookui_core::elements::{CrossAxisAlignment, ListNumbering};
+use unicode_width::UnicodeWidthStr;
 
 use crate::tui_builder::TuiUiBuilder;
 mod table;

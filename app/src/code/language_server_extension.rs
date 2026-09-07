@@ -1,7 +1,6 @@
 use lsp::{HoverContents, LspServerLogLevel, MarkupKind};
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use num_traits::SaturatingSub;
-use string_offset::CharOffset;
 use rook_core::send_telemetry_from_ctx;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::RookTheme;
@@ -15,6 +14,7 @@ use rookui::elements::{
     MouseStateHandle, ParentElement, Radius, Rect, ScrollbarWidth,
 };
 use rookui::{AppContext, Element, SingletonEntity, ViewContext};
+use string_offset::CharOffset;
 
 use super::editor::view::{CodeEditorRenderOptions, CodeEditorView};
 use super::lsp_telemetry::LspTelemetryEvent;

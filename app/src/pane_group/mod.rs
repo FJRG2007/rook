@@ -14,15 +14,6 @@ use markdown_parser::FormattedTextFragment;
 use parking_lot::FairMutex;
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use serde::{Deserialize, Serialize};
-use session_sharing_protocol::common::{
-    ParticipantId, Role, RoleRequestId, RoleRequestRejectedReason, RoleRequestResponse, SessionId,
-};
-use settings::Setting as _;
-use tree::DEFAULT_FLEX_VALUE;
-use typed_path::TypedPath;
-use url::Url;
-use uuid::Uuid;
 use rook_cli::agent::Harness;
 use rook_core::command::ExitCode;
 use rook_core::context_flag::ContextFlag;
@@ -45,6 +36,15 @@ use rookui::{
     AppContext, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle, WindowId,
 };
+use serde::{Deserialize, Serialize};
+use session_sharing_protocol::common::{
+    ParticipantId, Role, RoleRequestId, RoleRequestRejectedReason, RoleRequestResponse, SessionId,
+};
+use settings::Setting as _;
+use tree::DEFAULT_FLEX_VALUE;
+use typed_path::TypedPath;
+use url::Url;
+use uuid::Uuid;
 
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;
 use crate::ai::agent::conversation::{AIAgentHarness, AIConversation, AIConversationId};
@@ -208,8 +208,8 @@ pub use pane::{
     AnyPaneContent, BackingView, PaneConfiguration, PaneConfigurationEvent, PaneContent, PaneEvent,
     PaneHeaderAction, PaneHeaderCustomAction, PaneId, PaneView, TerminalPaneId,
 };
-pub use tree::{Direction, PaneData, PaneFlex, PaneNode, SplitDirection};
 use rook_errors::report_error;
+pub use tree::{Direction, PaneData, PaneFlex, PaneNode, SplitDirection};
 pub use working_directories::{WorkingDirectoriesEvent, WorkingDirectoriesModel};
 
 use self::pane::{DetachType, PaneViewEvent};

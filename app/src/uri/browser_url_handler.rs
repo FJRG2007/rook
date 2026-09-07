@@ -1,5 +1,5 @@
-use url::Url;
 use rook_errors::report_error;
+use url::Url;
 
 use super::web_intent_parser::WebIntent;
 

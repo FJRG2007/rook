@@ -5,8 +5,8 @@ use ort::session::Session;
 use ort::tensor::ArrayExtensions as _;
 use ort::value::Value;
 use parking_lot::Mutex;
-use tokenizers::Tokenizer;
 use rook_completer::ParsedTokensSnapshot;
+use tokenizers::Tokenizer;
 
 use super::{ClassificationResult, Model};
 use crate::InputClassifierDecisionSource;

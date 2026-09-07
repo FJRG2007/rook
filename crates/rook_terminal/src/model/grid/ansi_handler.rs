@@ -16,12 +16,12 @@ use base64::Engine as _;
 use bounded_vec_deque::BoundedVecDeque;
 use pathfinder_geometry::vector::Vector2F;
 use rand::Rng;
-use tab_stops::TabStops;
-use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 use rook_core::channel::ChannelState;
 use rook_core::features::FeatureFlag;
 use rook_errors::report_error;
 use rookui_core::image_cache::{FitType, resize_dimensions};
+use tab_stops::TabStops;
+use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
 use super::{AbsolutePoint, FullGridClearBehavior, GridHandler, PerformResetGridChecks, TermMode};
 use crate::event::Event;

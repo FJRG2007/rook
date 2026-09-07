@@ -2,7 +2,6 @@ use markdown_parser::{
     FormattedText, FormattedTextFragment, FormattedTextInline, FormattedTextLine,
 };
 use pathfinder_geometry::vector::vec2f;
-use serde::{Deserialize, Serialize};
 use rook_core::paths::home_relative_path;
 use rook_core::ui::theme::Fill;
 use rookui::accessibility::{AccessibilityContent, RookA11yRole};
@@ -18,6 +17,7 @@ use rookui::{
     AppContext, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use serde::{Deserialize, Serialize};
 
 use crate::app_state::{AppState, get_app_state};
 use crate::appearance::Appearance;

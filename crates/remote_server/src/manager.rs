@@ -6,7 +6,6 @@ use std::time::Duration;
 
 use futures::channel::oneshot;
 use repo_metadata::RepoMetadataUpdate;
-use serde::Serialize;
 use rook_core::SessionId;
 #[cfg(not(target_family = "wasm"))]
 use rook_core::channel::ChannelState;
@@ -16,6 +15,7 @@ use rook_util::standardized_path::StandardizedPath;
 #[cfg(not(target_family = "wasm"))]
 use rookui_core::r#async::FutureExt as _;
 use rookui_core::{Entity, ModelContext, ModelSpawner, SingletonEntity};
+use serde::Serialize;
 
 use crate::HostId;
 use crate::auth::RemoteServerAuthContext;

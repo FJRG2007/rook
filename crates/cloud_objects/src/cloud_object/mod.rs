@@ -6,7 +6,6 @@ use anyhow::{Result, anyhow};
 use chrono::{DateTime, Utc};
 use derivative::Derivative;
 use pathfinder_geometry::vector::vec2f;
-use serde::{Deserialize, Serialize};
 use rook_core::features::FeatureFlag;
 use rook_core::ui::Icon;
 use rook_core::ui::appearance::Appearance;
@@ -19,6 +18,7 @@ use rookui_core::elements::{
     ParentAnchor, ParentElement, ParentOffsetBounds, Stack,
 };
 use rookui_core::ui_components::components::UiComponent;
+use serde::{Deserialize, Serialize};
 
 use crate::auth::UserUid;
 use crate::drive::sharing::{SharingAccessLevel, Subject, TeamKind, UserKind};

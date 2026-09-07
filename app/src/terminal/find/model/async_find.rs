@@ -13,9 +13,9 @@ use std::time::Duration;
 
 use background_task::spawn_find_task;
 use parking_lot::FairMutex;
-use sum_tree::SeekBias;
 use rookui::r#async::SpawnedFutureHandle;
 use rookui::{EntityId, ModelContext};
+use sum_tree::SeekBias;
 use work_queue::FindWorkQueue;
 
 use super::FindOptions;

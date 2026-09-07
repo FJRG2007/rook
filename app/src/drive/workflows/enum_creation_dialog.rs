@@ -1,7 +1,5 @@
 use std::rc::Rc;
 
-use strum::IntoEnumIterator;
-use strum_macros::{EnumIter, IntoStaticStr};
 use rook_core::features::FeatureFlag;
 use rook_core::ui::appearance::Appearance;
 use rook_editor::editor::NavigationKey;
@@ -17,6 +15,8 @@ use rookui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use strum::IntoEnumIterator;
+use strum_macros::{EnumIter, IntoStaticStr};
 
 use crate::cloud_object::Revision;
 use crate::cloud_object::model::persistence::CloudModel;

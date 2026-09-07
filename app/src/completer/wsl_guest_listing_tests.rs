@@ -4,11 +4,11 @@ use std::collections::HashSet;
 use std::iter::FromIterator;
 use std::sync::Arc;
 
-use typed_path::{TypedPath, TypedPathBuf};
 #[cfg(unix)]
 use rook_completer::completer::EngineDirEntry;
 use rook_completer::signatures::CommandRegistry;
 use rookui::App;
+use typed_path::{TypedPath, TypedPathBuf};
 
 use crate::completer::SessionContext;
 use crate::terminal::model::session::command_executor::testing::TestCommandExecutor;

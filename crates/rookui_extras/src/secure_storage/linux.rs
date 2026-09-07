@@ -10,9 +10,9 @@ use std::path::PathBuf;
 use anyhow::{Context, anyhow};
 use rand::RngCore;
 use ring::aead;
+use rook_errors::report_error;
 use secret_service::EncryptionType;
 use secret_service::blocking::{Item, SecretService};
-use rook_errors::report_error;
 
 use super::Error;
 

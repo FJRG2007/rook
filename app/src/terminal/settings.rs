@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
-use settings::macros::define_settings_group;
-use settings::{RespectUserSyncSetting, SupportedPlatforms, SyncToCloud};
 use rook_core::features::FeatureFlag;
 use rookui::units::Pixels;
 use rookui::{AppContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
+use settings::macros::define_settings_group;
+use settings::{RespectUserSyncSetting, SupportedPlatforms, SyncToCloud};
 
 use crate::settings::{AISettings, InputSettings, TerminalSpacing};
 

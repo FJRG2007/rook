@@ -18,8 +18,8 @@ use lazy_static::lazy_static;
 use parking_lot::Mutex;
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::Vector2F;
-use rustc_hash::FxHashMap;
 use rook_errors::report_error;
+use rustc_hash::FxHashMap;
 
 use super::{
     ActionCallback, BlurContext, FocusContext, GlobalActionCallback, GlobalShortcut,

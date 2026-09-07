@@ -3,9 +3,9 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use pathfinder_geometry::rect::RectF;
-use serde::{Deserialize, Serialize};
 use rookui::platform::FullscreenState;
 use rookui::{AppContext, SingletonEntity as _};
+use serde::{Deserialize, Serialize};
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent_conversations_model::AgentManagementFilters;

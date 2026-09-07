@@ -17,7 +17,6 @@ use instant::Instant;
 pub use interaction_mode::*;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::Vector2F;
-pub use serialized_block::*;
 use rook_core::command::ExitCode;
 use rook_core::features::FeatureFlag;
 use rook_errors::report_error;
@@ -28,6 +27,7 @@ use rook_util::path::user_friendly_path;
 use rookui::r#async::executor::Background;
 use rookui::record_trace_event;
 use rookui::units::{IntoLines, Lines};
+pub use serialized_block::*;
 
 pub use super::BlockId;
 use super::bootstrap::BootstrapStage;

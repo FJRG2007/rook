@@ -41,8 +41,8 @@ fn open_in_rook_tooltip(
     mouse_state: MouseStateHandle,
     app: &AppContext,
 ) -> Option<GridTooltipLink> {
-    use settings::Setting as _;
     use rookui::SingletonEntity;
+    use settings::Setting as _;
 
     use crate::settings::CodeSettings;
     use crate::util::file::external_editor::EditorSettings;

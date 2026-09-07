@@ -9,7 +9,6 @@ use std::ops::{Range, RangeInclusive};
 
 use lazy_static::lazy_static;
 use num_traits::Float as _;
-use unicode_width::UnicodeWidthChar;
 use rook_core::features::FeatureFlag;
 use rook_errors::{ReportErrorLogMode, report_error};
 use rookui::assets::asset_cache::{AssetCache, AssetSource, AssetState};
@@ -23,6 +22,7 @@ use rookui::platform::LineStyle;
 use rookui::text_layout::{DEFAULT_TOP_BOTTOM_RATIO, Line, StyleAndFont, TextStyle};
 use rookui::units::{IntoLines as _, Lines, Pixels};
 use rookui::{AppContext, Element, EntityId, PaintContext, Scene, SingletonEntity};
+use unicode_width::UnicodeWidthChar;
 
 pub use self::cell_glyph_cache::CellGlyphCache;
 use self::cell_type::{CellType, IsFocused, Secret};

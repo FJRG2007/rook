@@ -1,8 +1,8 @@
 use std::num::NonZeroU8;
 use std::ops::Range;
 
-use string_offset::CharOffset;
 use rookui_core::text::TuiGridPoint;
+use string_offset::CharOffset;
 
 use super::super::test_utils::TEST_STYLES;
 use super::super::{CharCellState, CharCellTemporaryBlock, LineCount};

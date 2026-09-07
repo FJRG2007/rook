@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use pathfinder_geometry::vector::vec2f;
-use vim::vim::{VimMode, VimState};
 use rook_completer::completer::Description;
 use rook_core::features::FeatureFlag;
 use rookui::elements::{
@@ -14,6 +13,7 @@ use rookui::fonts::Weight;
 use rookui::presenter::ChildView;
 use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::{AppContext, EntityId, SingletonEntity, ViewHandle};
+use vim::vim::{VimMode, VimState};
 
 use crate::ai::llms::{LLMPreferences, should_show_key_icon_for_model};
 use crate::ai::{AIRequestUsageModel, BuyCreditsBannerDisplayState};

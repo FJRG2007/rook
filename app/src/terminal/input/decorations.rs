@@ -4,13 +4,13 @@
 use std::collections::HashMap;
 use std::ops::Range;
 
-use settings::Setting as _;
-use string_offset::{ByteOffset, CharOffset};
 pub use rook_completer::completer::SuggestionTypeName;
 pub use rook_completer::util::parse_current_commands_and_tokens;
 pub use rook_completer::{ParsedTokenData, ParsedTokensSnapshot};
 use rook_core::features::FeatureFlag;
 use rookui::{AppContext, SingletonEntity, ViewContext};
+use settings::Setting as _;
+use string_offset::{ByteOffset, CharOffset};
 
 use super::Input;
 use crate::appearance::Appearance;

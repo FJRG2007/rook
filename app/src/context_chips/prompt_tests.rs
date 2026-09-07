@@ -1,5 +1,5 @@
-use serde_json::Value;
 use rookui::{App, SingletonEntity};
+use serde_json::Value;
 
 use super::Prompt;
 use crate::auth::AuthStateProvider;

@@ -3,12 +3,12 @@ use std::ops::Range;
 use std::time::Duration;
 
 use async_channel::Sender;
-use string_offset::ByteOffset;
 use rook_completer::completer::SuggestionTypeName;
 use rook_completer::signatures::CommandRegistry;
 use rook_core::ui::theme::AnsiColorIdentifier;
 use rookui::r#async::SpawnedFutureHandle;
 use rookui::{Entity, ModelContext, SingletonEntity, ViewHandle};
+use string_offset::ByteOffset;
 
 use crate::appearance::Appearance;
 use crate::completer::SessionAgnosticContext;

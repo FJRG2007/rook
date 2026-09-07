@@ -3,7 +3,6 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use parking_lot::FairMutex;
-use string_offset::CharOffset;
 use rook::tui_export::{
     AIAgentAction, AIAgentActionId, AIAgentActionType, AIConversationId, Appearance, TaskId,
     TerminalModel, queue_tui_permission_action,
@@ -18,6 +17,7 @@ use rookui_core::presenter::tui::TuiPresenter;
 use rookui_core::{
     App, AppContext, EntityIdMap, TuiView, TypedActionView, ViewHandle, WindowInvalidation,
 };
+use string_offset::CharOffset;
 
 use super::{
     ShellCommandViewState, TuiShellCommandView, TuiShellCommandViewAction, TuiShellCommandViewEvent,

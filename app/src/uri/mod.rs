@@ -11,14 +11,14 @@ use std::str::FromStr;
 
 use anyhow::{Result, anyhow, ensure};
 use itertools::Itertools;
-use session_sharing_protocol::common::SessionId;
-use url::Url;
 #[cfg(not(target_family = "wasm"))]
 use rook_errors::report_error;
 use rook_util::path::LineAndColumnArg;
 use rookui::notification::UserNotification;
 use rookui::platform::TerminationMode;
 use rookui::{AppContext, EntityId, SingletonEntity as _, TypedActionView, ViewHandle, WindowId};
+use session_sharing_protocol::common::SessionId;
+use url::Url;
 
 use self::docker::open_docker_container;
 use crate::ai::active_agent_views_model::{ActiveAgentViewsModel, ConversationOrTaskId};

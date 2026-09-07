@@ -10,11 +10,10 @@ use onboarding::{
     SelectedSettings,
 };
 use pathfinder_color::ColorU;
-use rust_embed::RustEmbed;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::icons::Icon;
 use rook_core::ui::theme::{
-    AnsiColor, AnsiColors, Details, Fill, Image, TerminalColors, RookTheme,
+    AnsiColor, AnsiColors, Details, Fill, Image, RookTheme, TerminalColors,
 };
 use rookui_core::assets::asset_cache::AssetSource;
 use rookui_core::elements::{
@@ -27,6 +26,7 @@ use rookui_core::{
     AddWindowOptions, AppContext, AssetProvider, Element, Entity, SingletonEntity as _,
     TypedActionView, View, ViewContext, ViewHandle, platform,
 };
+use rust_embed::RustEmbed;
 
 #[derive(Clone, Copy, RustEmbed)]
 #[folder = "../../app/assets"]

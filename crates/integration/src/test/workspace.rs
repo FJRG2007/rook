@@ -5,7 +5,6 @@ use std::time::Duration;
 
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use settings::Setting as _;
 use rook::cmd_or_ctrl_shift;
 use rook::features::FeatureFlag;
 use rook::integration_testing::clipboard::assert_clipboard_contains_string;
@@ -44,6 +43,7 @@ use rookui_core::windowing::WindowManager;
 use rookui_core::{
     EntityId, SingletonEntity, TypedActionView, WindowId, async_assert, async_assert_eq,
 };
+use settings::Setting as _;
 
 use super::new_builder;
 use crate::Builder;

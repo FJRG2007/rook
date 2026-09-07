@@ -1,6 +1,6 @@
-use settings::Setting as _;
 use rookui::fonts::FamilyId;
 use rookui::{AddSingletonModel, AppContext, AssetProvider, Entity, ModelContext, SingletonEntity};
+use settings::Setting as _;
 
 #[cfg(target_os = "macos")]
 mod macos_app_icon {
@@ -22,7 +22,7 @@ use crate::settings::{
     FontSettings, FontSettingsChangedEvent, MonospaceFontSize, Settings, ThemeSettings,
     active_theme_kind,
 };
-use crate::themes::theme::{ThemeKind, RookTheme};
+use crate::themes::theme::{RookTheme, ThemeKind};
 
 /// Manages the state of the app-wide Appearance settings, it is responsible
 /// for 1) listening to settings changes and update the underlying Appearance

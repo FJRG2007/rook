@@ -2,8 +2,8 @@
 use std::io::Write;
 use std::path::PathBuf;
 
-use typed_path::TypedPath;
 use rook_util::path::{WSLPathConversionError, convert_wsl_to_windows_host_path};
+use typed_path::TypedPath;
 
 use crate::terminal::shell::ShellType;
 

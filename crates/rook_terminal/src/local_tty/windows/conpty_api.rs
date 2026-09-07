@@ -1,8 +1,8 @@
 use std::mem::transmute;
 use std::path::Path;
 
-use thiserror::Error;
 use rook_util::path::TargetDirError;
+use thiserror::Error;
 use windows::Win32::Foundation::HANDLE;
 use windows::Win32::System::Console::{COORD, HPCON};
 use windows::Win32::System::LibraryLoader::{GetProcAddress, LoadLibraryW};

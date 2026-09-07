@@ -8,12 +8,12 @@ use std::sync::Arc;
 
 use chrono::{Local, Utc};
 use parking_lot::FairMutex;
-use session_sharing_protocol::common::CLIAgentSessionState;
 use rook_cli::agent::Harness;
 use rook_terminal::model::escape_sequences::{BRACKETED_PASTE_END, BRACKETED_PASTE_START, C0};
 use rookui::notification::UserNotification;
 use rookui::platform::WindowStyle;
 use rookui::{App, EntityIdSet, Presenter, ReadModel, WindowInvalidation};
+use session_sharing_protocol::common::CLIAgentSessionState;
 
 use super::*;
 use crate::ActiveAgentViewsModel;

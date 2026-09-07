@@ -1,7 +1,6 @@
 use std::cell::RefCell;
 
 use futures::channel::oneshot;
-use serde_json::json;
 use rook::tui_export::{
     AIAgentAction, AIAgentActionId, AIAgentActionResultType, AIAgentActionType, AIConversationId,
     BlocklistAIActionEvent, SuggestNewConversationResult, TaskId, queue_tui_permission_action,
@@ -12,6 +11,7 @@ use rookui::{AddWindowOptions, App};
 use rookui_core::elements::tui::{Color, TuiBufferExt, TuiRect};
 use rookui_core::presenter::tui::TuiPresenter;
 use rookui_core::{TuiView as _, WindowInvalidation};
+use serde_json::json;
 
 use super::TuiGenericToolCallView;
 use crate::test_fixtures::{TestHostView, add_test_action_model};

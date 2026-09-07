@@ -3,8 +3,6 @@ use std::sync::Arc;
 
 use async_channel::TryRecvError;
 use parking_lot::Mutex;
-use string_offset::CharOffset;
-use tempfile::tempdir;
 use rook_editor::content::mermaid_diagram::mermaid_asset_source;
 use rook_editor::render::element::RichTextAction;
 use rook_editor::render::model::{
@@ -20,6 +18,8 @@ use rookui::presenter::ChildView;
 use rookui::units::Pixels;
 use rookui::windowing::WindowManager;
 use rookui::{App, Element, Entity, SingletonEntity, TypedActionView, View, ViewHandle, WindowId};
+use string_offset::CharOffset;
+use tempfile::tempdir;
 
 use super::{EditorViewAction, LayoutAffectingAssetLoad, RichTextEditorConfig, RichTextEditorView};
 use crate::appearance::Appearance;

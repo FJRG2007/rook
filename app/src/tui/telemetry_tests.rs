@@ -1,6 +1,6 @@
 use anyhow::anyhow;
-use serde_json::json;
 use rook_core::telemetry::TelemetryEvent as _;
+use serde_json::json;
 
 use super::{
     AbandonmentPhase, AuthenticationAttempt, AuthenticationEntrypoint, AuthenticationFailureReason,

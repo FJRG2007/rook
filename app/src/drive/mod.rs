@@ -19,9 +19,9 @@ use std::fmt;
 pub use cloud_objects::drive::CloudObjectTypeAndId;
 pub use index::DriveIndexVariant;
 pub use panel::{DrivePanel, DrivePanelEvent};
-use serde::{Deserialize, Serialize};
 use rook_core::user_preferences::GetUserPreferences as _;
 use rookui::AppContext;
+use serde::{Deserialize, Serialize};
 
 use crate::cloud_object::model::view::{CloudViewModel, UpdateTimestamp};
 use crate::cloud_object::{CloudObject, ObjectType};

@@ -4,15 +4,15 @@ use std::collections::HashMap;
 use std::sync::mpsc::SyncSender;
 
 #[cfg(not(target_family = "wasm"))]
-use session_sharing_protocol::sharer::SessionSourceType;
-use url::Url;
-#[cfg(not(target_family = "wasm"))]
 use rook_cli::agent::Harness;
 use rook_core::execution_mode::AppExecutionMode;
 use rook_errors::report_error;
 use rookui::{
     AppContext, EntityId, ModelHandle, SingletonEntity, ViewContext, ViewHandle, WindowId,
 };
+#[cfg(not(target_family = "wasm"))]
+use session_sharing_protocol::sharer::SessionSourceType;
+use url::Url;
 
 #[cfg(not(target_family = "wasm"))]
 use super::local_harness_launch::{PreparedLocalHarnessLaunch, prepare_local_harness_child_launch};

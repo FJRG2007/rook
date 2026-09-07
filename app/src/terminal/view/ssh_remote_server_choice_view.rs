@@ -16,7 +16,6 @@
 //!
 //! Dismissing the block (on click of either option, or when the session is
 //! deregistered) is the parent's responsibility.
-use settings::Setting;
 use rook_core::ui::theme::color::internal_colors;
 use rook_errors::report_error;
 use rookui::elements::{
@@ -29,6 +28,7 @@ use rookui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use settings::Setting;
 
 use crate::ai::blocklist::block::keyboard_navigable_buttons::{
     KeyboardNavigableButtons, rich_navigation_button,
@@ -38,7 +38,7 @@ use crate::ai::blocklist::inline_action::inline_action_header::{
 };
 use crate::server::telemetry::TelemetryEvent;
 use crate::terminal::model::session::SessionId;
-use crate::terminal::rookify::settings::{SshExtensionInstallMode, RookifySettings};
+use crate::terminal::rookify::settings::{RookifySettings, SshExtensionInstallMode};
 use crate::ui_components::blended_colors;
 use crate::{Appearance, send_telemetry_from_ctx};
 

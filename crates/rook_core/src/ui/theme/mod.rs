@@ -4,10 +4,10 @@ pub mod phenomenon;
 use std::path::PathBuf;
 
 use dirs::home_dir;
-use serde::{Deserialize, Serialize};
 use rookui_core::assets::asset_cache::AssetSource;
 use rookui_core::color::ColorU;
 use rookui_core::geometry::vector::vec2f;
+use serde::{Deserialize, Serialize};
 
 use self::color::CustomDetails;
 use super::color::blend::Blend;

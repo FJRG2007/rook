@@ -7,11 +7,11 @@ use repo_metadata::local_model::IndexedRepoState;
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
 use repo_metadata::{RepoMetadataModel, RepositoryIdentifier};
-use settings::Setting;
-use virtual_fs::{Stub, VirtualFS};
 use rook_core::ui::appearance::Appearance;
 use rookui::platform::WindowStyle;
 use rookui::{App, ModelHandle, SingletonEntity};
+use settings::Setting;
+use virtual_fs::{Stub, VirtualFS};
 
 use super::FileTreeView;
 use crate::auth::AuthStateProvider;

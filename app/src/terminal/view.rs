@@ -108,31 +108,6 @@ use regex::Regex;
 #[cfg(not(target_family = "wasm"))]
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::repositories::RepoDetectionSource;
-use serde::Serialize;
-use serde_json::json;
-use session_sharing_protocol::common::{
-    AgentAttachment, LongRunningCommandAgentInteraction, LongRunningCommandAgentInteractionState,
-    ParticipantId, Role, RoleRequestId, RoleRequestResponse,
-    ServerConversationToken as SessionSharingServerConversationToken,
-    WindowSize as SessionSharingWindowSize,
-};
-use session_sharing_protocol::sharer::{
-    RoleUpdateReason, SessionEndedReason, SessionRetentionReason,
-};
-use settings::{Setting, ToggleableSetting};
-use shared_session::cloud_conversation_continuation::CloudConversationContinuationUiState;
-pub(crate) use shared_session::cloud_conversation_continuation::{
-    AIQueryRouting, CloudRoutingIndicator, CompletedChildPresentation, ConversationAccess,
-    completed_child_conversation_access, completed_child_presentation,
-    is_retained_setup_failure_debug_editable_for_task, resolve_ai_query_routing,
-    resolve_ambient_agent_task_id,
-};
-use shared_session::{SharedSessionAdapter, Viewer};
-use ssh_file_upload::{FileUpload, FileUploadEvent};
-use sum_tree::SeekBias;
-use use_agent_footer::UseAgentToolbar;
-use uuid::Uuid;
-use vec1::vec1;
 use rook_completer::meta::Span;
 use rook_core::r#async::debounce;
 use rook_core::channel::ChannelState;
@@ -182,6 +157,31 @@ use rookui::{
     View, ViewAsRef, ViewContext, ViewHandle, WeakModelHandle, WeakViewHandle, WindowId,
     end_trace_after_next, record_trace_event, windowing,
 };
+use serde::Serialize;
+use serde_json::json;
+use session_sharing_protocol::common::{
+    AgentAttachment, LongRunningCommandAgentInteraction, LongRunningCommandAgentInteractionState,
+    ParticipantId, Role, RoleRequestId, RoleRequestResponse,
+    ServerConversationToken as SessionSharingServerConversationToken,
+    WindowSize as SessionSharingWindowSize,
+};
+use session_sharing_protocol::sharer::{
+    RoleUpdateReason, SessionEndedReason, SessionRetentionReason,
+};
+use settings::{Setting, ToggleableSetting};
+use shared_session::cloud_conversation_continuation::CloudConversationContinuationUiState;
+pub(crate) use shared_session::cloud_conversation_continuation::{
+    AIQueryRouting, CloudRoutingIndicator, CompletedChildPresentation, ConversationAccess,
+    completed_child_conversation_access, completed_child_presentation,
+    is_retained_setup_failure_debug_editable_for_task, resolve_ai_query_routing,
+    resolve_ambient_agent_task_id,
+};
+use shared_session::{SharedSessionAdapter, Viewer};
+use ssh_file_upload::{FileUpload, FileUploadEvent};
+use sum_tree::SeekBias;
+use use_agent_footer::UseAgentToolbar;
+use uuid::Uuid;
+use vec1::vec1;
 
 use self::link_detection::HighlightedLinkOption;
 pub use self::link_detection::{GridHighlightedLink, RichContentLink, RichContentLinkTooltipInfo};
@@ -198,11 +198,11 @@ use super::model::rich_content::RichContentType;
 use super::model::secrets::RichContentSecretTooltipInfo;
 use super::model::selection::ExpandedSelectionRange;
 use super::model::session::SessionBootstrappedEvent;
-use super::settings::AltScreenPaddingMode;
-use super::ssh::util::{InteractiveSshCommand, SshRookifyCommand, parse_interactive_ssh_command};
 use super::rookify::RookificationSource;
 use super::rookify::success_block::{RookifySuccessBlock, RookifySuccessBlockEvent};
-use super::rookify::trigger_state::{SshBlockState, RookifyState};
+use super::rookify::trigger_state::{RookifyState, SshBlockState};
+use super::settings::AltScreenPaddingMode;
+use super::ssh::util::{InteractiveSshCommand, SshRookifyCommand, parse_interactive_ssh_command};
 use super::{CLIAgent, GridType, cli_agent, should_right_click_paste};
 #[cfg(any(test, feature = "integration_tests"))]
 use crate::ai::agent::UserQueryMode;
@@ -458,6 +458,9 @@ use crate::terminal::model::terminal_model::{
 use crate::terminal::model::{ObfuscateSecrets, RespectObfuscatedSecrets, SecretHandle};
 use crate::terminal::model_events::{AnsiHandlerEvent, ModelEvent, ModelEventDispatcher};
 use crate::terminal::recorder::PtyRecorder;
+use crate::terminal::rookify::SubshellSource;
+use crate::terminal::rookify::render::render_subshell_separator;
+use crate::terminal::rookify::settings::RookifySettings;
 use crate::terminal::safe_mode_settings::get_secret_obfuscation_mode;
 use crate::terminal::session_settings::{
     DEFAULT_THRESHOLD_FOR_LONG_RUNNING_NOTIFICATION, NotificationsMode, NotificationsSettings,
@@ -499,9 +502,6 @@ use crate::terminal::view::ssh_tmux_deprecation_banner::{
 };
 use crate::terminal::view::telemetry::PromptSuggestionFallbackReason;
 use crate::terminal::view::zero_state_block::TerminalViewZeroStateBlock;
-use crate::terminal::rookify::SubshellSource;
-use crate::terminal::rookify::render::render_subshell_separator;
-use crate::terminal::rookify::settings::RookifySettings;
 use crate::terminal::waterfall_gap_element::WaterfallGapElement;
 use crate::terminal::writeable_pty::{PtyIntent, PtyIntentEvent, TerminalSurface};
 use crate::terminal::{

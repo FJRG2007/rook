@@ -6,9 +6,9 @@ mod search_item;
 mod view;
 
 pub use data_source::SelectUserQuery;
-pub use view::{UserQueryMenuEvent, UserQueryMenuView};
 use rookui::keymap::Keystroke;
 use rookui::platform::OperatingSystem;
+pub use view::{UserQueryMenuEvent, UserQueryMenuView};
 
 use crate::terminal::input::inline_menu::{
     InlineMenuAction, InlineMenuMessageArgs, InlineMenuRowAction, InlineMenuType,

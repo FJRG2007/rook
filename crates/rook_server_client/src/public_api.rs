@@ -1,7 +1,7 @@
 use anyhow::{Context as _, Result};
-use serde::de::DeserializeOwned;
 use rook_core::channel::ChannelState;
 use rook_errors::{ErrorExt, register_error};
+use serde::de::DeserializeOwned;
 
 use crate::base_client::{AmbientHeaderPolicy, BaseClient};
 

@@ -16,7 +16,7 @@ use rookui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View
 use crate::appearance::Appearance;
 use crate::server::telemetry::TelemetryEvent;
 use crate::settings::{ThemeSettings, active_theme_kind};
-use crate::themes::theme::{ThemeKind, RookTheme};
+use crate::themes::theme::{RookTheme, ThemeKind};
 use crate::user_config::util::from_yaml;
 use crate::{send_telemetry_from_ctx, user_config};
 

@@ -9,8 +9,6 @@ use diesel::SqliteConnection;
 #[cfg(feature = "local_fs")]
 use parking_lot::Mutex;
 use pathfinder_geometry::vector::vec2f;
-use settings::Setting as _;
-use uuid::Uuid;
 use rook_core::send_telemetry_from_ctx;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::color::internal_colors;
@@ -28,6 +26,8 @@ use rookui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
     WeakViewHandle,
 };
+use settings::Setting as _;
+use uuid::Uuid;
 
 use crate::GlobalResourceHandlesProvider;
 use crate::ai::blocklist::secret_redaction::find_secrets_in_text;

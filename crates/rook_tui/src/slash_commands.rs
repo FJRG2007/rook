@@ -6,7 +6,6 @@
 //! shared-source queries, and snapshotting render-friendly row data.
 use std::ops::Range;
 
-use string_offset::CharOffset;
 use rook::editor::{CodeEditorModel, CodeEditorModelEvent};
 use rook::search::data_source::QueryResult;
 use rook::search::mixer::SearchMixerEvent;
@@ -21,6 +20,7 @@ use rook_editor::model::CoreEditorModel;
 use rook_search_core::inline_menu::{InlineMenuResultsUpdate, InputDrivenInlineMenuLifecycle};
 use rookui::SingletonEntity;
 use rookui_core::{AppContext, Entity, ModelContext, ModelHandle};
+use string_offset::CharOffset;
 
 use crate::inline_menu::{
     MAX_INLINE_MENU_ROWS, TuiInlineMenuListState, TuiInlineMenuRow, TuiInlineMenuRowStyle,

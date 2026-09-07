@@ -1,8 +1,8 @@
 // The code in this file is adapted from the alacritty_terminal crate under the
 // Apache license; see: crates/rook_terminal/src/model/LICENSE-ALACRITTY.
 
-use string_offset::ByteOffset;
 use rook_errors::report_error;
+use string_offset::ByteOffset;
 
 use super::{FullGridClearBehavior, GridHandler};
 use crate::SizeInfo;

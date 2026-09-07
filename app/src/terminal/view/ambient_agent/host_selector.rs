@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use settings::Setting as _;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::Fill;
 use rook_core::ui::theme::color::internal_colors;
@@ -16,6 +15,7 @@ use rookui::text_layout::ClipConfig;
 use rookui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use settings::Setting as _;
 
 use crate::ai::blocklist::inline_action::orchestration_controls::ORCHESTRATION_ROOK_WORKER_HOST;
 use crate::ai::cloud_agent_settings::CloudAgentSettings;

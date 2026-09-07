@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use rookui::Entity;
+use serde::{Deserialize, Serialize};
 
 #[derive(
     Debug,

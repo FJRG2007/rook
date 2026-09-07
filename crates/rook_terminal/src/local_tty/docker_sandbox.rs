@@ -12,9 +12,9 @@
 
 use std::path::{Path, PathBuf};
 
-use serde::{Deserialize, Serialize};
 use rook_core::SessionId;
 use rook_util::path::resolve_executable;
+use serde::{Deserialize, Serialize};
 
 use super::shell::DirectShellStarter;
 use crate::shell::ShellType;

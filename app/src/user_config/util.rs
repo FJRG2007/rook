@@ -14,7 +14,7 @@ use crate::ai::custom_model_routers::{
 };
 use crate::launch_configs::launch_config::LaunchConfig;
 use crate::tab_configs::{TabConfig, TabConfigError};
-use crate::themes::theme::{ThemeKind, RookTheme, RookThemeConfig};
+use crate::themes::theme::{RookTheme, RookThemeConfig, ThemeKind};
 use crate::workflows::workflow::Workflow;
 
 const CONFIG_FILE_SUFFIXES: &[&str] = &[".yaml", ".yml"];

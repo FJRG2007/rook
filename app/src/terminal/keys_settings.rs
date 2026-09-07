@@ -1,8 +1,8 @@
-use settings::macros::define_settings_group;
-use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
 use rook_errors::{report_error, report_if_error};
 use rookui::keymap::Keystroke;
 use rookui::{AppContext, DisplayIdx, ModelContext};
+use settings::macros::define_settings_group;
+use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
 
 use crate::root_view::{QuakeModePinPosition, update_quake_window_bounds};
 use crate::settings::{

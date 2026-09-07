@@ -7,10 +7,10 @@ use futures::future::FutureExt;
 use futures::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader, BufWriter};
 use futures::lock::Mutex;
 use jsonrpc::Transport;
-use simple_logger::SimpleLogger;
 use rook_errors::report_error;
 use rookui_core::r#async::Timer;
 use rookui_core::r#async::executor::{Background, BackgroundTask};
+use simple_logger::SimpleLogger;
 
 /// Transport implementation for LSP communication over process stdin/stdout.
 /// Also manages the LSP server process lifecycle with graceful shutdown capabilities.

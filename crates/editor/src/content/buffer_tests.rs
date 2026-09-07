@@ -10,13 +10,13 @@ use markdown_parser::{
 use pathfinder_color::ColorU;
 use rand::SeedableRng;
 use rand::rngs::StdRng;
-use serde_yaml::{Mapping, Value};
-use string_offset::{ByteOffset, CharOffset};
-use vec1::{Vec1, vec1};
 use rook_util::content_version::ContentVersion;
 use rookui_core::elements::ListIndentLevel;
 use rookui_core::text::point::Point;
 use rookui_core::{App, AppContext, ModelContext, ModelHandle, ReadModel};
+use serde_yaml::{Mapping, Value};
+use string_offset::{ByteOffset, CharOffset};
+use vec1::{Vec1, vec1};
 
 use super::{BufferEvent, EditResult, ToBufferCharOffset};
 use crate::content::buffer::{

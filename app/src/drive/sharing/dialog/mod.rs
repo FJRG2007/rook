@@ -5,7 +5,6 @@ use inheritance::{InheritanceDetails, InheritanceState};
 use itertools::Itertools;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use session_sharing_protocol::common::{Guest, PendingGuest, SessionId, TeamAclData};
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::Fill as ThemeFill;
 use rook_editor::editor::NavigationKey;
@@ -27,6 +26,7 @@ use rookui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle,
 };
+use session_sharing_protocol::common::{Guest, PendingGuest, SessionId, TeamAclData};
 
 use super::qr_code::{QUIET_ZONE_MODULES, QrMatrix, qr_matrix_for_url, qr_png_for_url};
 use super::{

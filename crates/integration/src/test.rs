@@ -75,26 +75,6 @@ use pathfinder_geometry::vector::Vector2F;
 pub use preview_config_migration::*;
 pub use remote_server::*;
 pub use rich_input_ctrl_enter::*;
-pub use rules::*;
-use rust_embed::RustEmbed;
-pub use secrets::*;
-pub use session_restoration::*;
-use settings::Setting as _;
-pub use settings_execution_profiles::*;
-pub use settings_file_errors::*;
-pub use settings_file_hot_reload::*;
-pub use settings_file_migration::*;
-pub use settings_navigation::*;
-pub use settings_private::*;
-use shell::ShellType;
-pub use ssh::*;
-pub use subshell::*;
-use sum_tree::SeekBias;
-pub use sync_inputs::*;
-use sysinfo::{Pid, ProcessesToUpdate, System};
-pub use typeahead::*;
-use version_compare::Cmp;
-pub use video_recording::*;
 use rook::appearance::Appearance;
 use rook::features::FeatureFlag;
 use rook::integration_testing::assertions::{
@@ -117,6 +97,9 @@ use rook::integration_testing::navigation_palette::{
     RecentSession, check_recency, navigate_to_other_session_step, open_navigation_palette_step,
 };
 use rook::integration_testing::pane_group::assert_focused_pane_index;
+use rook::integration_testing::rook_drive::{
+    assert_is_left_panel_open, assert_rook_drive_is_closed, assert_rook_drive_is_open,
+};
 use rook::integration_testing::settings::{
     assert_theme_chooser_contains, set_window_custom_size, toggle_setting,
 };
@@ -151,9 +134,6 @@ use rook::integration_testing::view_getters::{
     pane_group_view, single_input_suggestions_view_for_tab, single_input_view_for_tab,
     single_terminal_pane_view_for_tab, single_terminal_view, single_terminal_view_for_tab,
     workspace_view,
-};
-use rook::integration_testing::rook_drive::{
-    assert_is_left_panel_open, assert_rook_drive_is_closed, assert_rook_drive_is_open,
 };
 use rook::integration_testing::window::{
     add_and_save_window, add_window, add_window_and_check_bounds, close_window,
@@ -200,6 +180,26 @@ use rookui_core::windowing::WindowManager;
 use rookui_core::{
     AssetProvider, Event, SingletonEntity, UpdateView, ViewHandle, async_assert, async_assert_eq,
 };
+pub use rules::*;
+use rust_embed::RustEmbed;
+pub use secrets::*;
+pub use session_restoration::*;
+use settings::Setting as _;
+pub use settings_execution_profiles::*;
+pub use settings_file_errors::*;
+pub use settings_file_hot_reload::*;
+pub use settings_file_migration::*;
+pub use settings_navigation::*;
+pub use settings_private::*;
+use shell::ShellType;
+pub use ssh::*;
+pub use subshell::*;
+use sum_tree::SeekBias;
+pub use sync_inputs::*;
+use sysinfo::{Pid, ProcessesToUpdate, System};
+pub use typeahead::*;
+use version_compare::Cmp;
+pub use video_recording::*;
 pub use websockets::*;
 pub use workflows::*;
 pub use workspace::*;

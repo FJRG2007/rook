@@ -7,12 +7,6 @@ use std::sync::Arc;
 use async_channel::Sender;
 use base64::Engine;
 use itertools::Either;
-use serde::Serialize;
-use session_sharing_protocol::common::{
-    AICommandMetadata, OrderedTerminalEventType, ParticipantId,
-};
-use session_sharing_protocol::sharer::SessionSourceType;
-use string_offset::CharOffset;
 use rook_completer::meta::Span;
 use rook_core::command::ExitCode;
 use rook_core::features::FeatureFlag;
@@ -26,6 +20,12 @@ use rookui::AppContext;
 use rookui::assets::asset_cache::Asset;
 use rookui::r#async::executor::Background;
 use rookui::image_cache::ImageType;
+use serde::Serialize;
+use session_sharing_protocol::common::{
+    AICommandMetadata, OrderedTerminalEventType, ParticipantId,
+};
+use session_sharing_protocol::sharer::SessionSourceType;
+use string_offset::CharOffset;
 
 use super::super::{AltScreen, BlockList};
 use super::ansi::{BootstrappedValue, FinishUpdateValue, InputBufferValue, Mode, PendingHook};

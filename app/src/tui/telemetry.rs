@@ -1,7 +1,7 @@
 use instant::Instant;
+use rook_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 use serde_json::{Value, json};
 use strum_macros::{EnumDiscriminants, EnumIter};
-use rook_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 
 use super::TuiLoginPhase;
 use crate::server::server_api::auth::UserAuthenticationError;

@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 use std::ops::Range;
 
-use string_offset::ByteOffset;
-use urlocator::{UrlLocation, UrlLocator};
 use rookui::Action;
 use rookui::elements::{MouseStateHandle, PartialClickableElement};
 use rookui::platform::Cursor;
 use rookui::text::char_slice;
+use string_offset::ByteOffset;
+use urlocator::{UrlLocation, UrlLocator};
 
 use crate::ai::agent::{AIAgentActionType, AIAgentOutput, AIAgentTextSection, ReadFilesRequest};
 use crate::ai::blocklist::block::TextLocation;
@@ -447,9 +447,9 @@ pub(crate) fn detect_file_paths(
     file_paths
 }
 
-use string_offset::CharOffset;
 use rook_editor::content::buffer::Buffer;
 use rookui::text::word_boundaries::WordBoundariesPolicy;
+use string_offset::CharOffset;
 
 /// Returns the range of the word surrounding the given offset.
 pub(crate) fn get_word_range_at_offset(

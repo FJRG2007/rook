@@ -2,7 +2,6 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-use settings::Setting as _;
 #[cfg(target_os = "macos")]
 use rook_core::channel::ChannelState;
 use rook_errors::report_if_error;
@@ -12,6 +11,7 @@ use rookui::ui_components::button::ButtonVariant;
 #[cfg(target_os = "macos")]
 use rookui::ui_components::components::UiComponent;
 use rookui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
+use settings::Setting as _;
 
 use super::settings_page::{
     LocalOnlyIconState, MatchData, PageTitle, PageType, SettingsPageMeta, SettingsPageViewHandle,

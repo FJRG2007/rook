@@ -6,7 +6,6 @@ use async_channel::Sender;
 use itertools::Itertools;
 #[cfg(not(target_family = "wasm"))]
 use repo_metadata::repositories::DetectedRepositories;
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rookui::elements::{
     AnchorPair, Border, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
@@ -21,6 +20,7 @@ use rookui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle,
 };
+use settings::Setting as _;
 
 use super::styles;
 use crate::appearance::Appearance;

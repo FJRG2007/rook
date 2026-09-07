@@ -2,8 +2,6 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use itertools::Itertools;
-use strum::IntoEnumIterator;
-use strum_macros::{EnumIter, IntoStaticStr};
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::Fill;
 use rook_editor::editor::NavigationKey;
@@ -23,6 +21,8 @@ use rookui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use strum::IntoEnumIterator;
+use strum_macros::{EnumIter, IntoStaticStr};
 
 use super::enum_creation_dialog::WorkflowEnumData;
 use crate::editor::{

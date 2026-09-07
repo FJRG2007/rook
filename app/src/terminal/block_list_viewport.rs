@@ -3,12 +3,12 @@ use std::rc::Rc;
 use std::sync::MutexGuard;
 
 use pathfinder_geometry::vector::Vector2F;
-use serde::{Deserialize, Serialize};
-use sum_tree::{Cursor, SeekBias};
 use rook_core::features::FeatureFlag;
 use rookui::elements::ClippedScrollStateHandle;
 use rookui::units::{IntoLines, IntoPixels, Lines, Pixels};
 use rookui::{AppContext, ModelHandle};
+use serde::{Deserialize, Serialize};
+use sum_tree::{Cursor, SeekBias};
 
 use super::block_list_element::{
     GridType, SnackbarHeader, SnackbarHeaderState, SnackbarPoint, VisibleItem,

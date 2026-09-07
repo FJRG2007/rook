@@ -11,16 +11,16 @@ pub use ::ai::agent::{
 pub use ai::agent::action::{RunAgentsAgentRunConfig, RunAgentsExecutionMode, RunAgentsRequest};
 pub use ai::agent::orchestration_config::{OrchestrationConfig, OrchestrationConfigStatus};
 pub use repo_metadata::repositories::RepoDetectionSource;
-#[cfg(feature = "voice_input")]
-pub use voice_input::{
-    StartListeningError, VoiceInput, VoiceInputLifecycle, VoiceInputLifecycleState,
-    VoiceInputState, VoiceInputToggledFrom, VoiceSession, VoiceSessionResult,
-};
 pub use rook_cli::agent::Harness;
 use rook_completer::completer::{CompletionContext as _, TopLevelCommandCaseSensitivity};
 use rook_completer::signatures::CommandRegistry;
 pub use rook_core::SessionId;
 use rookui::SingletonEntity as _;
+#[cfg(feature = "voice_input")]
+pub use voice_input::{
+    StartListeningError, VoiceInput, VoiceInputLifecycle, VoiceInputLifecycleState,
+    VoiceInputState, VoiceInputToggledFrom, VoiceSession, VoiceSessionResult,
+};
 
 pub use self::history::{TuiUpArrowHistoryItem, TuiUpArrowHistoryItemKind, tui_up_arrow_history};
 pub use crate::ai::agent::api::ServerConversationToken;

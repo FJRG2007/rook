@@ -1,6 +1,6 @@
 use itertools::Itertools;
-use serde::{Deserialize, Serialize};
 use rookui::{AppContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
 
 use super::current_prompt::CurrentPrompt;
 use super::prompt::Prompt;

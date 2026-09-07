@@ -52,10 +52,10 @@ mod terminal_probe;
 pub use event_conversion::crossterm_event_to_tui_event;
 use event_conversion::{ClickTracker, ShiftKeyTracker, ShiftRestoration};
 pub use renderer::TuiFrameRenderer;
+use rook_errors::report_error;
 pub use terminal_probe::{
     BackgroundLuminance, ProbedRgb, ProbedTerminalColors, probe_terminal_colors,
 };
-use rook_errors::report_error;
 
 /// The host terminal the runtime draws to and reads input from. Abstracted so
 /// the draw + event loop is testable against an in-memory target.

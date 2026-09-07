@@ -1,7 +1,6 @@
 use std::fmt;
 use std::num::NonZeroUsize;
 
-use settings::Setting as _;
 use rook_core::semantic_selection::SemanticSelection;
 use rookui::elements::{
     Container, DispatchEventResult, Element, EventHandler, SavePosition, SelectableArea,
@@ -11,6 +10,7 @@ use rookui::fonts::{Properties, Weight};
 use rookui::presenter::ChildView;
 use rookui::units::Pixels;
 use rookui::{AppContext, EntityId, ModelAsRef, ModelHandle, SingletonEntity, ViewHandle};
+use settings::Setting as _;
 
 use super::input::InputRenderStateModel;
 use super::model::block::Block;

@@ -29,10 +29,10 @@ pub mod user_preferences;
 #[doc(hidden)]
 pub use anyhow as __anyhow;
 pub use app_id::AppId;
-pub use session_id::SessionId;
 #[doc(hidden)]
 pub use rook_errors as __rook_errors;
 pub use rook_util::host_id::HostId;
+pub use session_id::SessionId;
 // Re-export rookui_core so that it can be referenced safely from the
 // telemetry macros.
 pub use rookui_core;

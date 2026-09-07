@@ -3,9 +3,6 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use settings::ToggleableSetting as _;
-use strum::IntoEnumIterator;
-use uuid::Uuid;
 use rook_core::features::FeatureFlag;
 use rook_core::send_telemetry_from_ctx;
 use rook_core::ui::Icon;
@@ -22,6 +19,9 @@ use rookui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
     WeakViewHandle,
 };
+use settings::ToggleableSetting as _;
+use strum::IntoEnumIterator;
+use uuid::Uuid;
 
 use crate::ToastStack;
 use crate::ai::mcp::gallery::MCPGalleryManagerEvent;

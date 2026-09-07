@@ -1,6 +1,6 @@
-use serde_yaml::{Mapping, Value};
 use rook_editor::content::markdown::MarkdownStyle;
 use rookui::{EntityId, WindowId};
+use serde_yaml::{Mapping, Value};
 
 use super::{
     COMMENT_ID_MAPPING_KEY, ENTITY_ID_MAPPING_KEY, EmbeddedCommentSpace, EmbeddedItem as _,

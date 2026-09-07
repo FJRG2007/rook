@@ -1,8 +1,8 @@
 mod v1;
 
-use serde::Deserialize;
 pub use rook_core::cli_agent_protocol::CLI_AGENT_NOTIFICATION_SENTINEL;
 use rook_errors::report_error;
+use serde::Deserialize;
 
 use crate::terminal::CLIAgent;
 

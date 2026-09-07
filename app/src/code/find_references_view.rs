@@ -8,7 +8,6 @@ use std::path::PathBuf;
 
 use lsp::ReferenceLocation;
 use pathfinder_geometry::vector::Vector2F;
-use string_offset::CharOffset;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::icons::Icon as RookIcon;
 use rook_core::ui::theme::color::internal_colors;
@@ -28,6 +27,7 @@ use rookui::ui_components::components::UiComponent;
 use rookui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use string_offset::CharOffset;
 
 use super::editor::view::{CodeEditorRenderOptions, CodeEditorView};
 use super::global_buffer_model::GlobalBufferModel;

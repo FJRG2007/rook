@@ -3,8 +3,6 @@ use itertools::Itertools;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use settings::Setting as _;
-use thousands::Separable;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::Fill;
 use rook_graphql::billing::{AddonCreditsOption, StripeSubscriptionPlan};
@@ -21,6 +19,8 @@ use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use settings::Setting as _;
+use thousands::Separable;
 
 use crate::pricing::{PricingInfoModel, PricingInfoModelEvent};
 use crate::terminal::general_settings::GeneralSettings;

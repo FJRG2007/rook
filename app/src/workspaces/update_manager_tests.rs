@@ -1,9 +1,9 @@
 use chrono::Utc;
 use cloud_object_client::MockObjectClient;
 use itertools::Itertools;
-use settings::{PrivatePreferences, PublicPreferences};
 use rookui::{AddSingletonModel, App};
 use rookui_extras::user_preferences;
+use settings::{PrivatePreferences, PublicPreferences};
 
 use super::*;
 use crate::ai::credit_availability::{AICreditAvailability, AICreditDenialReason};

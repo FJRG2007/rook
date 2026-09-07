@@ -2,8 +2,8 @@ use std::sync::Arc;
 
 use chrono::{Duration, Utc};
 use cloud_object_client::MockObjectClient;
-use settings::manager::SettingsManager;
 use rookui::{App, SingletonEntity};
+use settings::manager::SettingsManager;
 
 use crate::NetworkStatus;
 use crate::ai::facts::{AIFact, AIMemory, CloudAIFactModel};

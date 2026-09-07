@@ -1,7 +1,6 @@
 use std::rc::Rc;
 
 use pathfinder_geometry::vector::vec2f;
-use serde::Serialize;
 use rook_core::channel::ChannelState;
 use rook_core::ui::theme::color::internal_colors::{neutral_2, neutral_3};
 use rookui::elements::{
@@ -17,6 +16,7 @@ use rookui::{
     AppContext, Element, Entity, EventContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use serde::Serialize;
 
 use crate::ai::AIRequestUsageModel;
 use crate::ai::agent::api::ServerConversationToken;

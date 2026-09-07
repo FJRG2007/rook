@@ -10,8 +10,6 @@ use enum_iterator::Sequence;
 use itertools::Itertools;
 use parking_lot::FairMutex;
 use pathfinder_color::ColorU;
-use session_sharing_protocol::common::{ParticipantId, Selection};
-use vec1::Vec1;
 use rook_core::semantic_selection::SemanticSelection;
 use rook_core::ui::builder::UiBuilder;
 use rook_core::ui::theme::AnsiColorIdentifier;
@@ -36,6 +34,8 @@ use rookui::{
     AfterLayoutContext, AppContext, ClipBounds, Element, EntityId, Event, EventContext,
     LayoutContext, ModelHandle, PaintContext, SingletonEntity as _, SizeConstraint,
 };
+use session_sharing_protocol::common::{ParticipantId, Selection};
+use vec1::Vec1;
 
 use super::block_list_viewport::{ClampingMode, InputMode, ScrollPosition, ViewportState};
 use super::blockgrid_renderer::{BlockGridRenderer, GridRenderParams};
@@ -51,6 +51,7 @@ use super::model::image_map::StoredImageMetadata;
 use super::model::mouse::{MouseAction, MouseButton, MouseState};
 use super::model::session::SessionId;
 use super::model::terminal_model::{SelectedBlocks, WithinBlock, WithinModel};
+use super::rookify::render::{draw_flag_pole, render_subshell_flag};
 use super::shared_session::presence_manager::{
     MUTED_PARTICIPANT_COLOR, PresenceManager, text_selection_color,
 };
@@ -59,7 +60,6 @@ use super::view::{
     BLOCK_BANNER_HEIGHT, BlocklistAIRenderContext, InlineBannerId, RichContentMetadata,
     SeparatorId, SharedSessionBanners, TerminalEditor, TerminalViewRenderContext,
 };
-use super::rookify::render::{draw_flag_pole, render_subshell_flag};
 use super::{HEIGHT_FUDGE_FACTOR_LINES, TerminalModel, heights_approx_eq};
 use crate::ai::blocklist::{ATTACH_AS_AGENT_MODE_CONTEXT_TEXT, ai_brand_color};
 use crate::ai_assistant::{AI_ASSISTANT_SVG_PATH, ASK_AI_ASSISTANT_TEXT};
@@ -84,9 +84,9 @@ use crate::terminal::model::escape_sequences::{
 use crate::terminal::model::index::Point as IndexPoint;
 use crate::terminal::model::selection::{SelectAction, SelectionPoint};
 use crate::terminal::model::terminal_model::BlockIndex;
+use crate::terminal::rookify::SubshellSource;
 use crate::terminal::safe_mode_settings::get_secret_obfuscation_mode;
 use crate::terminal::view::TerminalAction;
-use crate::terminal::rookify::SubshellSource;
 use crate::terminal::{SizeInfo, grid_renderer, should_right_click_paste};
 use crate::themes::theme::{Fill, RookTheme};
 use crate::ui_components::{self, icons as UIIcon};

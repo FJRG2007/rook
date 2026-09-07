@@ -1,6 +1,6 @@
+use rookui::platform::linux;
 use settings::macros::define_settings_group;
 use settings::{SupportedPlatforms, SyncToCloud};
-use rookui::platform::linux;
 
 define_settings_group!(LinuxAppConfiguration,
     settings: [

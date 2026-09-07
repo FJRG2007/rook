@@ -10,9 +10,9 @@ use async_channel::Receiver;
 use enclose::enclose;
 use futures::StreamExt;
 use rand::prelude::StdRng;
-use test::Network;
 use rookui::color::ColorU;
 use rookui::{App, ModelHandle};
+use test::Network;
 
 use super::*;
 use crate::editor::soft_wrap::ClampDirection;

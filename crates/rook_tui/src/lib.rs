@@ -56,6 +56,7 @@ mod platform;
 mod prompt_and_command_history_menu;
 mod read_only_menu;
 mod resume;
+mod rooking_indicator;
 mod session_registry;
 mod skills_menu;
 mod slash_commands;
@@ -87,7 +88,6 @@ mod tui_shell_command_view;
 mod usage;
 #[cfg(feature = "voice_input")]
 mod voice_input;
-mod rooking_indicator;
 mod zero_state;
 mod zero_state_animation;
 

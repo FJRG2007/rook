@@ -7,9 +7,6 @@ use env_var_selector::{EnvVarSelector, EnvVarSelectorEvent};
 use itertools::Itertools;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use string_offset::CharOffset;
-use syntax_highlightable::SyntaxHighlightable;
-use url::Url;
 use rook_core::context_flag::ContextFlag;
 use rook_core::settings::Setting;
 use rook_core::ui::theme::AnsiColorIdentifier;
@@ -32,6 +29,9 @@ use rookui::{
     AppContext, Element, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WindowId,
 };
+use string_offset::CharOffset;
+use syntax_highlightable::SyntaxHighlightable;
+use url::Url;
 
 use super::aliases::WorkflowAliases;
 use super::command_parser::WorkflowCommandDisplayData;

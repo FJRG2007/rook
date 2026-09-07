@@ -19,7 +19,7 @@ use rookui::{Entity, ModelContext, SingletonEntity};
 use crate::ai::custom_model_routers::{CustomModelRouter, ModelConfigError};
 use crate::launch_configs::launch_config::LaunchConfig;
 use crate::tab_configs::{TabConfig, TabConfigError};
-use crate::themes::theme::{ThemeKind, RookThemeConfig};
+use crate::themes::theme::{RookThemeConfig, ThemeKind};
 use crate::workflows::workflow::Workflow;
 
 lazy_static! {

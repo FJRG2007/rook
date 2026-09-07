@@ -23,7 +23,7 @@ use super::settings_page::{
 };
 use super::{SettingsAction, SettingsSection, ToggleSettingActionPair, flags};
 use crate::appearance::Appearance;
-use crate::settings::{AISettings, MemoryEnabled, RuleSuggestionsEnabled, RookDriveContextEnabled};
+use crate::settings::{AISettings, MemoryEnabled, RookDriveContextEnabled, RuleSuggestionsEnabled};
 use crate::util::bindings;
 
 const PAGE_TITLE: &str = "Knowledge";

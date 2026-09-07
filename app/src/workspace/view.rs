@@ -63,12 +63,6 @@ use pathfinder_geometry::rect::RectF;
 use repo_metadata::RemoteRepositoryIdentifier;
 #[cfg(feature = "local_fs")]
 use repo_metadata::repositories::DetectedRepositories;
-#[cfg(all(target_os = "macos", feature = "crash_reporting"))]
-use sentry::protocol::{Attachment, AttachmentType};
-use serde_json;
-use session_sharing_protocol::common::SessionId as SharedSessionId;
-#[cfg(target_family = "wasm")]
-use url::Url;
 use rook_cli::agent::Harness;
 use rook_core::context_flag::ContextFlag;
 use rook_core::execution_mode::AppExecutionMode;
@@ -117,6 +111,12 @@ use rookui::{
     AppContext, Entity, EntityId, FocusContext, ModelHandle, SingletonEntity, TypedActionView,
     UpdateModel, UpdateView, View, ViewAsRef, ViewContext, ViewHandle, WeakViewHandle, WindowId,
 };
+#[cfg(all(target_os = "macos", feature = "crash_reporting"))]
+use sentry::protocol::{Attachment, AttachmentType};
+use serde_json;
+use session_sharing_protocol::common::SessionId as SharedSessionId;
+#[cfg(target_family = "wasm")]
+use url::Url;
 
 use self::vertical_tabs::telemetry::{VerticalTabsDisplayOption, VerticalTabsTelemetryEvent};
 use self::vertical_tabs::{
@@ -341,7 +341,7 @@ use crate::server::telemetry::{
     AddTabWithShellSource, AnonymousUserSignupEntrypoint, CloseTarget, EnvVarTelemetryMetadata,
     FileTreeSource, KnowledgePaneEntrypoint, LaunchConfigUiLocation,
     MCPServerCollectionPaneEntrypoint, NotificationsTurnedOnSource, OpenedRookAISource,
-    PaletteSource, SharingDialogSource, TabRenameEvent, TierLimitHitEvent, RookDriveSource,
+    PaletteSource, RookDriveSource, SharingDialogSource, TabRenameEvent, TierLimitHitEvent,
 };
 use crate::session_management::{SessionNavigationData, SessionSource, TabNavigationData};
 use crate::settings::cloud_preferences::CloudPreferencesSettings;
@@ -411,6 +411,7 @@ use crate::terminal::model::terminal_model::ConversationTranscriptViewerStatus;
 use crate::terminal::resizable_data::{
     DEFAULT_LEFT_PANEL_WIDTH, DEFAULT_RIGHT_PANEL_WIDTH, ModalSizes, ModalType, ResizableData,
 };
+use crate::terminal::rookify::settings::RookifySettings;
 use crate::terminal::safe_mode_settings::SafeModeSettings;
 use crate::terminal::session_settings::{
     NewSessionSource, NotificationsMode, NotificationsSettings, SessionSettings,
@@ -434,7 +435,6 @@ use crate::terminal::view::{
     NOTIFICATIONS_TROUBLESHOOT_URL, OnboardingIntention, OnboardingVersion, SyncEvent,
     SyncInputType, TerminalAction,
 };
-use crate::terminal::rookify::settings::RookifySettings;
 use crate::terminal::{self, BlockListSettings, SizeInfo, TerminalModel, TerminalView};
 use crate::themes::theme::{AnsiColorIdentifier, RespectSystemTheme, ThemeKind};
 use crate::themes::theme_chooser::{ThemeChooser, ThemeChooserEvent, ThemeChooserMode};

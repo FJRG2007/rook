@@ -5,8 +5,6 @@ use lazy_static::lazy_static;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::Vector2F;
-use thiserror::Error;
-use validator::ValidateEmail;
 use rook_errors::report_error;
 use rookui::clipboard::ClipboardContent;
 use rookui::elements::{
@@ -21,6 +19,8 @@ use rookui::{
     AppContext, Entity, EventContext, FocusContext, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use thiserror::Error;
+use validator::ValidateEmail;
 
 use super::SettingsSection;
 use super::settings_page::{

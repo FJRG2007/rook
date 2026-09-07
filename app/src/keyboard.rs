@@ -3,12 +3,12 @@ use std::env::var_os;
 
 use anyhow::Context;
 use itertools::Itertools;
-use serde::{Deserialize, Serialize};
-use vec1::{Vec1, vec1};
 use rookui::AppContext;
 use rookui::keymap::Keystroke;
 #[cfg(not(test))]
 use rookui::keymap::Trigger;
+use serde::{Deserialize, Serialize};
+use vec1::{Vec1, vec1};
 
 /// Environment variable to disable saving keybindings to file (used in integration tests)
 pub const DISABLE_SAVE_ENV_VAR: &str = "ROOK_TEST_DISABLE_KEYBINDING_SAVE";

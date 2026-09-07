@@ -5,11 +5,11 @@ use std::time::Duration;
 
 use chrono::{DateTime, Local};
 use markdown_parser::FormattedTextFragment;
-use session_sharing_protocol::common::{ParticipantId, ParticipantList, Role, SessionId};
-use session_sharing_protocol::sharer::SessionSourceType;
 use rook_core::features::FeatureFlag;
 use rookui::elements::MouseStateHandle;
 use rookui::{AppContext, Element, ModelHandle, ViewContext, ViewHandle};
+use session_sharing_protocol::common::{ParticipantId, ParticipantList, Role, SessionId};
+use session_sharing_protocol::sharer::SessionSourceType;
 
 use super::sharer::Sharer;
 use super::viewer::Viewer;

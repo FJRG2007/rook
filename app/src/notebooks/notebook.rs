@@ -6,8 +6,6 @@ use async_channel::Sender;
 use futures_util::stream::AbortHandle;
 use lazy_static::lazy_static;
 use regex::Regex;
-use settings::Setting as _;
-use url::Url;
 use rook_core::context_flag::ContextFlag;
 use rook_editor::editor::NavigationKey;
 use rook_editor::model::{CoreEditorModel, RichTextEditorModel};
@@ -28,6 +26,8 @@ use rookui::{
     AppContext, BlurContext, Element, Entity, FocusContext, ModelAsRef, ModelHandle,
     SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, WindowId,
 };
+use settings::Setting as _;
+use url::Url;
 
 use self::details_bar::DetailsBar;
 use super::active_notebook_data::{

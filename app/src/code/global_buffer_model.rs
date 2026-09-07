@@ -10,8 +10,6 @@ use futures_util::stream::AbortHandle;
 use lsp::types::TextDocumentContentChangeEvent;
 use lsp::{LspManagerModel, LspServerLogLevel, LspServerModel};
 use remote_server::manager::RemoteServerManager;
-use string_offset::{ByteOffset, CharOffset};
-use vec1::vec1;
 use rook_core::features::FeatureFlag;
 use rook_core::safe_error;
 use rook_editor::content::buffer::{Buffer, ToBufferCharOffset};
@@ -25,6 +23,8 @@ use rook_util::remote_path::RemotePath;
 use rook_util::standardized_path::StandardizedPath;
 use rookui::r#async::Timer;
 use rookui::{Entity, ModelContext, ModelHandle, SingletonEntity, WeakModelHandle};
+use string_offset::{ByteOffset, CharOffset};
+use vec1::vec1;
 
 use super::buffer_location::{LocalOrRemotePath, SyncClock};
 

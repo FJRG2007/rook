@@ -31,9 +31,9 @@ use command::r#async::Command;
 use futures_lite::future;
 use is_executable::IsExecutable as _;
 use itertools::Itertools;
-use sha2::{Digest, Sha256};
 use rook_core::safe_info;
 use rook_errors::{ErrorExt, register_error};
+use sha2::{Digest, Sha256};
 
 pub mod spacectl;
 

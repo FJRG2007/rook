@@ -7,12 +7,12 @@ use itertools::Itertools;
 use num_traits::Float as _;
 use parking_lot::Mutex;
 use pathfinder_color::ColorU;
-use vec1::Vec1;
 use rook_core::semantic_selection::SemanticSelection;
 use rook_errors::report_error;
 use rook_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
 use rookui::text::SelectionType;
 use rookui::units::Lines;
+use vec1::Vec1;
 
 use super::find::RegexDFAs;
 use super::grid::RespectDisplayedOutput;

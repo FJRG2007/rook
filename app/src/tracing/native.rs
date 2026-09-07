@@ -61,12 +61,12 @@ use opentelemetry_sdk::resource::{EnvResourceDetector, TelemetryResourceDetector
 use opentelemetry_sdk::trace::{
     SdkTracer, SdkTracerProvider, Span as SdkSpan, SpanData, SpanExporter,
 };
+use rook_managed_secrets::client::ManagedSecretsClient;
+use rookui::AppContext;
 use tracing::subscriber;
 use tracing_subscriber::EnvFilter;
 use tracing_subscriber::layer::SubscriberExt as _;
 use url::{Host, Url};
-use rook_managed_secrets::client::ManagedSecretsClient;
-use rookui::AppContext;
 
 use super::Initialization;
 use super::cloud_agent_auth::{self, AuthContext};

@@ -91,10 +91,10 @@ use chrono::Duration;
 use permissions::ensure_feature_enabled;
 #[cfg(any(unix, test))]
 use permissions::{ensure_action_allowed, ensure_protocol_version};
-#[cfg(unix)]
-use tokio::io::{AsyncReadExt as _, AsyncWriteExt as _};
 use rook_core::channel::ChannelState;
 use rookui::{Entity, ModelContext, ModelSpawner, SingletonEntity};
+#[cfg(unix)]
+use tokio::io::{AsyncReadExt as _, AsyncWriteExt as _};
 
 #[cfg(any(unix, test))]
 const MAX_ACTIVE_CREDENTIALS: usize = 128;

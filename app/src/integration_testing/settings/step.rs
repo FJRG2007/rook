@@ -1,7 +1,7 @@
-use settings::Setting;
 use rookui::integration::{AssertionOutcome, TestStep};
 use rookui::windowing::WindowManager;
 use rookui::{App, SingletonEntity, WindowId, async_assert};
+use settings::Setting;
 
 use crate::integration_testing::step::new_step_with_default_assertions;
 use crate::integration_testing::view_getters::{settings_view, theme_chooser_view};

@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
 use markdown_parser::{compute_formatted_text_delta, parse_markdown};
+use rookui_core::{App, ReadModel};
 use serde_yaml::Value;
 use string_offset::CharOffset;
 use vec1::Vec1;
-use rookui_core::{App, ReadModel};
 
 use super::MarkdownStyle;
 use crate::content::buffer::tests::TestEmbeddedItem;

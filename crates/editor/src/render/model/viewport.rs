@@ -1,10 +1,10 @@
 use float_cmp::ApproxEq;
-use string_offset::CharOffset;
-use sum_tree::{SeekBias, SumTree};
 use rookui_core::SizeConstraint;
 use rookui_core::geometry::rect::RectF;
 use rookui_core::geometry::vector::{Vector2F, vec2f};
 use rookui_core::units::{IntoPixels, Pixels};
+use string_offset::CharOffset;
+use sum_tree::{SeekBias, SumTree};
 
 use super::positioned::PositionedCursor;
 use super::{

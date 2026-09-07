@@ -3,11 +3,11 @@ use std::future::Future;
 use std::sync::Arc;
 use std::time::Duration;
 
-use vec1::vec1;
 use rook_core::features::FeatureFlag;
 use rook_graphql::managed_secrets::ManagedSecret;
 use rook_graphql::queries::task_secrets::ManagedSecretValue as GqlManagedSecretValue;
 use rookui_core::{Entity, SingletonEntity};
+use vec1::vec1;
 
 use crate::ManagedSecretValue;
 use crate::client::{

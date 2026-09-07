@@ -1,7 +1,5 @@
 //! Integration tests for bootstrapping logic.
 
-use settings::Setting as _;
-use version_compare::Cmp;
 use rook::cmd_or_ctrl_shift;
 use rook::integration_testing::input::{
     input_contains_string, input_editor_is_focused, input_editor_is_not_focused, input_is_empty,
@@ -26,6 +24,8 @@ use rook::workspace::Workspace;
 use rookui_core::clipboard::ClipboardContent;
 use rookui_core::integration::{AssertionCallback, TestStep};
 use rookui_core::{ViewHandle, async_assert, async_assert_eq};
+use settings::Setting as _;
+use version_compare::Cmp;
 
 use super::{Builder, new_builder};
 use crate::util::{ShellRcType, write_all_rc_files_for_test, write_rc_files_for_test};

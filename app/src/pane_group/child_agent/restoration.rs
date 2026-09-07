@@ -3,11 +3,11 @@ use std::path::PathBuf;
 use std::time::Duration;
 
 use instant::Instant;
-use session_sharing_protocol::common::SessionId;
-use uuid::Uuid;
 use rook_errors::report_error;
 use rookui::r#async::Timer;
 use rookui::{SingletonEntity, ViewContext};
+use session_sharing_protocol::common::SessionId;
+use uuid::Uuid;
 
 use super::{HiddenChildAgentTaskContext, apply_hidden_child_agent_task_context};
 use crate::ai::agent::conversation::{AIConversation, AIConversationId};

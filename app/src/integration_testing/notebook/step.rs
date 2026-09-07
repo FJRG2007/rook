@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
-use string_offset::CharOffset;
 use rook_editor::model::CoreEditorModel;
 use rookui::integration::TestStep;
 use rookui::windowing::WindowManager;
 use rookui::{App, SingletonEntity, ViewHandle, WindowId, async_assert};
+use string_offset::CharOffset;
 
 use crate::cloud_object::model::persistence::CloudModel;
 use crate::cloud_object::{CloudObjectEventEntrypoint, Space};

@@ -4,7 +4,6 @@ use std::time::Duration;
 
 use mockall::Sequence;
 use regex::Regex;
-use settings::{PrivatePreferences, PublicPreferences};
 use rook_graphql::billing::{
     BillingMetadata as GqlBillingMetadata, BonusGrantsInfo as GqlBonusGrantsInfo,
     CustomerType as GqlCustomerType, DelinquencyStatus as GqlDelinquencyStatus,
@@ -51,6 +50,7 @@ use rookui::elements::Empty;
 use rookui::platform::WindowStyle;
 use rookui::{AddSingletonModel, App, Element, TypedActionView, View, ViewHandle, WindowId};
 use rookui_extras::user_preferences;
+use settings::{PrivatePreferences, PublicPreferences};
 
 use super::*;
 use crate::ai::blocklist::is_agent_mode_autonomy_allowed;

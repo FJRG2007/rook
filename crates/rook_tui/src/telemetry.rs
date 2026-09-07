@@ -1,9 +1,9 @@
 //! Telemetry for the `rook-tui` front-end.
 use std::ffi::{OsStr, OsString};
 
+use rook_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 use serde_json::{Value, json};
 use strum_macros::{EnumDiscriminants, EnumIter};
-use rook_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 const MAX_TERM_PROGRAM_CHARS: usize = 64;
 
 #[derive(Clone, Copy, Debug)]

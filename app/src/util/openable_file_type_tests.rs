@@ -1,8 +1,8 @@
 use std::path::Path;
 
+use rook_core::features::FeatureFlag;
 #[cfg(feature = "local_fs")]
 use settings::Setting as _;
-use rook_core::features::FeatureFlag;
 
 use super::*;
 

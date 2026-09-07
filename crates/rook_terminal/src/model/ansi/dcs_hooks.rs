@@ -4,9 +4,9 @@ use std::collections::HashSet;
 use std::path::PathBuf;
 
 use ordered_float::OrderedFloat;
+use rook_core::command::ExitCode;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Deserializer, Serialize};
-use rook_core::command::ExitCode;
 
 use crate::model::block::BlockId;
 use crate::model::session::SessionId;

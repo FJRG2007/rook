@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::path::Path;
 
+use rook_core::ui::theme::AnsiColorIdentifier;
 use settings::macros::define_settings_group;
 use settings::{RespectUserSyncSetting, SupportedPlatforms, SyncToCloud};
-use rook_core::ui::theme::AnsiColorIdentifier;
 
 #[derive(
     Default,

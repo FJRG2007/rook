@@ -8,6 +8,7 @@
 mod telemetry;
 mod transition;
 
+use rook_core::features::FeatureFlag;
 pub use telemetry::LifecycleRecoveryRecord;
 pub(in crate::terminal) use telemetry::LifecycleTelemetryEvent;
 use telemetry::LifecycleTelemetryLimiter;
@@ -15,7 +16,6 @@ pub(in crate::terminal) use transition::{
     CommandStartKind, IgnoreReason, LifecycleAction, LifecycleInput, LifecyclePhase,
     LifecycleSnapshot, LifecycleTransition, NextBlockIdDisposition, PreexecObservation,
 };
-use rook_core::features::FeatureFlag;
 
 use super::block::BlockState;
 

@@ -6,9 +6,9 @@ use std::sync::Arc;
 use itertools::Itertools;
 use mio::Interest;
 use parking_lot::Mutex;
-use signal_hook_mio::v1_0::Signals;
 use rook_cli::TerminalServerArgs;
 use rook_errors::report_error;
+use signal_hook_mio::v1_0::Signals;
 
 use super::{RECV_SOCKET_FILENO, SEND_SOCKET_FILENO, api, logging, protocol};
 use crate::local_tty::server::protocol::NonblockingSocketFd;

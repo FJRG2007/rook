@@ -4,7 +4,6 @@ use std::sync::Arc;
 
 use itertools::Itertools;
 use pathfinder_geometry::vector::vec2f;
-use string_offset::CharOffset;
 use rook_core::ui::theme::Fill;
 use rook_editor::editor::NavigationKey;
 use rook_errors::report_error;
@@ -24,6 +23,7 @@ use rookui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, UpdateView, View,
     ViewContext, ViewHandle,
 };
+use string_offset::CharOffset;
 
 use super::arguments::ArgumentsState;
 use super::enum_creation_dialog::{EnumCreationDialog, EnumCreationDialogEvent, WorkflowEnumData};

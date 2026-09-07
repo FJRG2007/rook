@@ -1,12 +1,12 @@
 use instant::Duration;
-use settings::{PrivatePreferences, PublicPreferences, Setting, SettingsManager};
-use settings_value::SettingsValue;
 use rook_core::features::FeatureFlag;
 use rook_core::settings::macros::define_settings_group;
 use rook_core::settings::{SupportedPlatforms, SyncToCloud};
 use rook_core::user_preferences::GetUserPreferences as _;
 use rookui::SingletonEntity;
 use rookui_extras::user_preferences;
+use settings::{PrivatePreferences, PublicPreferences, Setting, SettingsManager};
+use settings_value::SettingsValue;
 
 use super::{
     SETTINGS_FILE_MIGRATION_COMPLETE_KEY, migrate_native_settings_to_settings_file,
@@ -377,10 +377,10 @@ fn test_migration_with_multiple_setting_types() {
 // serde fallback is never reached and values are lost.
 
 mod notifications_migration {
-    use settings::{PrivatePreferences, PublicPreferences, SettingsManager};
     use rook_core::settings::macros::define_settings_group;
     use rook_core::settings::{SupportedPlatforms, SyncToCloud};
     use rookui_extras::user_preferences;
+    use settings::{PrivatePreferences, PublicPreferences, SettingsManager};
 
     use crate::terminal::session_settings::NotificationsSettings;
 

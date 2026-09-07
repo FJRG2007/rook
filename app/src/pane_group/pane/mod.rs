@@ -32,8 +32,6 @@ pub mod workflow_pane;
 use std::any::Any;
 use std::fmt::Display;
 
-use serde::{Deserialize, Serialize};
-use url::Url;
 use rook_util::remote_path::RemotePath;
 use rookui::elements::{DispatchEventResult, EventHandler, MouseInBehavior};
 use rookui::presenter::ChildView;
@@ -41,6 +39,8 @@ use rookui::{
     Action, AppContext, Element, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity,
     View, ViewContext, ViewHandle, WeakModelHandle,
 };
+use serde::{Deserialize, Serialize};
+use url::Url;
 
 pub use self::view::{PaneHeaderAction, PaneHeaderCustomAction, PaneView, PaneViewEvent};
 use super::{ActivationReason, LeafContents, PaneGroup, PaneGroupAction};

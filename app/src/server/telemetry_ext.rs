@@ -1,8 +1,8 @@
 use chrono::{DateTime, Utc};
-use serde_json::{Value, json};
 use rook_core::channel::{Channel, ChannelState};
 use rook_core::execution_mode;
 use rookui::telemetry::EventPayload;
+use serde_json::{Value, json};
 
 use super::telemetry::rudder_message::{
     BatchMessage as RudderBatchMessage, BatchMessageItem as RudderBatchMessageItem,

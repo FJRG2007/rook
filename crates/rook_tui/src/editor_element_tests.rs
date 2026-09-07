@@ -1,7 +1,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use string_offset::CharOffset;
 use rook::appearance::Appearance;
 use rook::editor::CodeEditorModel;
 use rook_editor::content::buffer::InitialBufferState;
@@ -15,6 +14,7 @@ use rookui_core::elements::tui::{
 use rookui_core::event::KeyEventDetails;
 use rookui_core::keymap::Keystroke;
 use rookui_core::{App, AppContext, ModelHandle};
+use string_offset::CharOffset;
 
 use super::{TuiEditorAction, TuiEditorElement, TuiEditorStyles};
 use crate::tui_builder::TuiUiBuilder;

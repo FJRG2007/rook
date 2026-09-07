@@ -36,7 +36,7 @@ fn create_restored_conversation(
 #[test]
 fn test_should_show_task_in_blocklist_hides_rook_docs_subagent_task() {
     let conversation = create_restored_conversation(
-        api::message::tool_call::subagent::Metadata::RookDocumentationSearch(()),
+        api::message::tool_call::subagent::Metadata::WarpDocumentationSearch(()),
     );
 
     let subtask = conversation
@@ -64,7 +64,7 @@ fn test_should_show_task_in_blocklist_hides_conversation_search_subagent_task() 
 #[test]
 fn test_exchanges_for_blocklist_excludes_rook_docs_subagent_exchanges() {
     let conversation = create_restored_conversation(
-        api::message::tool_call::subagent::Metadata::RookDocumentationSearch(()),
+        api::message::tool_call::subagent::Metadata::WarpDocumentationSearch(()),
     );
 
     let exchanges = exchanges_for_blocklist(&conversation);

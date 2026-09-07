@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rookui::units::{IntoPixels, Pixels};
 use rookui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity, WindowId};
+use settings::Setting as _;
 
 use super::styles::{HEADER_BORDER, HEADER_ROW_HEIGHT};
 use crate::ai::blocklist::agent_view::AgentViewController;

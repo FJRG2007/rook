@@ -8,7 +8,6 @@ use ai::api_keys::{
 };
 use channel_versions::{Changelog, MarkdownSection, Section};
 use chrono::DateTime;
-use uuid::Uuid;
 use rook::tui_export::{
     TuiMcpConfigDiagnostic, TuiMcpServerId, TuiMcpServerSnapshot, TuiMcpServerSource,
     TuiMcpServerStatus, TuiMcpSnapshot, TuiMcpTransport, TuiUserInfoSnapshot,
@@ -21,6 +20,7 @@ use rookui_core::elements::tui::{
     TuiPaintSurface, TuiRect, TuiScreenPosition, TuiSize, TuiStyle, TuiText, text_width,
 };
 use rookui_core::{App, AppContext};
+use uuid::Uuid;
 
 use super::{
     ANIMATION_PANEL_COLS, LEFT_COLUMN_COLS, ZeroStateSectionVisibility, autoupdate_status_label,

@@ -10,11 +10,6 @@ use fuzzy_match::FuzzyMatchResult;
 use repo_metadata::RepoMetadataModel;
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
-use session_sharing_protocol::common::Role;
-use smol_str::SmolStr;
-use unindent::Unindent;
-#[cfg(feature = "voice_input")]
-use voice_input::VoiceInputToggledFrom;
 use rook_completer::completer::{
     EngineFileType, Match, MatchStrategy, MatchedSuggestion, PathSeparators, Priority, Suggestion,
     SuggestionResults, SuggestionType,
@@ -25,6 +20,11 @@ use rook_util::user_input::UserInput;
 use rookui::platform::WindowStyle;
 use rookui::text::SelectionType;
 use rookui::{App, ReadModel, UpdateView, WindowId};
+use session_sharing_protocol::common::Role;
+use smol_str::SmolStr;
+use unindent::Unindent;
+#[cfg(feature = "voice_input")]
+use voice_input::VoiceInputToggledFrom;
 use watcher::HomeDirectoryWatcher;
 use workflows::workflow::{Argument, ArgumentType, Workflow};
 
@@ -57,6 +57,7 @@ use crate::editor::{DisplayPoint, EditorAction, Point, TextStyleOperation};
 use crate::input_suggestions::{HistoryOrder, Item};
 use crate::network::NetworkStatus;
 use crate::pricing::PricingInfoModel;
+use crate::rook_managed_paths_watcher::RookManagedPathsWatcher;
 use crate::search::files::model::FileSearchModel;
 use crate::search::slash_command_menu::static_commands::commands;
 use crate::server::cloud_objects::listener::Listener;
@@ -107,7 +108,6 @@ use crate::terminal::writeable_pty::command_history::update_command_history;
 use crate::test_util::assert_eventually;
 use crate::test_util::settings::initialize_settings_for_tests;
 use crate::themes::theme::AnsiColorIdentifier;
-use crate::rook_managed_paths_watcher::RookManagedPathsWatcher;
 use crate::workspace::{ActiveSession, OneTimeModalModel, ToastStack, WorkspaceRegistry};
 use crate::workspaces::team_tester::TeamTesterStatus;
 use crate::workspaces::update_manager::TeamUpdateManager;

@@ -1,8 +1,8 @@
+#[cfg(feature = "tui")]
+use rookui_core::runtime::BackgroundLuminance;
 use settings::schema::SettingSchemaEntry;
 use settings::{Setting, SettingSurfaces, SettingsMode, SyncToCloud};
 use settings_value::SettingsValue;
-#[cfg(feature = "tui")]
-use rookui_core::runtime::BackgroundLuminance;
 
 use super::{TuiTheme, TuiThemeSetting};
 

@@ -7,7 +7,6 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use parking_lot::FairMutex;
-use sum_tree::SeekBias;
 #[cfg(test)]
 use rook::tui_export::TotalIndex;
 use rook::tui_export::{BlockHeight, BlockHeightItem, BlockHeightSummary, BlockId, TerminalModel};
@@ -18,6 +17,7 @@ use rookui_core::elements::tui::{
     TuiVisibleViewportItem,
 };
 use rookui_core::{AppContext, TuiView};
+use sum_tree::SeekBias;
 
 use super::agent_block::TuiAIBlock;
 use super::handoff::TuiHandoffBlock;

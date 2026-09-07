@@ -7,9 +7,8 @@ use onboarding::callout::{
 };
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use rust_embed::RustEmbed;
 use rook_core::ui::appearance::Appearance;
-use rook_core::ui::theme::{AnsiColor, AnsiColors, Details, Fill, TerminalColors, RookTheme};
+use rook_core::ui::theme::{AnsiColor, AnsiColors, Details, Fill, RookTheme, TerminalColors};
 use rookui_core::elements::{
     ChildAnchor, ChildView, ConstrainedBox, Container, Flex, MainAxisAlignment, MainAxisSize,
     OffsetPositioning, ParentElement, PositionedElementAnchor, PositionedElementOffsetBounds, Rect,
@@ -22,6 +21,7 @@ use rookui_core::{
     AddWindowOptions, AppContext, AssetProvider, Element, Entity, SingletonEntity as _,
     TypedActionView, View, ViewContext, ViewHandle, platform,
 };
+use rust_embed::RustEmbed;
 
 #[derive(Clone, Copy, RustEmbed)]
 #[folder = "../../app/assets"]

@@ -4,12 +4,12 @@
 //! persisted through Rook's secure storage provider. It is the authoritative
 //! enablement bit for local control.
 use anyhow::Result;
-use serde::{Deserialize, Serialize};
-use settings::macros::define_settings_group;
-use settings::{SecureSetting, Setting, SupportedPlatforms, SyncToCloud};
 use rook_core::channel::{Channel, ChannelState};
 use rookui::{AppContext, ModelContext};
 use rookui_extras::secure_storage;
+use serde::{Deserialize, Serialize};
+use settings::macros::define_settings_group;
+use settings::{SecureSetting, Setting, SupportedPlatforms, SyncToCloud};
 
 const LOCAL_CONTROL_MODE_STORAGE_KEY: &str = "LocalControlMode";
 

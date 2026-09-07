@@ -5,12 +5,12 @@
 //! [`SettingCallbacks`] preserves setting-specific method resolution.
 
 use anyhow::{Result, anyhow};
-use serde::de::DeserializeOwned;
-use settings_value::SettingsValue;
 use rookui_core::{
     AddSingletonModel, Entity, GetSingletonModelHandle, ModelContext, ModelHandle, SingletonEntity,
     UpdateModel,
 };
+use serde::de::DeserializeOwned;
+use settings_value::SettingsValue;
 
 use crate::manager::{SettingsEvent, SettingsManager};
 use crate::{Setting, SupportedPlatforms, SyncToCloud};

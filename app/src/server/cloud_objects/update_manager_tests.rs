@@ -6,11 +6,11 @@ use chrono::{DateTime, Utc};
 use cloud_object_client::MockObjectClient;
 use cloud_object_models::JsonSerializer;
 use futures_lite::future;
-use settings::{RespectUserSyncSetting, SyncToCloud};
 use rook_core::features::FeatureFlag;
 use rook_graphql::object_permissions::AccessLevel;
 use rook_graphql::scalars::time::ServerTimestamp;
 use rookui::{App, ModelHandle, SingletonEntity};
+use settings::{RespectUserSyncSetting, SyncToCloud};
 
 use super::{GetCloudObjectResponse, InitialLoadResponse, UpdateManager};
 use crate::ASSETS;

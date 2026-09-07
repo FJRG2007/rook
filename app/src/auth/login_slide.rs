@@ -7,7 +7,6 @@ use onboarding::slides::{layout, onboarding_bottom_nav, slide_content};
 use onboarding::{OnboardingEvent, OnboardingIntention, ROOK_DRIVE_FEATURES};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use ui_components::{Component as _, Options as _, button};
 use rook_core::features::FeatureFlag;
 use rook_core::safe_error;
 use rook_core::ui::Icon;
@@ -28,6 +27,7 @@ use rookui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, UpdateModel, View,
     ViewContext, ViewHandle,
 };
+use ui_components::{Component as _, Options as _, button};
 
 use crate::appearance::Appearance;
 use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};

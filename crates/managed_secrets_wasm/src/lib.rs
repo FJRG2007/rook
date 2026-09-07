@@ -1,5 +1,5 @@
-use serde::Serialize;
 use rook_managed_secrets::{ManagedSecretValue, UploadKey, init_envelope};
+use serde::Serialize;
 use wasm_bindgen::prelude::*;
 
 /// Called once when the WASM module is instantiated.

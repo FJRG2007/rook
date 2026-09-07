@@ -1,5 +1,5 @@
-use string_offset::CharOffset;
 use rookui_core::text::TextBuffer;
+use string_offset::CharOffset;
 
 /// Returns the offset of the first newline above a paragraph start before the current position.
 pub fn find_previous_paragraph_start<'a, T, C>(buffer: &'a T, offset: C) -> Option<CharOffset>

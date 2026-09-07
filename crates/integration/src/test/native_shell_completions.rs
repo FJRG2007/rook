@@ -9,7 +9,6 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 
-use settings::Setting as _;
 use rook::features::FeatureFlag;
 use rook::integration_testing::input::{input_is_empty, tab_completions_menu_is_open};
 use rook::integration_testing::step::new_step_with_default_assertions;
@@ -26,6 +25,7 @@ use rook::terminal::model::block::TranscriptScope;
 use rook::terminal::shell::ShellType;
 use rookui_core::async_assert;
 use rookui_core::units::Lines;
+use settings::Setting as _;
 
 use super::new_builder;
 use crate::Builder;

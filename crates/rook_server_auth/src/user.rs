@@ -1,8 +1,8 @@
 use anyhow::{Result, anyhow};
 use chrono::{DateTime, FixedOffset, Local};
-use serde::{Deserialize, Serialize};
 use rook_graphql::queries::get_user::FirebaseProfile;
 use rook_graphql::scalars::time::ServerTimestamp;
+use serde::{Deserialize, Serialize};
 
 use super::UserUid;
 pub use super::user_uid::{TEST_USER_EMAIL, TEST_USER_UID};

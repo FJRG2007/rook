@@ -4,8 +4,6 @@ use std::time::Duration;
 
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use serde::{Deserialize, Serialize};
-use settings::Setting as _;
 use rook_core::context_flag::ContextFlag;
 use rook_core::ui::builder::UiBuilder;
 use rook_core::ui::theme::AnsiColors;
@@ -26,6 +24,8 @@ use rookui::text_layout::ClipConfig;
 use rookui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use rookui::ui_components::text_input::TextInput;
 use rookui::{AppContext, Entity, ModelContext, SingletonEntity, ViewHandle};
+use serde::{Deserialize, Serialize};
+use settings::Setting as _;
 
 use crate::BlocklistAIHistoryModel;
 use crate::ai::agent::conversation::ConversationStatus;

@@ -1,8 +1,8 @@
 use std::borrow::Cow;
 
 use anyhow::{Result, anyhow};
-use rust_embed::RustEmbed;
 use rookui_core::AssetProvider;
+use rust_embed::RustEmbed;
 
 #[derive(Clone, Copy, RustEmbed)]
 #[folder = "../../app/assets"]

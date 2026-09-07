@@ -10,14 +10,14 @@ use ai::skills::SkillProvider;
 use enum_iterator::Sequence;
 use markdown_parser::parse_markdown;
 use pathfinder_color::ColorU;
-use serde::{Deserialize, Serialize};
-use smol_str::SmolStr;
 use rook_cli::agent::Harness;
 use rook_completer::parsers::simple::top_level_command;
 use rook_editor::content::buffer::Buffer;
 use rook_editor::content::markdown::MarkdownStyle;
 use rook_util::path::EscapeChar;
 use rookui::{AppContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
+use smol_str::SmolStr;
 
 use crate::ai::agent::{AgentReviewCommentBatch, DiffSetHunk};
 use crate::ai::blocklist::CLAUDE_ORANGE;

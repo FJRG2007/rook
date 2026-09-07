@@ -1,5 +1,5 @@
-use settings::Setting;
 use rookui::{Entity, ModelContext, SingletonEntity};
+use settings::Setting;
 
 use crate::settings::{AISettings, AISettingsChangedEvent};
 

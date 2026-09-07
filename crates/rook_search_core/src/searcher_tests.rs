@@ -4,8 +4,8 @@ use std::time::Duration;
 use instant::Instant;
 use itertools::Itertools;
 use parking_lot::Mutex;
-use tantivy::tokenizer::{TextAnalyzer, Token};
 use rookui_core::r#async::executor::Background;
+use tantivy::tokenizer::{TextAnalyzer, Token};
 
 use crate::define_search_schema;
 use crate::searcher::{

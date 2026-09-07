@@ -1,12 +1,12 @@
 use std::borrow::Cow;
 
 use chrono::{DateTime, Local};
-use session_sharing_protocol::common::SessionId;
 use rook_core::channel::ChannelState;
 use rook_core::ui::appearance::Appearance;
 use rookui::color::ColorU;
 use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::{AppContext, SingletonEntity, WeakViewHandle};
+use session_sharing_protocol::common::SessionId;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::blocklist::BlocklistAIHistoryModel;

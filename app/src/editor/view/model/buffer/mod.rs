@@ -19,18 +19,18 @@ use itertools::Itertools;
 use lazy_static::lazy_static;
 #[cfg(test)]
 use rand::prelude::*;
-use serde::{Deserialize, Serialize};
-use string_offset::{ByteOffset, CharOffset};
-use sum_tree::{self, Cursor, FilterCursor, SeekBias, SumTree};
-use time::{Global, Lamport};
-use undo::{LocalUndoStack, UndoHistory};
-use vec1::{Vec1, vec1};
 use rookui::color::ColorU;
 use rookui::text::point::Point;
 use rookui::text::words::is_default_word_boundary;
 use rookui::text::{BufferIndex, TextBuffer};
 use rookui::text_layout::TextStyle;
 use rookui::{Entity, ModelContext};
+use serde::{Deserialize, Serialize};
+use string_offset::{ByteOffset, CharOffset};
+use sum_tree::{self, Cursor, FilterCursor, SeekBias, SumTree};
+use time::{Global, Lamport};
+use undo::{LocalUndoStack, UndoHistory};
+use vec1::{Vec1, vec1};
 /// The public interfaces that we expose to the model.
 /// This should be a very limited set of APIs and should
 /// not expose the internal details of the buffer.

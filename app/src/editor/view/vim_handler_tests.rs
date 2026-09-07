@@ -1,7 +1,7 @@
 use itertools::Itertools;
-use unindent::Unindent;
 use rookui::platform::WindowStyle;
 use rookui::{App, EntityIdSet, ViewHandle};
+use unindent::Unindent;
 
 use super::*;
 use crate::editor::EditorView;

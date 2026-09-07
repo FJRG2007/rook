@@ -4,13 +4,13 @@ use std::sync::Arc;
 
 use async_channel::{Receiver, Sender};
 use parking_lot::FairMutex;
-use thiserror::Error;
 use rook_completer::meta::Span;
 #[cfg(feature = "local_fs")]
 use rook_errors::report_error;
 use rook_util::path::ShellFamily;
 use rookui::r#async::block_on;
 use rookui::{Entity, ModelContext, ModelHandle, SingletonEntity};
+use thiserror::Error;
 
 use super::Message;
 use crate::SessionSettings;

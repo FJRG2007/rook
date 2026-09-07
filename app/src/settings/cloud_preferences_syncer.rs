@@ -5,7 +5,6 @@ use std::time::Duration;
 
 use cloud_object_models::JsonSerializer;
 use lazy_static::lazy_static;
-use settings::{Setting as _, SyncToCloud};
 use rook_core::r#async::debounce;
 use rook_core::execution_mode::AppExecutionMode;
 use rook_core::settings::ChangeEventReason;
@@ -14,6 +13,7 @@ use rook_errors::report_if_error;
 use rookui::r#async::Timer;
 use rookui::{Entity, ModelContext, ModelHandle, SingletonEntity};
 use rookui_extras::user_preferences::toml_backed::TomlBackedUserPreferences;
+use settings::{Setting as _, SyncToCloud};
 
 use super::PrivacySettings;
 use super::ai::{CustomEndpoints, ExecutionProfiles};

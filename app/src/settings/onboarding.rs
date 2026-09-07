@@ -1,8 +1,8 @@
 use onboarding::slides::{AgentAutonomy, AgentDevelopmentSettings};
 use onboarding::{SelectedSettings, SessionDefault, UICustomizationSettings};
-use settings::Setting as _;
 use rook_errors::report_if_error;
 use rookui::{AppContext, SingletonEntity as _};
+use settings::Setting as _;
 
 use crate::ai::execution_profiles::profiles::AIExecutionProfilesModel;
 use crate::ai::execution_profiles::{ActionPermission, WriteToPtyPermission};

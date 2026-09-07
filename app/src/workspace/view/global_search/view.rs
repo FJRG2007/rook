@@ -9,7 +9,6 @@ use async_channel::Sender;
 use instant::Instant;
 use pathfinder_geometry::vector::vec2f;
 use remote_server::HostId;
-use string_offset::{ByteOffset, CharCounter};
 use rook_core::r#async::debounce;
 use rook_core::send_telemetry_from_ctx;
 use rook_core::ui::Icon;
@@ -39,6 +38,7 @@ use rookui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle,
 };
+use string_offset::{ByteOffset, CharCounter};
 
 use crate::TelemetryEvent;
 use crate::code::icon_from_file_path;

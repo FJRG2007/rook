@@ -29,11 +29,11 @@ pub use local_command_executor::LocalCommandExecutor;
 pub use noop_command_executor::NoOpCommandExecutor;
 #[cfg(feature = "local_tty")]
 pub use remote_command_executor::RemoteCommandExecutor;
-pub use shared::{ExecutorCommandEvent, shell_escape_single_quotes, shell_quote_arg};
 use rook_completer::completer::CommandOutput;
 #[cfg(feature = "local_tty")]
 use rook_errors::report_error;
 use rookui::ModelContext;
+pub use shared::{ExecutorCommandEvent, shell_escape_single_quotes, shell_quote_arg};
 
 use super::SessionInfo;
 use crate::terminal::event::ExecutedExecutorCommandEvent;
@@ -150,8 +150,8 @@ fn new_command_executor_for_local_tty_session(
 ) -> Arc<dyn CommandExecutor> {
     use msys2_command_executor::MSYS2CommandExecutor;
     use remote_server_executor::RemoteServerCommandExecutor;
-    use settings::Setting as _;
     use rookui::SingletonEntity as _;
+    use settings::Setting as _;
     use wsl_command_executor::WslCommandExecutor;
 
     use super::IsSSHWrapperSession;

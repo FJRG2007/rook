@@ -5,10 +5,10 @@ use std::path::PathBuf;
 use async_recursion::async_recursion;
 use async_trait::async_trait;
 use pathfinder_color::ColorU;
-use serde::Deserialize;
 use rook_core::ui::color::hex_color::coloru_from_hex_string;
-use rook_core::ui::theme::{AnsiColor, AnsiColors, TerminalColors, RookTheme};
+use rook_core::ui::theme::{AnsiColor, AnsiColors, RookTheme, TerminalColors};
 use rookui::fonts::FontInfo;
+use serde::Deserialize;
 
 use super::config::{
     Config, ConfigError, ImportableSetting, ParseableConfig, SettingType, ThemeType,

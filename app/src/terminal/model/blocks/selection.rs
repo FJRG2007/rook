@@ -3,13 +3,13 @@ use std::fmt::Debug;
 use std::mem;
 use std::ops::RangeInclusive;
 
-use sum_tree::SeekBias;
-use vec1::{Vec1, vec1};
 use rook_core::semantic_selection::SemanticSelection;
 use rook_terminal::model::grid::CellType;
 use rookui::text::{IsRect, SelectionType};
 use rookui::units::{IntoLines as _, Lines};
 use rookui::{AppContext, EntityId, ViewAsRef as _};
+use sum_tree::SeekBias;
+use vec1::{Vec1, vec1};
 
 use super::{
     BlockHeight, BlockHeightItem, BlockHeightSummary, BlockList, BlockListPoint, RichContentItem,

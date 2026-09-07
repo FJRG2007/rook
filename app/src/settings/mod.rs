@@ -67,6 +67,7 @@ pub use native_preference::*;
 pub(crate) use onboarding::*;
 pub use pane::*;
 pub use privacy::*;
+use rook_core::user_preferences::GetUserPreferences as _;
 pub use same_line_prompt_block::*;
 #[cfg(not(target_family = "wasm"))]
 pub use schema_generation::dump_settings_schema;
@@ -80,7 +81,6 @@ pub use tui_theme::*;
 pub use tui_voice::*;
 pub use tui_zero_state::*;
 pub use vim_banner::*;
-use rook_core::user_preferences::GetUserPreferences as _;
 
 /// Describes errors encountered when loading settings from `settings.toml`.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -138,17 +138,17 @@ use std::path::PathBuf;
 use lazy_static::lazy_static;
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::Vector2F;
-use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rookui::elements::DEFAULT_UI_LINE_HEIGHT_RATIO;
 use rookui::keymap::Keystroke;
 use rookui::{AppContext, DisplayIdx, SingletonEntity};
+use serde::{Deserialize, Serialize};
+use serde_json::{Value, json};
+use settings::Setting as _;
 
 use crate::root_view::QuakeModePinPosition;
 use crate::terminal::{BlockListSettings, BlockPadding};
-use crate::themes::theme::{ThemeKind, RookTheme};
+use crate::themes::theme::{RookTheme, ThemeKind};
 use crate::user_config::RookConfig;
 
 // The following are user preferences keys.

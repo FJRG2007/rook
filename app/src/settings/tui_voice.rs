@@ -1,7 +1,7 @@
-use settings::macros::define_settings_group;
-use settings::{SupportedPlatforms, SyncToCloud};
 #[cfg(feature = "tui")]
 use rookui_core::platform::keyboard::KeyCode;
+use settings::macros::define_settings_group;
+use settings::{SupportedPlatforms, SyncToCloud};
 
 #[derive(
     Clone,

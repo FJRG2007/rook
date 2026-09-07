@@ -1,8 +1,3 @@
-use vim::vim::{
-    BracketChar, CharacterMotion, Direction, FindCharMotion, FirstNonWhitespaceMotion,
-    InsertPosition, LineMotion, ModeTransition, MotionType, TextObjectType, VimHandler, VimMode,
-    VimMotion, VimOperand, VimOperator, VimTextObject, WordMotion,
-};
 use rook_editor::content::buffer::{
     AutoScrollBehavior, BufferEditAction, EditOrigin, SelectionOffsets, VimInsertPoint,
 };
@@ -11,6 +6,11 @@ use rook_editor::render::model::AutoScrollMode;
 use rook_editor::selection::{TextDirection, TextUnit};
 use rookui::units::IntoPixels;
 use rookui::{SingletonEntity, ViewContext};
+use vim::vim::{
+    BracketChar, CharacterMotion, Direction, FindCharMotion, FirstNonWhitespaceMotion,
+    InsertPosition, LineMotion, ModeTransition, MotionType, TextObjectType, VimHandler, VimMode,
+    VimMotion, VimOperand, VimOperator, VimTextObject, WordMotion,
+};
 
 use super::{CodeEditorEvent, CodeEditorView};
 use crate::code::editor::find::view::Event as FindViewEvent;

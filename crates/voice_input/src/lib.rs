@@ -8,15 +8,15 @@ use cpal::traits::{DeviceTrait, HostTrait};
 use cpal::{Sample, StreamConfig};
 use futures::channel::oneshot;
 use parking_lot::Mutex;
-use rubato::{
-    Resampler, SincFixedIn, SincInterpolationParameters, SincInterpolationType, WindowFunction,
-};
-use thiserror::Error;
 use rook_errors::report_error;
 use rookui_core::r#async::SpawnedFutureHandle;
 use rookui_core::event::KeyState;
 use rookui_core::platform::MicrophoneAccessState;
 use rookui_core::{Entity, ModelContext, SingletonEntity};
+use rubato::{
+    Resampler, SincFixedIn, SincInterpolationParameters, SincInterpolationType, WindowFunction,
+};
+use thiserror::Error;
 
 const DEFAULT_CHUNK_SIZE: u32 = 512;
 // We only support mono for now.

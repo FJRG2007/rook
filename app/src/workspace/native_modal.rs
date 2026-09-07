@@ -1,4 +1,3 @@
-use settings::Setting as _;
 use rook_core::ui::theme::Fill;
 use rookui::elements::{Align, Container, Empty, Flex, MouseStateHandle, ParentElement};
 use rookui::fonts::Weight;
@@ -11,6 +10,7 @@ use rookui::ui_components::text::Span;
 use rookui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use settings::Setting as _;
 
 use crate::appearance::Appearance;
 use crate::terminal::general_settings::{GeneralSettings, GeneralSettingsChangedEvent};

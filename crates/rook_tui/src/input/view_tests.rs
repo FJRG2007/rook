@@ -8,8 +8,6 @@ use std::future::Future;
 use std::ops::Range;
 use std::rc::Rc;
 
-use string_offset::CharOffset;
-use vim::vim::VimMode;
 use rook::appearance::Appearance;
 use rook::editor::CodeEditorModel;
 use rook::settings::AISettingsChangedEvent;
@@ -37,6 +35,8 @@ use rookui_core::{
     AddWindowOptions, App, AppContext, Entity, EntityId, ModelHandle, TuiView, TypedActionView,
     ViewHandle,
 };
+use string_offset::CharOffset;
+use vim::vim::VimMode;
 
 use super::{
     INLINE_MENU_CAN_CLEAR_SELECTED_FLAG, INPUT_HANDLES_ESCAPE_FLAG, InputKeymapContextConfig,

@@ -6,7 +6,6 @@ use futures::Future;
 use itertools::Itertools;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use url::Url;
 use rook_core::context_flag::ContextFlag;
 use rook_core::settings::Setting;
 use rook_core::ui::theme::color::internal_colors;
@@ -32,6 +31,7 @@ use rookui::{
     AppContext, BlurContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView,
     UpdateView, View, ViewContext, ViewHandle, WindowId,
 };
+use url::Url;
 
 use super::cloud_object_naming_dialog::CloudObjectNamingDialog;
 use super::drive_helpers::{

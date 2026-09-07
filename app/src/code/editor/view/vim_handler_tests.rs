@@ -3,8 +3,6 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use unindent::Unindent;
-use vim::vim::{MotionType, VimMode};
 use rook_core::features::FeatureFlag;
 use rook_core::settings::Setting;
 use rook_core::ui::appearance::Appearance;
@@ -21,6 +19,8 @@ use rookui::{
     App, EntityId, EntityIdSet, Event, Presenter, SingletonEntity, TypedActionView, UpdateModel,
     ViewHandle, WindowId, WindowInvalidation,
 };
+use unindent::Unindent;
+use vim::vim::{MotionType, VimMode};
 
 use crate::auth::AuthStateProvider;
 use crate::cloud_object::model::persistence::CloudModel;

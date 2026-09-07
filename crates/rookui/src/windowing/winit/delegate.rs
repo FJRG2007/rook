@@ -14,8 +14,8 @@ use anyhow::Result;
 use geometry::rect::RectF;
 use itertools::Itertools;
 use parking_lot::Mutex;
-use serde::de::IntoDeserializer;
 use rook_errors::report_error;
+use serde::de::IntoDeserializer;
 use winit::event_loop::{ActiveEventLoop, EventLoopProxy};
 
 #[cfg(not(target_family = "wasm"))]

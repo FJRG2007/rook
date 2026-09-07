@@ -1,4 +1,3 @@
-use ui_components::{Component as _, Options as _, button};
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::Fill;
 use rook_core::ui::theme::color::internal_colors;
@@ -17,6 +16,7 @@ use rookui_core::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity as _, TypedActionView, View,
     ViewContext,
 };
+use ui_components::{Component as _, Options as _, button};
 
 use super::OnboardingSlide;
 use crate::model::{AiAccessChoice, OnboardingAuthState, OnboardingStateModel};

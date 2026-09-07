@@ -4,8 +4,8 @@ use std::sync::Arc;
 
 use parking_lot::FairMutex;
 use pathfinder_geometry::vector::Vector2F;
-use settings::Setting as _;
 use rookui::{AppContext, SingletonEntity};
+use settings::Setting as _;
 
 use super::event_listener::ChannelEventListener;
 use super::model::block::BlockSize;

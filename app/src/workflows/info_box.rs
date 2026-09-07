@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::ops::Range;
 
-use string_offset::CharOffset;
 use rook_core::features::FeatureFlag;
 use rook_core::settings::Setting;
 use rook_errors::report_error;
@@ -23,6 +22,7 @@ use rookui::{
     AppContext, Element, Entity, EventContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use string_offset::CharOffset;
 
 use super::command_parser::{
     WorkflowArgumentIndex, WorkflowDisplayData, compute_workflow_display_data,

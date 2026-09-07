@@ -4,8 +4,8 @@ use std::{pin, task};
 use futures_lite::{Stream, ready};
 use pin::Pin;
 use pin_project::pin_project;
-use task::{Context, Poll};
 use rookui_core::r#async::Timer;
+use task::{Context, Poll};
 
 /// Debounce takes in a stream and limits the rate of firing events from the stream
 /// by bundling all events occurred within the set interval into one.

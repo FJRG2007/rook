@@ -8,11 +8,11 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use async_trait::async_trait;
+use rook_core::command::ExitCode;
+use rook_util::path::{EscapeChar, ShellFamily, TEST_SESSION_HOME_DIR};
 use smol_str::SmolStr;
 use typed_path::{TypedPath, TypedPathBuf};
 use warp_command_signatures::IconType;
-use rook_core::command::ExitCode;
-use rook_util::path::{EscapeChar, ShellFamily, TEST_SESSION_HOME_DIR};
 
 use super::{CommandExitStatus, MatchedSuggestion, PathSeparators};
 use crate::completer::{

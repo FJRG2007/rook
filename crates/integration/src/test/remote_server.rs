@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::time::Duration;
 
-use settings::Setting as _;
 use rook::features::FeatureFlag;
 use rook::integration_testing::remote_server::{
     assert_command_executor_is_remote_server, assert_remote_server_connected,
@@ -22,9 +21,10 @@ use rook::integration_testing::terminal::{
     execute_command_for_single_terminal_in_tab, run_completer,
     wait_until_bootstrapped_single_pane_for_tab,
 };
-use rook::terminal::shell::ShellType;
 use rook::terminal::rookify::settings::{SshExtensionInstallMode, SshExtensionInstallModeSetting};
+use rook::terminal::shell::ShellType;
 use rookui_core::integration::TestStep;
+use settings::Setting as _;
 
 use super::{Builder, new_builder};
 

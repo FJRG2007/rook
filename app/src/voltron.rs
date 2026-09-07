@@ -17,7 +17,6 @@ use std::path::PathBuf;
 
 use enclose::enclose;
 use pathfinder_geometry::vector::Vector2F;
-use vec1::Vec1;
 use rook_errors::report_error;
 use rookui::accessibility::AccessibilityContent;
 use rookui::elements::{
@@ -35,6 +34,7 @@ use rookui::{
     AppContext, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use vec1::Vec1;
 
 use crate::appearance::Appearance;
 use crate::editor::{

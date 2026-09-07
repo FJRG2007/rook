@@ -4,8 +4,6 @@ use std::str::FromStr;
 use std::sync::Arc;
 
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use serde_yaml::Mapping;
-use uuid::Uuid;
 use rook_editor::content::markdown::MarkdownStyle;
 use rook_editor::editor::EmbeddedItemModel;
 use rook_editor::render::element::{RenderContext, RenderableBlock};
@@ -19,6 +17,8 @@ use rook_errors::report_error;
 use rookui::event::DispatchedEvent;
 use rookui::units::Pixels;
 use rookui::{AppContext, EntityId, EventContext, LayoutContext, ViewHandle, WindowId};
+use serde_yaml::Mapping;
+use uuid::Uuid;
 
 use crate::code::editor::comment_editor::CommentEditor;
 use crate::code_review::comments::CommentId;

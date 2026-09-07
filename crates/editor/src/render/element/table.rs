@@ -1,6 +1,5 @@
 use std::ops::Range;
 
-use string_offset::CharOffset;
 use rookui_core::elements::{
     Axis, CornerRadius, DEFAULT_SCROLL_WHEEL_PIXELS_PER_LINE, Radius, ScrollData,
     ScrollbarAppearance, ScrollbarGeometry, ScrollbarWidth, compute_scrollbar_geometry,
@@ -11,6 +10,7 @@ use rookui_core::geometry::rect::RectF;
 use rookui_core::geometry::vector::{Vector2F, vec2f};
 use rookui_core::units::{IntoPixels, Pixels};
 use rookui_core::{AppContext, ClipBounds, Event, EventContext};
+use string_offset::CharOffset;
 
 use super::paint::{CursorData, CursorDisplayType};
 use super::{RenderContext, RenderableBlock};

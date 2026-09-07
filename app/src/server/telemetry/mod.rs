@@ -18,13 +18,13 @@ pub use collector::*;
 pub use context::telemetry_context;
 pub use events::*;
 use futures::FutureExt;
+use rook_core::channel::RudderStackDestination;
+use rook_errors::report_error;
+use rookui::telemetry::Event;
 use rudder_message::{
     Batch as RudderBatch, BatchMessage as RudderBatchMessageWithMetadata,
     BatchMessageItem as RudderBatchMessage, Message as RudderMessage,
 };
-use rook_core::channel::RudderStackDestination;
-use rook_errors::report_error;
-use rookui::telemetry::Event;
 
 use crate::ChannelState;
 use crate::auth::UserUid;

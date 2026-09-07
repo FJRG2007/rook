@@ -2,12 +2,12 @@ use std::sync::Arc;
 
 pub use lightbox::LightboxImage;
 use pathfinder_geometry::vector::Vector2F;
-use ui_components::{Component as _, lightbox};
 use rookui::assets::asset_cache::{AssetCache, AssetSource, AssetState};
 use rookui::image_cache::ImageType;
 use rookui::keymap::{FixedBinding, Keystroke};
 use rookui::prelude::*;
 use rookui::{AppContext, BlurContext, Element, Entity, SingletonEntity, View, ViewContext};
+use ui_components::{Component as _, lightbox};
 
 use crate::appearance::Appearance;
 

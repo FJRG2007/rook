@@ -8,8 +8,6 @@ use instant::Instant;
 use itertools::Itertools;
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use smallvec::SmallVec;
-use vim::vim::{MotionType, VimMode};
 use rook_core::features::FeatureFlag;
 use rook_core::ui::appearance::DEFAULT_UI_FONT_SIZE;
 use rook_errors::report_error;
@@ -31,6 +29,8 @@ use rookui::text_selection_utils::{
 };
 use rookui::ui_components::components::UiComponent;
 use rookui::{AppContext, SingletonEntity, TaskId, ViewHandle};
+use smallvec::SmallVec;
+use vim::vim::{MotionType, VimMode};
 
 use super::super::soft_wrap::{
     ClampDirection, DisplayPointAndClampDirection, FrameLayouts, SoftWrapPoint, SoftWrapState,

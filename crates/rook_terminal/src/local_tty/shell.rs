@@ -4,8 +4,6 @@ use std::{io, process};
 
 use anyhow::Context as _;
 use itertools::Itertools as _;
-use serde::{Deserialize, Serialize};
-use typed_path::UnixPathBuf;
 use rook_core::channel::{Channel, ChannelState};
 use rook_core::session_id::SessionId;
 use rook_errors::report_error;
@@ -14,6 +12,8 @@ use rook_util::path::windows::{powershell_5_path, powershell_7_path, wsl_path};
 use rook_util::path::{
     canonicalize_git_bash_path, is_msys2_path, resolve_executable, rook_shell_path,
 };
+use serde::{Deserialize, Serialize};
+use typed_path::UnixPathBuf;
 
 use crate::bootstrap::{generate_session_id, init_shell_script_for_shell};
 use crate::local_tty::docker_sandbox::DockerSandboxShellStarter;

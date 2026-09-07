@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
 use rookui::AppContext;
 use rookui::keymap::Keystroke;
+use serde::{Deserialize, Serialize};
 
 pub mod tip_view;
 pub use tip_view::{TipsEvent, TipsView};

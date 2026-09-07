@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
 use chrono::{Duration, Local};
-use settings::Setting;
 use rook_core::SessionId;
 use rookui::{App, AppContext, EntityId, SingletonEntity};
+use settings::Setting;
 
 use super::{UpArrowHistoryConfig, prompt_history_for_terminal_surface};
 use crate::ai::agent::AIAgentExchangeId;

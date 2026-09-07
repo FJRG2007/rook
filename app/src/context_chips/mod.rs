@@ -19,14 +19,14 @@ use std::collections::HashMap;
 use std::time::Duration;
 
 use context_chip::PromptGenerator;
-use serde::{Deserialize, Serialize};
-use smol_str::SmolStr;
 use rook_core::ui::color::blend::Blend;
 use rook_core::ui::color::contrast::{MinimumAllowedContrast, high_enough_contrast};
 use rook_core::ui::theme::{Fill, RookTheme};
 use rookui::color::ColorU;
 use rookui::elements::Text;
 use rookui::fonts::{Properties, Weight};
+use serde::{Deserialize, Serialize};
+use smol_str::SmolStr;
 
 #[allow(unused_imports)]
 pub use self::context_chip::{

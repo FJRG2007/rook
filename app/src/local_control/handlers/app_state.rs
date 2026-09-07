@@ -12,13 +12,13 @@ use ::local_control::protocol::{
     TargetSelector, TextParams,
 };
 use ::local_control::{ActionKind, ControlError, ErrorCode, InstanceId};
-use serde_json::json;
 #[cfg(feature = "local_fs")]
 use rook_util::local_or_remote_path::LocalOrRemotePath;
 use rook_util::path::LineAndColumnArg;
 #[cfg(feature = "local_fs")]
 use rookui::SingletonEntity;
 use rookui::{AppContext, ModelContext, TypedActionView};
+use serde_json::json;
 
 #[cfg(feature = "local_fs")]
 use crate::code::editor_management::CodeSource;

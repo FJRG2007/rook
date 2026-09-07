@@ -1,10 +1,10 @@
 use std::str::FromStr;
 
-use settings::macros::define_settings_group;
-use settings::{Setting as _, SupportedPlatforms, SyncToCloud};
 use rook_core::ui::theme::{ColorScheme, RookTheme};
 #[cfg(feature = "tui")]
 use rookui_core::runtime::BackgroundLuminance;
+use settings::macros::define_settings_group;
+use settings::{Setting as _, SupportedPlatforms, SyncToCloud};
 
 #[cfg(feature = "tui")]
 use crate::themes::default_themes::{dark_theme, light_theme};

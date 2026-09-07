@@ -24,10 +24,6 @@ pub use notifications_error::*;
 pub use open_in_rook::*;
 pub use passive_code_diff::*;
 use pathfinder_color::ColorU;
-pub use session_state::*;
-pub use shared_sessions::*;
-pub use shell_process_terminated::*;
-pub use vim_mode::*;
 use rookui::Element;
 use rookui::elements::{
     Align, Clipped, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Icon,
@@ -37,6 +33,10 @@ use rookui::elements::{
 use rookui::fonts::{FamilyId, Properties, Weight};
 use rookui::ui_components::button::ButtonVariant;
 use rookui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+pub use session_state::*;
+pub use shared_sessions::*;
+pub use shell_process_terminated::*;
+pub use vim_mode::*;
 
 pub use self::prompt_suggestions::*;
 use crate::appearance::Appearance;

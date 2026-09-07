@@ -2,13 +2,13 @@ use std::io::Write as _;
 use std::path::Path;
 
 use anyhow::{Context as _, Result};
+use rook_core::channel::ChannelState;
+use rook_core::features::FeatureFlag;
 use schemars::SchemaGenerator;
 use serde_json::{Map, Value};
 use settings::schema::SettingSchemaEntry;
 use settings::{SettingSurfaces, SettingsMode};
 use tempfile::NamedTempFile;
-use rook_core::channel::ChannelState;
-use rook_core::features::FeatureFlag;
 
 /// Writes the settings schema to a file or prints it to standard output.
 pub fn dump_settings_schema(output_path: Option<&Path>) -> Result<()> {

@@ -3,10 +3,10 @@ use std::sync::Arc;
 
 use chrono::Local;
 use pathfinder_color::ColorU;
-use smol_str::SmolStr;
 use rook_editor::render::model::LineCount;
 use rook_util::path::EscapeChar;
 use rookui::App;
+use smol_str::SmolStr;
 
 use super::{
     CLIAgent, UBER_TEAM_UID, build_diff_hunk_prompt, build_review_prompt,

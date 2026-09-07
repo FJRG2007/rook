@@ -1,8 +1,8 @@
 use itertools::Itertools;
-use string_offset::CharOffset;
 use rook_editor::render::model::BlockItem;
 use rookui::integration::{AssertionCallback, AssertionOutcome, AssertionWithDataCallback};
 use rookui::{App, ViewHandle, async_assert, async_assert_eq};
+use string_offset::CharOffset;
 
 use crate::cloud_object::model::generic_string_model::GenericStringObjectId;
 use crate::cloud_object::model::persistence::CloudModel;

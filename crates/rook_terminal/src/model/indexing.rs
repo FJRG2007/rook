@@ -4,8 +4,8 @@ use std::cmp::Ordering;
 use std::fmt;
 use std::ops::{Add, AddAssign, Range, RangeInclusive, Sub, SubAssign};
 
-use serde::{Deserialize, Serialize};
 use rookui_core::units::Lines;
+use serde::{Deserialize, Serialize};
 
 use super::grid::Dimensions;
 pub trait RangeInModel {

@@ -8,12 +8,6 @@ use itertools::Itertools;
 use lazy_static::lazy_static;
 use markdown_parser::markdown_parser::CODE_BLOCK_DEFAULT_MARKDOWN_LANG;
 use pathfinder_color::ColorU;
-use string_offset::{ByteOffset, CharOffset};
-use syntect::easy::HighlightLines;
-use syntect::highlighting::{self, Theme, ThemeSet};
-use syntect::parsing::SyntaxSet;
-use syntect::util::LinesWithEndings;
-use ui_components::lightbox::{LightboxImage, LightboxImageSource};
 use rook_completer::signatures::CommandRegistry;
 use rook_core::r#async::debounce;
 use rook_editor::content::anchor::Anchor;
@@ -39,6 +33,12 @@ use rookui::{
     AppContext, AssetProvider as _, Element, Entity, ModelAsRef, ModelContext, ModelHandle,
     SingletonEntity, ViewHandle, WeakModelHandle, WindowId,
 };
+use string_offset::{ByteOffset, CharOffset};
+use syntect::easy::HighlightLines;
+use syntect::highlighting::{self, Theme, ThemeSet};
+use syntect::parsing::SyntaxSet;
+use syntect::util::LinesWithEndings;
+use ui_components::lightbox::{LightboxImage, LightboxImageSource};
 
 use super::interaction_state_model::InteractionStateModel;
 use super::keys::{NotebookKeybindings, custom_action_to_display};

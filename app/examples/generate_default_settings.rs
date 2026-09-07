@@ -16,11 +16,11 @@
 use std::collections::HashSet;
 use std::path::PathBuf;
 
-use settings::SettingsMode;
-use settings::schema::SettingSchemaEntry;
 use rook_core::features::{DEBUG_FLAGS, DOGFOOD_FLAGS, FeatureFlag, PREVIEW_FLAGS, RELEASE_FLAGS};
 use rookui_extras::user_preferences::UserPreferences as _;
 use rookui_extras::user_preferences::toml_backed::TomlBackedUserPreferences;
+use settings::SettingsMode;
+use settings::schema::SettingSchemaEntry;
 
 /// Ensures all `inventory::submit!` registrations from the app crate's
 /// dependency tree are linked into the binary.

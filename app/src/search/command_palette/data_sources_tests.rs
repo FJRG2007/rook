@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 use chrono::Utc;
 use cloud_object_client::MockObjectClient;
-use settings::manager::SettingsManager;
 use rook_graphql::object_permissions::AccessLevel;
 use rookui::{App, SingletonEntity, WindowId};
+use settings::manager::SettingsManager;
 
 use super::*;
 use crate::auth::{AuthStateProvider, UserUid};

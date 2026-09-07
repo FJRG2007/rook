@@ -1,7 +1,7 @@
-use serde_json::{Value, json};
-use strum_macros::{EnumDiscriminants, EnumIter};
 use rook_core::features::FeatureFlag;
 use rook_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
+use serde_json::{Value, json};
+use strum_macros::{EnumDiscriminants, EnumIter};
 
 use crate::workspace::tab_settings::{
     VerticalTabsCompactSubtitle, VerticalTabsDisplayGranularity, VerticalTabsPrimaryInfo,

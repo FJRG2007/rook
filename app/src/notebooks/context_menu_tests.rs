@@ -1,9 +1,9 @@
 use pathfinder_geometry::vector::vec2f;
-use string_offset::ByteOffset;
 use rook_core::ui::appearance::Appearance;
 use rook_editor::model::CoreEditorModel;
 use rookui::App;
 use rookui::platform::WindowStyle;
+use string_offset::ByteOffset;
 
 use super::MenuSource;
 use crate::auth::AuthStateProvider;

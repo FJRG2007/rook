@@ -10,10 +10,10 @@ use anyhow::{Result, anyhow};
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use pathfinder_geometry::vector::Vector2F;
-use thiserror::Error;
-use version_compare::Version;
 use rook_errors::report_error;
 use rookui_core::rendering::{GPUBackend, GPUDeviceInfo, GPUDeviceType};
+use thiserror::Error;
+use version_compare::Version;
 use wgpu::{
     Adapter, Backend, CompositeAlphaMode, CurrentSurfaceTexture, Device, DeviceType, PresentMode,
     Queue, Surface, SurfaceConfiguration,

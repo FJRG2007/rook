@@ -3,11 +3,11 @@ use std::ops::Range;
 
 use arborium::tree_sitter::{Node, Query, QueryCursor, TextProvider, Tree};
 use rangemap::RangeMap;
-use streaming_iterator::StreamingIterator;
-use string_offset::{ByteOffset, CharOffset};
 use rook_editor::content::buffer::{Buffer, ToBufferByteOffset, ToBufferCharOffset};
 use rook_editor::content::text::Bytes;
 use rookui_core::color::ColorU;
+use streaming_iterator::StreamingIterator;
+use string_offset::{ByteOffset, CharOffset};
 
 /// Color mapping from parsed syntax token name to its corresponding highlighting color.
 #[derive(Clone, Copy)]

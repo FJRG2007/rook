@@ -2,13 +2,6 @@
 
 use chrono::{DateTime, Local};
 use itertools::Itertools;
-use session_sharing_protocol::common::{
-    ParticipantId, ParticipantList, ParticipantPresenceUpdate, Role, RoleRequestId,
-    RoleRequestResponse, SessionId, WindowSize,
-};
-use session_sharing_protocol::sharer::{RoleUpdateReason, SessionEndedReason, SessionSourceType};
-use session_sharing_protocol::viewer::RoleUpdatedReason;
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rook_core::semantic_selection::SemanticSelection;
 use rook_core::ui::appearance::Appearance;
@@ -21,6 +14,13 @@ use rookui::ui_components::button::ButtonVariant;
 use rookui::ui_components::components::UiComponent;
 use rookui::units::IntoLines;
 use rookui::{AppContext, Element, ModelHandle, SingletonEntity, ViewContext};
+use session_sharing_protocol::common::{
+    ParticipantId, ParticipantList, ParticipantPresenceUpdate, Role, RoleRequestId,
+    RoleRequestResponse, SessionId, WindowSize,
+};
+use session_sharing_protocol::sharer::{RoleUpdateReason, SessionEndedReason, SessionSourceType};
+use session_sharing_protocol::viewer::RoleUpdatedReason;
+use settings::Setting as _;
 
 use super::adapter::{Adapter, Kind, Participant};
 use super::cloud_conversation_continuation::{

@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
-use settings::Setting as _;
-use vim::vim::MotionType;
 use rookui::clipboard::ClipboardContent;
 use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
+use settings::Setting as _;
+use vim::vim::MotionType;
 
 use crate::settings::AppEditorSettings;
 

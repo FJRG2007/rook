@@ -1,7 +1,7 @@
-use serde::Serialize;
 use rookui::Element;
 use rookui::elements::MouseStateHandle;
 use rookui::notification::RequestPermissionsOutcome;
+use serde::Serialize;
 
 use super::{
     InlineBannerButtonState, InlineBannerCloseButton, InlineBannerContent, InlineBannerStyle,

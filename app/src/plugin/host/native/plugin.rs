@@ -3,8 +3,8 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use anyhow::anyhow;
-use rquickjs::Context;
 use rook_js::{JsFunctionId, JsFunctionRegistry, SerializedJsValue};
+use rquickjs::Context;
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "completions_v2")] {

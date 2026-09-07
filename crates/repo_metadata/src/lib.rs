@@ -5,10 +5,10 @@
 use std::borrow::Borrow;
 use std::path::{Path, PathBuf};
 
-use thiserror::Error;
 use rook_util::standardized_path::StandardizedPath;
 #[cfg(not(target_family = "wasm"))]
 use rookui_core::SingletonEntity;
+use thiserror::Error;
 
 /// Errors that can occur when working with repository metadata.
 #[derive(Error, Debug)]

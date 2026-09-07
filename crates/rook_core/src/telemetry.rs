@@ -5,9 +5,9 @@ use std::marker::PhantomData;
 #[doc(hidden)]
 #[cfg(not(target_family = "wasm"))]
 pub use inventory::submit;
+use rookui_core::{AppContext, Entity, SingletonEntity};
 use serde_json::Value;
 use strum::IntoEnumIterator;
-use rookui_core::{AppContext, Entity, SingletonEntity};
 
 use crate::channel::{Channel, ChannelState};
 use crate::features::FeatureFlag;

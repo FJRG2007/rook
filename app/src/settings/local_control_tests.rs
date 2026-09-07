@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 use std::sync::Mutex;
 
-use settings::{PrivatePreferences, PublicPreferences, Setting as _, SettingsManager, SyncToCloud};
 use rook_core::channel::{Channel, ChannelState};
 use rookui::SingletonEntity as _;
 use rookui_extras::secure_storage::{self, AppContextExt as _};
 use rookui_extras::user_preferences;
+use settings::{PrivatePreferences, PublicPreferences, Setting as _, SettingsManager, SyncToCloud};
 
 use super::{
     LocalControlMode, LocalControlModeSetting, LocalControlSettings, default_mode_for_channel,

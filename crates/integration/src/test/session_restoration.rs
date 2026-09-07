@@ -1,4 +1,3 @@
-use settings::{RespectUserSyncSetting, SyncToCloud};
 use rook::features::FeatureFlag;
 use rook::integration_testing::notebook::{
     assert_cloud_preference_exists, assert_notebook_contents, assert_notebook_metadata_revision,
@@ -21,6 +20,7 @@ use rook::terminal::{History, ShellHost, TerminalView};
 use rook::workspace::Workspace;
 use rookui_core::integration::{AssertionOutcome, TestStep};
 use rookui_core::{SingletonEntity, ViewHandle, async_assert_eq};
+use settings::{RespectUserSyncSetting, SyncToCloud};
 
 use super::{Builder, TEST_ONLY_ASSETS, new_builder};
 use crate::util::{get_local_user, tab_title_in_home_dir};

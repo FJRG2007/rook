@@ -6,7 +6,7 @@ use itertools::Itertools;
 use palette::Srgba;
 use pathfinder_color::ColorU;
 use plist::{Dictionary, Value};
-use rook_core::ui::theme::{AnsiColors, TerminalColors, RookTheme};
+use rook_core::ui::theme::{AnsiColors, RookTheme, TerminalColors};
 use rookui::DisplayIdx;
 use rookui::fonts::FontInfo;
 use rookui::keymap::Keystroke;

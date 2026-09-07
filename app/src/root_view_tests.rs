@@ -3,7 +3,6 @@ use onboarding::{
     AgentOnboardingView, OfferVariant, OnboardingAuthState, OnboardingIntention, SelectedSettings,
     UICustomizationSettings,
 };
-use session_sharing_protocol::common::SessionId;
 use rook_core::features::FeatureFlag;
 use rook_core::user_preferences::GetUserPreferences as _;
 use rookui::elements::Empty;
@@ -11,6 +10,7 @@ use rookui::platform::WindowStyle;
 use rookui::{
     App, AppContext, Element, Entity, EntityId, SingletonEntity, TypedActionView, View, ViewHandle,
 };
+use session_sharing_protocol::common::SessionId;
 
 use super::{
     AccountFirstCompletion, AuthOnboardingState, AuthOnboardingTarget,

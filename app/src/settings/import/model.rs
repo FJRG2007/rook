@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
+use rook_core::features::FeatureFlag;
+use rookui::{Entity, ModelContext, SingletonEntity};
 use serde::Serialize;
 use strum::IntoEnumIterator;
 use strum_macros::{EnumDiscriminants, EnumIter};
-use rook_core::features::FeatureFlag;
-use rookui::{Entity, ModelContext, SingletonEntity};
 
 #[cfg(target_os = "macos")]
 use super::config::HotkeyError;

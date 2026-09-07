@@ -1,4 +1,3 @@
-use settings::Setting;
 use rook_core::ui::Icon;
 use rook_errors::report_if_error;
 use rookui::elements::{
@@ -14,6 +13,7 @@ use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use settings::Setting;
 
 use crate::WorkspaceAction;
 use crate::ai::blocklist::agent_view::{

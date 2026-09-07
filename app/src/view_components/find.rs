@@ -1,5 +1,4 @@
 use pathfinder_color::ColorU;
-use serde::Serialize;
 pub use rookui::AppContext;
 pub use rookui::accessibility::{AccessibilityContent, RookA11yRole};
 use rookui::elements::{
@@ -16,6 +15,7 @@ use rookui::{
     Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use serde::Serialize;
 
 use crate::appearance::Appearance;
 use crate::editor::{

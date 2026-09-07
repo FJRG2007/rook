@@ -26,6 +26,7 @@ pub mod persistence;
 #[cfg(target_os = "macos")]
 pub mod preview_config_migration;
 pub mod remote_server;
+pub mod rook_drive;
 pub mod rules;
 pub mod secret_redaction;
 pub mod settings;
@@ -36,7 +37,6 @@ pub mod terminal;
 pub mod themes;
 pub mod type_getters;
 pub mod view_getters;
-pub mod rook_drive;
 pub mod window;
 pub mod workflow;
 pub mod workspace;

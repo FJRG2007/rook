@@ -19,12 +19,12 @@ use super::{
 use crate::ai::custom_model_routers::{CustomModelRouter, ModelConfigError};
 use crate::features::FeatureFlag;
 use crate::launch_configs::launch_config::LaunchConfig;
-use crate::tab_configs::{TabConfig, TabConfigError};
-use crate::themes::theme::RookThemeConfig;
 use crate::rook_managed_paths_watcher::{
     RookManagedPathsWatcher, RookManagedPathsWatcherEvent, repository_update_touches_path,
     repository_update_touches_prefix,
 };
+use crate::tab_configs::{TabConfig, TabConfigError};
+use crate::themes::theme::RookThemeConfig;
 use crate::workflows::workflow::Workflow;
 
 impl super::RookConfig {

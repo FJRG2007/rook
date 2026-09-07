@@ -1,4 +1,3 @@
-use settings::Setting as _;
 use rook_errors::{report_error, report_if_error};
 use rookui::elements::{
     Align, CrossAxisAlignment, Flex, MainAxisSize, MouseStateHandle, ParentElement as _,
@@ -8,6 +7,7 @@ use rookui::platform::Cursor;
 use rookui::ui_components::button::ButtonVariant;
 use rookui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use rookui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use settings::Setting as _;
 
 use crate::appearance::Appearance;
 use crate::settings::app_installation_detection::{

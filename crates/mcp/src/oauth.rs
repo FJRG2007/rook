@@ -7,13 +7,13 @@ use rmcp::transport::auth::{
     OAuthState, StoredCredentials,
 };
 use rmcp::transport::{AuthError, AuthorizationSession};
+use rook_core::channel::ChannelState;
+use rook_errors::report_error;
+use rookui_extras::secure_storage::AppContextExt as _;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
-use rook_core::channel::ChannelState;
-use rook_errors::report_error;
-use rookui_extras::secure_storage::AppContextExt as _;
 mod loopback;
 
 pub const TEMPLATABLE_MCP_CREDENTIALS_KEY: &str = "TemplatableMcpCredentials";

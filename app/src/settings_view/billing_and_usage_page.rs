@@ -7,8 +7,6 @@ use itertools::Itertools;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use settings::Setting;
-use thousands::Separable;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::appearance::Appearance;
 use rook_core::ui::theme::Fill;
@@ -29,6 +27,8 @@ use rookui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, UpdateView, View,
     ViewContext, ViewHandle, WeakViewHandle,
 };
+use settings::Setting;
+use thousands::Separable;
 
 use super::SettingsSection;
 use super::admin_actions::AdminActions;

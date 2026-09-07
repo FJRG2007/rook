@@ -11,10 +11,10 @@ use std::time::Duration;
 use futures::channel::oneshot;
 use futures::executor::block_on;
 use ignore::gitignore::Gitignore;
-use virtual_fs::{Stub, VirtualFS};
 use rook_util::standardized_path::StandardizedPath;
 use rookui_core::r#async::FutureExt as _;
 use rookui_core::{App, ModelHandle};
+use virtual_fs::{Stub, VirtualFS};
 #[cfg(feature = "local_fs")]
 use watcher::BulkFilesystemWatcherEvent;
 

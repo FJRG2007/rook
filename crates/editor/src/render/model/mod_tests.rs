@@ -3,9 +3,6 @@ use std::sync::Arc;
 
 use markdown_parser::{FormattedTextStyles, Hyperlink};
 use rangemap::RangeSet;
-use string_offset::CharOffset;
-use sum_tree::SumTree;
-use vec1::{Vec1, vec1};
 use rookui_core::assets::asset_cache::AssetSource;
 use rookui_core::color::ColorU;
 use rookui_core::elements::ListIndentLevel;
@@ -14,6 +11,9 @@ use rookui_core::geometry::rect::RectF;
 use rookui_core::geometry::vector::vec2f;
 use rookui_core::text_layout::TextFrame;
 use rookui_core::units::{IntoPixels, Pixels};
+use string_offset::CharOffset;
+use sum_tree::SumTree;
+use vec1::{Vec1, vec1};
 
 use super::debug::Describe;
 use super::test_utils::{layout_paragraph, layout_paragraphs};

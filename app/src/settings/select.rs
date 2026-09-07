@@ -1,11 +1,11 @@
 use std::ops::Not;
 
+use rookui::AppContext;
+use rookui::clipboard::ClipboardContent;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use settings::macros::define_settings_group;
 use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
-use rookui::AppContext;
-use rookui::clipboard::ClipboardContent;
 
 #[derive(
     Debug,

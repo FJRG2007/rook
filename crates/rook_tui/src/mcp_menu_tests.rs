@@ -1,9 +1,9 @@
-use uuid::Uuid;
 use rook::tui_export::{
     TuiMcpAction, TuiMcpConfigDiagnostic, TuiMcpFileScope, TuiMcpFileSource, TuiMcpServerId,
     TuiMcpServerSnapshot, TuiMcpServerSource, TuiMcpServerStatus, TuiMcpSnapshot,
     TuiMcpSyncedTemplateProvenance, TuiMcpTransport,
 };
+use uuid::Uuid;
 
 use super::{menu_rows, row_is_selectable};
 

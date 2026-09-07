@@ -28,11 +28,11 @@ use instant::Instant;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use log::debug;
-use vte::{Params, Parser as VteParser, Perform as VtePerform};
 use rook_core::features::FeatureFlag;
 use rook_core::{safe_debug, safe_error, safe_warn};
 use rook_errors::report_error;
 use rookui_core::color::ColorU;
+use vte::{Params, Parser as VteParser, Perform as VtePerform};
 
 use super::kitty::parse_kitty_chunk;
 use crate::model::completions::{ShellCompletion, ShellCompletionUpdate};

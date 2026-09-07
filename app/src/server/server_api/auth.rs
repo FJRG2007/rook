@@ -1,9 +1,9 @@
-use thiserror::Error;
 #[cfg(any(test, feature = "test-util"))]
 pub use rook_server_client::auth::MockAuthClient;
 pub use rook_server_client::auth::{
     AuthClient, FetchUserResult, MintCustomTokenError, SyncedUserSettings, UserAuthenticationError,
 };
+use thiserror::Error;
 
 #[derive(Error, Debug)]
 /// Error type when creating anonymous users.

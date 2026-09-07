@@ -7,10 +7,10 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use futures_util::future::Either;
-use url::Url;
 use rook_util::path::{CleanPathResult, LineAndColumnArg};
 use rookui::r#async::SpawnedFutureHandle;
 use rookui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity, WindowId};
+use url::Url;
 
 use super::file::is_markdown_file;
 use crate::drive::OpenRookDriveObjectArgs;

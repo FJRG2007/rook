@@ -2,10 +2,10 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use futures::FutureExt as _;
-use vec1::vec1;
 use rook_managed_secrets::client::{IdentityTokenOptions, ManagedSecretsClient};
 use rook_server_client::iap::IapIdentityTokenMinter;
 use rookui::r#async::BoxFuture;
+use vec1::vec1;
 
 /// Mints Rook-signed OIDC identity tokens for the runner-context IAP Workload
 /// Identity Federation flow, backed by the managed-secrets client. Lives in the

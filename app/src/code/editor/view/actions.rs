@@ -7,7 +7,6 @@ use std::ops::Range;
 
 use lazy_static::lazy_static;
 use rangemap::RangeSet;
-use string_offset::CharOffset;
 use rook_editor::content::version::BufferVersion;
 use rook_editor::editor::{EmbeddedItemModel, RunnableCommandModel, TextDecoration};
 use rook_editor::model::{CoreEditorModel, PlainTextEditorModel};
@@ -21,6 +20,7 @@ use rookui::event::ModifiersState;
 use rookui::keymap::{EditableBinding, FixedBinding, Keystroke, PerPlatformKeystroke};
 use rookui::units::Pixels;
 use rookui::{AppContext, TypedActionView, ViewContext, WeakViewHandle};
+use string_offset::CharOffset;
 
 use crate::cmd_or_ctrl_shift;
 use crate::code::editor::line::EditorLineLocation;

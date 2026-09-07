@@ -3,7 +3,6 @@
 use std::time::Duration;
 
 use chrono::{Local, NaiveDateTime};
-use vim::vim::{MotionType, VimMode};
 use rook::settings::{AISettings, TuiStatuslineConfig, TuiStatuslineItem};
 use rook::tui_export::{
     ConversationUsageTotals, GitRepoModels, GitStatusMetadata, LLMPreferences, ResolvedTeamScope,
@@ -15,6 +14,7 @@ use rookui_core::elements::tui::{
     Modifier, TuiAnimated, TuiElement, TuiFlex, TuiHoverable, TuiStyle, TuiText,
 };
 use rookui_core::{AppContext, ViewContext};
+use vim::vim::{MotionType, VimMode};
 
 use super::{
     CTRL_C_EXIT_HINT, CTRL_C_KILL_CHILD_HINT, ConversationRestoreState, LOADING_CONVERSATION_HINT,

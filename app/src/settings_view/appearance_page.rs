@@ -75,7 +75,7 @@ use crate::terminal::settings::{
 use crate::terminal::{
     BlockListSettings, ShowBlockDividers, ShowJumpToBottomOfBlockButton, SizeInfo,
 };
-use crate::themes::theme::{self, RespectSystemTheme, SelectedSystemThemes, ThemeKind, RookTheme};
+use crate::themes::theme::{self, RespectSystemTheme, RookTheme, SelectedSystemThemes, ThemeKind};
 use crate::themes::theme_chooser::ThemeChooserMode;
 use crate::ui_components::color_dot::{TAB_COLOR_OPTIONS, render_color_dot};
 use crate::ui_components::icons::Icon;

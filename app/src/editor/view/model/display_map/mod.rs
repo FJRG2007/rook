@@ -6,9 +6,9 @@ use std::ops::Range;
 use anyhow::{Context, Result};
 pub use fold_map::BufferRows;
 use fold_map::FoldMap;
-use string_offset::CharOffset;
 use rookui::text::point::Point;
 use rookui::{AppContext, Entity, ModelContext, ModelHandle};
+use string_offset::CharOffset;
 
 use super::buffer::{self, Anchor, Buffer, Edit, StylizedChar, ToCharOffset, ToPoint};
 use crate::editor::soft_wrap::{self, DisplayPointAndClampDirection, SoftWrapPoint, SoftWrapState};

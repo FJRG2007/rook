@@ -1,8 +1,8 @@
 //! Utilities to check whether a command at the cursor position is likely a package installer command.
 
-use string_offset::ByteOffset;
 use rook_completer::parsers::simple::command_at_cursor_position;
 use rook_util::path::ShellFamily;
+use string_offset::ByteOffset;
 
 use crate::completer::SessionContext;
 use crate::terminal::alias::is_expandable_alias;

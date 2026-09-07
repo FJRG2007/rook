@@ -2,8 +2,8 @@ use std::cmp::max;
 
 use ordered_float::Float;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
-use serde::{Deserialize, Serialize};
 use rookui_core::units::{IntoPixels, Pixels};
+use serde::{Deserialize, Serialize};
 
 use crate::model::Side;
 

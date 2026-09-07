@@ -1,12 +1,12 @@
 use std::fmt::Write;
 
 use itertools::Itertools;
-use settings::ToggleableSetting as _;
 use rook_errors::report_if_error;
 use rookui::modals::{AlertDialogWithCallbacks, AppModalCallback, ModalButton};
 use rookui::{
     AppContext, EntityId, SingletonEntity, ViewContext, ViewHandle, WeakViewHandle, WindowId,
 };
+use settings::ToggleableSetting as _;
 
 use crate::code::editor_management::{CodeEditorStatus, CodeEditorSummary};
 use crate::code::view::CodeView;

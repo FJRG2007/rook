@@ -4,11 +4,11 @@ use ::local_control::protocol::{
     ThemeListResult, ThemeStateResult, ThemeSummary,
 };
 use ::local_control::{ControlError, ErrorCode};
+use rookui::keymap::DescriptionContext;
+use rookui::{ModelContext, SingletonEntity};
 use serde::Serialize;
 use serde_json::{Value, json};
 use settings::Setting as _;
-use rookui::keymap::DescriptionContext;
-use rookui::{ModelContext, SingletonEntity};
 
 use crate::WindowSettings;
 use crate::local_control::LocalControlBridge;

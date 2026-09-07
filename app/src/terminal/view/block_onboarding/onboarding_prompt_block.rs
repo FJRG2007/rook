@@ -1,5 +1,4 @@
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use settings::Setting as _;
 use rook_errors::report_if_error;
 use rookui::elements::{
     Align, Border, Clipped, ConstrainedBox, Container, CornerRadius, Flex, FormattedTextElement,
@@ -10,6 +9,7 @@ use rookui::fonts::Weight;
 use rookui::platform::Cursor;
 use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use settings::Setting as _;
 
 use crate::appearance::Appearance;
 use crate::context_chips::prompt::Prompt;

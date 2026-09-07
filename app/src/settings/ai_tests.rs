@@ -1,8 +1,8 @@
 use chrono::Utc;
-use settings::schema::SettingSchemaEntry;
-use settings::{Setting, SettingSurfaces, SettingsMode};
 use rook_graphql::scalars::time::ServerTimestamp;
 use rookui::{App, SingletonEntity};
+use settings::schema::SettingSchemaEntry;
+use settings::{Setting, SettingSurfaces, SettingsMode};
 
 use super::*;
 use crate::ai::request_usage_model::{RequestLimitInfo, RequestLimitRefreshDuration};

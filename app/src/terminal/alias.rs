@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use smol_str::SmolStr;
 use rook_completer::parsers::simple::all_parsed_commands;
+use smol_str::SmolStr;
 
 use crate::terminal::model::session::Session;
 

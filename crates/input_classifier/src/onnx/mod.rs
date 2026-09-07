@@ -7,9 +7,9 @@ use std::borrow::Cow;
 
 use anyhow::Result;
 use async_trait::async_trait;
-use rust_embed::RustEmbed;
 use rook_completer::ParsedTokensSnapshot;
 use rook_errors::report_error;
+use rust_embed::RustEmbed;
 
 use crate::parser::parse_query_into_tokens;
 use crate::util::{

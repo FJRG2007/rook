@@ -10,7 +10,6 @@ use std::collections::HashMap;
 use enum_iterator::all;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use regex::Regex;
-use settings::{Setting, ToggleableSetting};
 use rook_core::features::FeatureFlag;
 use rook_errors::report_if_error;
 use rookui::elements::{
@@ -24,6 +23,7 @@ use rookui::ui_components::switch::SwitchStateHandle;
 use rookui::{
     Action, AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, id,
 };
+use settings::{Setting, ToggleableSetting};
 
 use super::ai_shared::{
     render_ai_feature_switch, render_ai_setting_toggle, render_toolbar_layout_editor, styles,

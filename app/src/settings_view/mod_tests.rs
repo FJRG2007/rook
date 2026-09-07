@@ -1,12 +1,12 @@
 use pathfinder_geometry::vector::vec2f;
-use settings_page::{
-    Category, CategoryHeader, FilteredPageType, MatchData, PageTitle, PageType, SettingsWidget,
-    categories_with_visible_content, search_terms_match,
-};
 use rookui::elements::Empty;
 use rookui::platform::WindowStyle;
 use rookui::{
     App, AppContext, Element, Entity, Presenter, TypedActionView, View, WindowInvalidation,
+};
+use settings_page::{
+    Category, CategoryHeader, FilteredPageType, MatchData, PageTitle, PageType, SettingsWidget,
+    categories_with_visible_content, search_terms_match,
 };
 
 use super::*;

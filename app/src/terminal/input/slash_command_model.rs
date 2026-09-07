@@ -1,9 +1,9 @@
 use ai::skills::SkillReference;
 use input_classifier::InputType;
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rook_search_core::inline_menu::InputDrivenInlineMenuLifecycle;
 use rookui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
+use settings::Setting as _;
 
 use crate::ai::blocklist::{
     BlocklistAIInputEvent, BlocklistAIInputModel, InputTypeAutoDetectionSource,

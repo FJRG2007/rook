@@ -5,10 +5,6 @@ use std::time::Duration;
 
 use anyhow::{Result, anyhow};
 use futures::future::Either;
-use settings::Setting as _;
-#[cfg(target_family = "wasm")]
-use url::Url;
-use uuid::Uuid;
 use rook_core::channel::ChannelState;
 use rook_core::features::FeatureFlag;
 use rook_errors::{report_error, report_if_error};
@@ -20,6 +16,10 @@ use rook_server_auth::user::persistence::PersistedUser;
 use rookui::r#async::Timer;
 use rookui::clipboard::ClipboardContent;
 use rookui::{Entity, ModelContext, SingletonEntity, UpdateModel};
+use settings::Setting as _;
+#[cfg(target_family = "wasm")]
+use url::Url;
+use uuid::Uuid;
 
 use super::auth_state::{AuthState, PersistAction};
 use super::auth_view_modal::{AuthRedirectPayload, AuthViewVariant};

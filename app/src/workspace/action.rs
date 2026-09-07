@@ -2,8 +2,6 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use session_sharing_protocol::common::SessionId;
-use ui_components::lightbox;
 use rook_util::path::LineAndColumnArg;
 use rookui::accessibility::AccessibilityVerbosity;
 use rookui::geometry::rect::RectF;
@@ -11,6 +9,8 @@ use rookui::geometry::vector::Vector2F;
 use rookui::platform::Cursor;
 use rookui::platform::keyboard::KeyCode;
 use rookui::{EntityId, WeakViewHandle, WindowId};
+use session_sharing_protocol::common::SessionId;
+use ui_components::lightbox;
 
 use super::global_actions::{ForkFromExchange, ForkedConversationDestination};
 use super::tab_settings::{

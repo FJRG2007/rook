@@ -2,7 +2,6 @@ use std::cell::RefCell;
 use std::collections::HashSet;
 use std::rc::Rc;
 
-use string_offset::CharOffset;
 use rook::tui_export::{
     Appearance, OptionBadge, OptionFooter, OptionRow, OptionSnapshot, OptionSourceStatus,
 };
@@ -14,6 +13,7 @@ use rookui_core::elements::tui::{
 };
 use rookui_core::keymap::Keystroke;
 use rookui_core::{App, AppContext, TuiView as _, TypedActionView as _, ViewHandle};
+use string_offset::CharOffset;
 
 use super::{
     OptionSelectorHeader, OptionSelectorPage, SELECTOR_NAVIGATION_ACTIVE, SelectorFocusZone,

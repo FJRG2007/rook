@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
 use regex::Regex;
-use settings::Setting as _;
 use rook::integration_testing::step::new_step_with_default_assertions;
 use rook::integration_testing::subshell::{
     enter_ssh_command, enter_ssh_password, setup_gcloud_sdk, wait_for_password_prompt,
@@ -21,6 +20,7 @@ use rook::terminal::session_settings::{StartupShell, StartupShellOverride};
 use rook::terminal::shell::ShellType;
 use rookui_core::integration::{AssertionCallback, AssertionOutcome, TestStep};
 use rookui_core::{async_assert, async_assert_eq};
+use settings::Setting as _;
 
 use super::new_builder;
 use crate::Builder;

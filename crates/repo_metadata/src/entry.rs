@@ -10,9 +10,9 @@ use futures_lite::StreamExt;
 use ignore::gitignore::Gitignore;
 #[cfg(feature = "local_fs")]
 use notify_debouncer_full::notify::WatchFilter;
-use thiserror::Error;
 use rook_errors::{ErrorExt, register_error, report_error};
 use rook_util::standardized_path::StandardizedPath;
+use thiserror::Error;
 
 use crate::gitignore_cache;
 use crate::standing_queries::{StandingQueryDefinitions, StandingQueryResults};

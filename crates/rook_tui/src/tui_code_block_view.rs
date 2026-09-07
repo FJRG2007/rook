@@ -5,13 +5,13 @@
 //! lightweight text for pathological inputs.
 
 use rangemap::RangeSet;
-use string_offset::CharOffset;
 use rook::editor::{CodeEditorModel, CodeEditorModelEvent};
 use rook_editor::content::buffer::InitialBufferState;
 use rook_editor::content::version::BufferVersion;
 use rook_editor::model::CoreEditorModel;
 use rookui_core::elements::tui::{Color, TuiElement, TuiFlex, TuiParentElement, TuiStyle, TuiText};
 use rookui_core::{AppContext, Entity, ModelHandle, TuiView, ViewContext};
+use string_offset::CharOffset;
 
 use crate::editor_element::{TuiEditorElement, TuiEditorStyles};
 use crate::tui_builder::TuiUiBuilder;

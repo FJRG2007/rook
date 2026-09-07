@@ -10,14 +10,14 @@ use futures::stream::AbortHandle;
 use itertools::Itertools;
 use pathfinder_color::ColorU;
 use rangemap::RangeMap;
-use similar::{ChangeTag, DiffOp, TextDiff};
-use string_offset::CharOffset;
 use rook_core::ui::theme::{AnsiColorIdentifier, Fill};
 use rook_editor::content::edit::TemporaryBlock;
 use rook_editor::content::version::BufferVersion;
 use rook_editor::multiline::{AnyMultilineString, LF, MultilineStr, MultilineString};
 use rook_editor::render::model::{Decoration, LineCount, LineDecoration};
 use rookui::{Entity, ModelContext};
+use similar::{ChangeTag, DiffOp, TextDiff};
+use string_offset::CharOffset;
 
 use super::super::DiffResult;
 use crate::appearance::Appearance;

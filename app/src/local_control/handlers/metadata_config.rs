@@ -6,10 +6,10 @@ use ::local_control::protocol::{
     TabTarget, TargetSelector, ThemeNameParams, WindowTarget,
 };
 use ::local_control::{ActionKind, ControlError, ErrorCode, InstanceId};
-use serde_json::json;
-use settings::Setting as _;
 use rook_core::ui::theme::AnsiColorIdentifier;
 use rookui::{ModelContext, SingletonEntity as _, WindowId};
+use serde_json::json;
+use settings::Setting as _;
 
 use super::metadata::{
     PaneEntry, TabEntry, WindowEntry, pane_entries_for_tabs, tab_entries_for_windows,

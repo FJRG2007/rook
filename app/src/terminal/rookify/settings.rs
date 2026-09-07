@@ -1,14 +1,14 @@
 use anyhow::Result;
 use lazy_static::lazy_static;
 use regex::Regex;
+use rook_errors::report_error;
+use rook_util::path::ShellFamily;
+use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
 use settings::macros::{maybe_define_setting, register_settings_events};
 use settings::{
     ChangeEventReason, RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud,
 };
 use strum_macros::EnumIter;
-use rook_errors::report_error;
-use rook_util::path::ShellFamily;
-use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
 
 use crate::terminal::ssh::util::{SshRookifyCommand, parse_interactive_ssh_command};
 

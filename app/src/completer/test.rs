@@ -3,12 +3,12 @@ use std::iter::FromIterator;
 use std::sync::Arc;
 
 use itertools::Itertools;
-use typed_path::{TypedPath, TypedPathBuf};
-#[cfg(windows)]
-use typed_path::{UnixComponent, WindowsComponent, WindowsPrefix};
 use rook_completer::completer::{CompletionContext, EngineDirEntry, PathCompletionContext};
 use rook_completer::signatures::CommandRegistry;
 use rookui::App;
+use typed_path::{TypedPath, TypedPathBuf};
+#[cfg(windows)]
+use typed_path::{UnixComponent, WindowsComponent, WindowsPrefix};
 
 use crate::completer::SessionContext;
 use crate::terminal::model::session::command_executor::testing::TestCommandExecutor;

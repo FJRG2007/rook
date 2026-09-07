@@ -5,7 +5,6 @@ use std::sync::atomic::{AtomicBool, Ordering};
 
 use markdown_parser::{FormattedText, parse_html, parse_markdown};
 use pathfinder_geometry::vector::vec2f;
-use string_offset::CharOffset;
 use rook_editor::content::anchor::Anchor;
 use rook_editor::content::text::{BufferTextStyle, CodeBlockType, TextStyles};
 use rook_editor::content::version::BufferVersion;
@@ -46,6 +45,7 @@ use rookui::{
     AppContext, BlurContext, CursorInfo, Element, Entity, FocusContext, ModelHandle,
     SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, WeakViewHandle, windowing,
 };
+use string_offset::CharOffset;
 
 use super::block_insertion_menu::{BlockInsertionMenuState, BlockInsertionSource};
 use super::find_bar::{FindBar, FindBarEvent, FindBarState};

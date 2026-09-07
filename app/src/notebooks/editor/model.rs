@@ -12,9 +12,6 @@ use markdown_parser::FormattedText;
 use mermaid_to_svg::MermaidTheme;
 use num_traits::SaturatingSub;
 use regex::Regex;
-use string_offset::CharOffset;
-use url::Url;
-use vec1::{Vec1, vec1};
 use rook_core::r#async::debounce;
 use rook_core::features::FeatureFlag;
 use rook_core::semantic_selection::SemanticSelection;
@@ -40,6 +37,9 @@ use rookui::elements::ListIndentLevel;
 use rookui::{
     AppContext, Entity, ModelAsRef, ModelContext, ModelHandle, SingletonEntity, WindowId,
 };
+use string_offset::CharOffset;
+use url::Url;
+use vec1::{Vec1, vec1};
 
 use super::super::telemetry::SelectionMode as TelemetrySelectionMode;
 use super::NotebookWorkflow;

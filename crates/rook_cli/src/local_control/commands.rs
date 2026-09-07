@@ -8,8 +8,8 @@ use local_control::protocol::{
     TabCreateParams, TextParams, ThemeNameParams,
 };
 use local_control::selection::select_instance;
-use serde::Serialize;
 use rook_core::channel::ChannelState;
+use serde::Serialize;
 
 use crate::agent::OutputFormat;
 use crate::local_control::output::{write_json, write_json_line};

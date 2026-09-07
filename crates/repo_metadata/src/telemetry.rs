@@ -1,7 +1,7 @@
-use serde_json::{Value, json};
-use strum_macros::{EnumDiscriminants, EnumIter};
 use rook_core::register_telemetry_event;
 use rook_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
+use serde_json::{Value, json};
+use strum_macros::{EnumDiscriminants, EnumIter};
 
 #[derive(Clone, EnumDiscriminants)]
 #[strum_discriminants(derive(EnumIter))]

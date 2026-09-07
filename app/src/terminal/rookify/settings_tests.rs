@@ -1,7 +1,7 @@
-use settings::{Setting, SyncToCloud};
 use rookui::{App, SingletonEntity};
+use settings::{Setting, SyncToCloud};
 
-use super::{EnableSshWrapper, UseSshTmuxWrapper, RookifySettings};
+use super::{EnableSshWrapper, RookifySettings, UseSshTmuxWrapper};
 use crate::test_util::settings::initialize_settings_for_tests;
 
 #[test]

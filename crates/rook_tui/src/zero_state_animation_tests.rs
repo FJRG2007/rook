@@ -5,7 +5,6 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use instant::Instant;
-use tempfile::TempDir;
 use rook::settings::{
     TuiZeroStateExtrusionDepthSetting, TuiZeroStateFreezeAnimationWhenUnfocusedSetting,
     TuiZeroStateObject, TuiZeroStateObjectSetting, TuiZeroStateRotationPeriodSeconds,
@@ -24,6 +23,7 @@ use rookui_core::elements::tui::{
 use rookui_core::event::ModifiersState;
 use rookui_core::presenter::tui::TuiPresenter;
 use rookui_core::{AddWindowOptions, App, AppContext, Entity, TuiView, TypedActionView};
+use tempfile::TempDir;
 
 use super::config::{
     AsciiArtError, AsciiArtMask, ReloadObjectOutcome, ZeroStateAnimationConfig,
@@ -36,8 +36,8 @@ use super::{
     ZeroStateAnimationElement, ZeroStateInteractionHandle, configured_idle_velocity,
     face_linger_angle, fitted_logo_size, glyph_for_tangent, idle_angle, is_ghost_stipple_cell,
     logo_frame_at, object_frame_at, object_frame_at_angle, object_frame_at_angle_with_background,
-    object_frame_at_with_background, rotation_angle, star_count_for_size, starfield_emitter_x,
-    rook_logo_contains,
+    object_frame_at_with_background, rook_logo_contains, rotation_angle, star_count_for_size,
+    starfield_emitter_x,
 };
 
 const PANEL_SIZE: TuiSize = TuiSize::new(52, 20);

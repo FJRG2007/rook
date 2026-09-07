@@ -1,7 +1,7 @@
-use session_sharing_protocol::common::SessionId;
-use uuid::Uuid;
 use rook_errors::report_error;
 use rookui::{SingletonEntity, ViewContext};
+use session_sharing_protocol::common::SessionId;
+use uuid::Uuid;
 
 use super::materialization::{ChildPaneMaterialization, decide_child_pane_materialization};
 use crate::ai::agent::api::ServerConversationToken;

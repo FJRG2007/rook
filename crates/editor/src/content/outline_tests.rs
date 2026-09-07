@@ -1,6 +1,6 @@
 use itertools::Itertools;
-use string_offset::CharOffset;
 use rookui_core::App;
+use string_offset::CharOffset;
 
 use crate::content::buffer::Buffer;
 use crate::content::outline::BlockOutline;

@@ -3,8 +3,8 @@ use std::sync::Arc;
 use chrono::Utc;
 use cloud_object_client::MockObjectClient;
 use itertools::Itertools;
-use settings::manager::SettingsManager;
 use rookui::{App, SingletonEntity};
+use settings::manager::SettingsManager;
 
 use super::*;
 use crate::auth::AuthStateProvider;

@@ -9,12 +9,12 @@ use chrono::{Duration, Utc};
 use derivative::Derivative;
 use lazy_static::lazy_static;
 use regex::Regex;
-use url::Url;
 use rook_core::channel::Channel;
 use rook_core::features::FeatureFlag;
 use rook_graphql::queries::get_updated_cloud_objects::UpdatedObjectInput;
 use rook_graphql::scalars::time::ServerTimestamp;
 use rookui::{AppContext, SingletonEntity};
+use url::Url;
 
 use self::breadcrumbs::ContainingObject;
 use self::model::actions::ObjectActions;

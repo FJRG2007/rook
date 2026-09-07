@@ -1,5 +1,4 @@
 use chrono::{Local, TimeZone};
-use uuid::Uuid;
 use rook_core::ui::external_product_icon::ExternalProductIcon;
 use rook_core::ui::icons::Icon;
 use rook_core::ui::theme::color::internal_colors;
@@ -15,6 +14,7 @@ use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use uuid::Uuid;
 
 use crate::ai::mcp::{Author, MCPServerUpdate};
 use crate::appearance::Appearance;

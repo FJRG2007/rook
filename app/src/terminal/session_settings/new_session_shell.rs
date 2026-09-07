@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 
-use serde::{Deserialize, Serialize};
 use rook_util::path::ShellFamily;
 use rookui::platform::OperatingSystem;
+use serde::{Deserialize, Serialize};
 
 #[derive(
     Debug,

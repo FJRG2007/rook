@@ -11,7 +11,6 @@ use std::borrow::Cow;
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-use settings::Setting;
 use rook_core::context_flag::ContextFlag;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::theme::color::internal_colors;
@@ -21,6 +20,7 @@ use rookui::elements::{
 use rookui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use rookui::ui_components::switch::SwitchStateHandle;
 use rookui::{Action, AppContext, SingletonEntity, View, ViewContext, ViewHandle};
+use settings::Setting;
 
 use super::SettingsAction;
 use super::settings_page::{

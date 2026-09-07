@@ -1,10 +1,10 @@
 use std::cmp::Ordering;
 
-use typed_path::TypedPathBuf;
 use rook_completer::completer::{EngineDirEntry, EngineFileType};
 use rook_util::file_type::is_binary_file;
 use rookui::r#async::SpawnedFutureHandle;
 use rookui::{AppContext, Entity, ModelContext};
+use typed_path::TypedPathBuf;
 
 use super::display_menu::GenericMenuItem;
 use crate::completer::SessionContext;

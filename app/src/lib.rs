@@ -69,6 +69,7 @@ mod referral_theme_status;
 mod remote_server;
 mod resource_limits;
 mod reward_view;
+mod rook_managed_paths_watcher;
 mod safe_triangle;
 mod search_bar;
 mod server;
@@ -99,7 +100,6 @@ mod view_components;
 mod vim_registers;
 mod voice;
 mod voltron;
-mod rook_managed_paths_watcher;
 #[cfg(target_family = "wasm")]
 mod wasm_nux_dialog;
 mod window_settings;
@@ -166,6 +166,8 @@ use quit_warning::UnsavedStateSummary;
 use repo_metadata::{
     RepoMetadataModel, repositories::DetectedRepositories, watcher::DirectoryWatcher,
 };
+use rook_cli::agent::AgentCommand;
+use rook_cli::{CliCommand, GlobalOptions};
 use server::network_log_pane_manager::NetworkLogPaneManager;
 use server::telemetry::context_provider::AppTelemetryContextProvider;
 use server::voice_transcriber::ServerVoiceTranscriber;
@@ -178,8 +180,6 @@ use terminal::keys_settings::KeysSettings;
 use terminal::local_shell::LocalShellState;
 pub use util::bindings::cmd_or_ctrl_shift;
 use voice::transcriber::VoiceTranscriber;
-use rook_cli::agent::AgentCommand;
-use rook_cli::{CliCommand, GlobalOptions};
 #[cfg(feature = "local_fs")]
 use watcher::HomeDirectoryWatcher;
 
@@ -291,6 +291,7 @@ use crate::palette::PaletteMode;
 use crate::persistence::PersistenceWriter;
 use crate::persistence::model::AgentConversationData;
 use crate::projects::ProjectManagementModel;
+use crate::rook_managed_paths_watcher::{RookManagedPathsWatcher, ensure_rook_watch_roots_exist};
 use crate::root_view::{
     OpenFromRestoredArg, OpenPath, quake_mode_window_id, quake_mode_window_is_open,
 };
@@ -324,7 +325,6 @@ use crate::undo_close::UndoCloseStack;
 use crate::user_config::RookConfig;
 use crate::util::bindings::is_binding_cross_platform;
 use crate::vim_registers::VimRegisters;
-use crate::rook_managed_paths_watcher::{RookManagedPathsWatcher, ensure_rook_watch_roots_exist};
 use crate::workflows::aliases::WorkflowAliases;
 use crate::workflows::local_workflows::LocalWorkflows;
 use crate::workspace::{

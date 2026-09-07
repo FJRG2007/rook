@@ -10,11 +10,11 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use anyhow::Result;
-use serde::{Deserialize, Serialize};
 use rook_core::SessionId;
 use rook_util::remote_path::RemotePath;
 use rook_util::standardized_path::StandardizedPath;
 use rookui::{AppContext, ModelContext, ModelHandle};
+use serde::{Deserialize, Serialize};
 
 use crate::code_review::diff_size_limits::DiffSize;
 use crate::util::git::{BranchEntry, Commit, FileChangeEntry, PrInfo};

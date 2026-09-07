@@ -42,7 +42,7 @@ use crate::input_suggestions::{Event as InputSuggestionsEvent, InputSuggestions}
 use crate::send_telemetry_from_ctx;
 use crate::server::server_api::ServerApi;
 use crate::server::server_api::ai::AIClient;
-use crate::server::telemetry::{TelemetryEvent, RookAIActionType};
+use crate::server::telemetry::{RookAIActionType, TelemetryEvent};
 use crate::terminal::resizable_data::{DEFAULT_ROOK_AI_WIDTH, ModalType, ResizableData};
 use crate::ui_components::blended_colors;
 use crate::ui_components::buttons::icon_button;

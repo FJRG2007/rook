@@ -1,6 +1,6 @@
+use rook_core::features::FeatureFlag;
 use settings::macros::define_settings_group;
 use settings::{RespectUserSyncSetting, SupportedPlatforms, SyncToCloud};
-use rook_core::features::FeatureFlag;
 
 use super::DriveSortOrder;
 

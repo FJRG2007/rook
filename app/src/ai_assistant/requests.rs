@@ -17,7 +17,7 @@ use crate::send_telemetry_from_ctx;
 use crate::server::ids::ServerId;
 use crate::server::server_api::ServerApi;
 use crate::server::server_api::ai::AIClient;
-use crate::server::telemetry::{TelemetryEvent, RookAIRequestResult};
+use crate::server::telemetry::{RookAIRequestResult, TelemetryEvent};
 use crate::workspaces::user_workspaces::UserWorkspaces;
 
 /// The key for the corresponding entry in UserDefaults.

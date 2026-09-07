@@ -6,7 +6,6 @@ use anyhow::{Context as _, Result, bail};
 use firebase::FetchAccessTokenResponse;
 use instant::Duration;
 use oauth2::TokenResponse as _;
-use url::Url;
 use rook_core::channel::ChannelState;
 use rook_server_auth::auth_state::AuthState;
 use rook_server_auth::credentials::{
@@ -14,6 +13,7 @@ use rook_server_auth::credentials::{
 };
 use rook_server_auth::user::FirebaseAuthTokens;
 use rookui_core::r#async::{BoxFuture, Timer};
+use url::Url;
 
 use super::UserAuthenticationError;
 

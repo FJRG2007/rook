@@ -4,7 +4,6 @@ use std::sync::Arc;
 
 use lazy_static::lazy_static;
 use parking_lot::RwLock;
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rook_core::semantic_selection::SemanticSelection;
 use rook_core::ui::Icon;
@@ -18,6 +17,7 @@ use rookui::{
     AppContext, Element, Entity, EntityId, FocusContext, SingletonEntity, TypedActionView, View,
     ViewContext,
 };
+use settings::Setting as _;
 
 use crate::ai::agent::icons::{yellow_running_icon, yellow_stop_icon};
 use crate::ai::blocklist::block::view_impl::{

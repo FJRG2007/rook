@@ -6,8 +6,8 @@ pub mod font_kit;
 #[path = "text_layout_tests.rs"]
 mod text_layout_tests;
 
+pub use rookui_core::fonts::*;
 #[cfg(all(test, target_os = "macos"))]
 pub(crate) use text_layout_tests::collect_line_caret_position_starts;
 #[cfg(test)]
 pub(crate) use text_layout_tests::{collect_glyph_indices, init_fonts};
-pub use rookui_core::fonts::*;

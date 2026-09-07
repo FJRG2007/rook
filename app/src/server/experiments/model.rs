@@ -3,10 +3,10 @@
 use std::collections::HashSet;
 
 use anyhow::Context;
-#[cfg(test)]
-pub use tests::TestModel;
 use rook_errors::report_if_error;
 use rookui::{Entity, ModelContext, SingletonEntity};
+#[cfg(test)]
+pub use tests::TestModel;
 
 use super::ServerExperiment;
 use crate::GlobalResourceHandlesProvider;

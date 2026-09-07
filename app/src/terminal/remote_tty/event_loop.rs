@@ -4,9 +4,9 @@ use std::sync::Arc;
 use async_channel::Receiver;
 use futures_util::SinkExt;
 use parking_lot::FairMutex;
-use serde::Serialize;
 use rook_errors::report_error;
 use rookui::{Entity, ModelContext, SingletonEntity};
+use serde::Serialize;
 use websocket::{Message, Sink, Stream, WebSocket, WebsocketMessage as _};
 
 use crate::terminal::bootstrap::init_shell_script_for_shell;

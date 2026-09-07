@@ -25,8 +25,8 @@ pub use file_picker::{
 use lazy_static::lazy_static;
 use pathfinder_geometry::rect::{RectF, RectI};
 use pathfinder_geometry::vector::{Vector2F, Vector2I};
-use serde::{Deserialize, Serialize};
 use rook_util::path::ShellFamily;
+use serde::{Deserialize, Serialize};
 
 use crate::accessibility::AccessibilityContent;
 use crate::fonts::canvas::RasterFormat;

@@ -1,6 +1,6 @@
 use itertools::Itertools;
-use string_offset::ByteOffset;
 use rook_util::path::EscapeChar;
+use string_offset::ByteOffset;
 
 use super::LocationType;
 use crate::completer::CompletionContext;

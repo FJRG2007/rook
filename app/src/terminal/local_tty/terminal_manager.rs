@@ -15,11 +15,11 @@ use async_broadcast::InactiveReceiver;
 use nix::sys::termios::LocalFlags;
 use parking_lot::{FairMutex, Mutex};
 use pathfinder_geometry::vector::Vector2F;
-use settings::Setting as _;
 use rook_core::SessionId;
 use rook_errors::report_error;
 use rookui::r#async::executor::Background;
 use rookui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity, ViewHandle};
+use settings::Setting as _;
 
 use super::event_loop::EventLoop;
 use super::shell::{ShellStarter, ShellStarterSource};
@@ -52,12 +52,12 @@ use crate::terminal::model::terminal_model::{ExitReason, ShellProcessInfo};
 #[cfg(unix)]
 use crate::terminal::model_events::ModelEvent as TerminalModelEvent;
 use crate::terminal::model_events::{ModelEventDispatcher, SshRemoteServerSupport};
+use crate::terminal::rookify::settings::RookifySettings;
 use crate::terminal::session_settings::{SessionSettings, ToolbarChipSelection};
 use crate::terminal::shared_session::sharer::network::Network;
 use crate::terminal::shared_session::{IsSharedSessionCreator, SharedSessionStatus};
 use crate::terminal::shell::ShellName;
 use crate::terminal::terminal_manager::BlockSpacing;
-use crate::terminal::rookify::settings::RookifySettings;
 use crate::terminal::writeable_pty::pty_controller::{EventLoopSendError, EventLoopSender};
 use crate::terminal::writeable_pty::terminal_manager_util::{
     init_pty_controller_model, init_remote_server_controller, wire_up_pty_controller_with_surface,

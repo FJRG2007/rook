@@ -7,8 +7,6 @@ use ai::LLMProvider;
 use ai::api_keys::ApiKeyManager;
 use chrono::NaiveDate;
 use instant::Instant;
-use string_offset::CharOffset;
-use tempfile::TempDir;
 use rook::appearance::Appearance;
 #[cfg(feature = "voice_input")]
 use rook::settings::TuiVoiceSettings;
@@ -26,11 +24,11 @@ use rook::tui_export::{
     ConversationStatus, ConversationUsageTotals, Harness, InputTypeAutoDetectionSource, LLMId,
     LLMPreferences, LinkedWorkflowData, LongRunningCommandControlState, MessageId,
     OutputStatusUpdateCallback, ParsedSlashCommandInput, PtyIntent, PtyIntentEvent,
-    ResolvedTeamScope, ServerOutputId, Session, Shared, SizeInfo, SizeUpdate,
-    SlashCommandDataSource as _, SlashCommandKind, TaskId, TranscriptScope, TuiMcpAction,
-    TuiMcpServerId, TuiOnboardingMarker, TuiOnboardingMarkers, TuiUpArrowHistoryItemKind,
-    UserTakeOverReason, UserWorkspaces, RookConfig, RookConfigUpdateEvent,
-    export_conversation_markdown, forkable_tui_conversation_for_test, queue_tui_permission_action,
+    ResolvedTeamScope, RookConfig, RookConfigUpdateEvent, ServerOutputId, Session, Shared,
+    SizeInfo, SizeUpdate, SlashCommandDataSource as _, SlashCommandKind, TaskId, TranscriptScope,
+    TuiMcpAction, TuiMcpServerId, TuiOnboardingMarker, TuiOnboardingMarkers,
+    TuiUpArrowHistoryItemKind, UserTakeOverReason, UserWorkspaces, export_conversation_markdown,
+    forkable_tui_conversation_for_test, queue_tui_permission_action,
     register_tui_session_view_test_singletons, set_tui_default_team_admin_for_test,
     set_tui_workspace_teams_for_test, slash_commands,
 };
@@ -57,6 +55,8 @@ use rookui_core::platform::keyboard::KeyCode;
 use rookui_core::presenter::tui::{TuiFrame, TuiPresenter};
 use rookui_core::telemetry::{EventPayload, flush_events};
 use rookui_core::{App, AppContext, TuiView, TypedActionView, ViewContext, WindowInvalidation};
+use string_offset::CharOffset;
+use tempfile::TempDir;
 
 use super::statusline::{
     ContextWindowUsage, FooterSegment, FooterSegments, format_context_window_usage,

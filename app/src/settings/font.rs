@@ -1,10 +1,10 @@
-use settings::macros::define_settings_group;
-use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
 use rook_core::ui::builder::MIN_FONT_SIZE;
 use rookui::elements::DEFAULT_UI_LINE_HEIGHT_RATIO;
 use rookui::fonts::Weight;
 use rookui::rendering::ThinStrokes;
 use rookui::{AppContext, SingletonEntity};
+use settings::macros::define_settings_group;
+use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
 
 use super::EnforceMinimumContrast as EnforceMinimumContrastEnum;
 

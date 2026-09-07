@@ -1,5 +1,4 @@
 use pathfinder_color::ColorU;
-use ui_components::{Component as _, Options as _, button};
 use rook_core::features::FeatureFlag;
 use rook_core::send_telemetry_from_ctx;
 use rook_core::ui::appearance::Appearance;
@@ -18,6 +17,7 @@ use rookui_core::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui_core::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use ui_components::{Component as _, Options as _, button};
 
 use super::OnboardingSlide;
 use crate::OnboardingIntention;

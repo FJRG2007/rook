@@ -22,7 +22,6 @@
 use std::ops::Range;
 use std::rc::Rc;
 
-use string_offset::CharOffset;
 use rook::editor::CodeEditorModel;
 use rook_editor::model::CoreEditorModel;
 use rook_editor::render::model::{DisplayLattice, DisplayRow, DisplayRowKind};
@@ -32,6 +31,7 @@ use rookui_core::elements::tui::{
     TuiScreenPosition, TuiSize, TuiStyle, TuiText,
 };
 use rookui_core::{AppContext, ModelHandle};
+use string_offset::CharOffset;
 
 use crate::tui_builder::TuiUiBuilder;
 

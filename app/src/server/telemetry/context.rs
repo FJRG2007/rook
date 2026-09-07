@@ -3,11 +3,11 @@
 
 use std::sync::OnceLock;
 
-use serde::Serialize;
-use serde_json::{Value, json};
 use rook_errors::report_error;
 #[cfg(target_family = "wasm")]
 use rookui::platform::wasm;
+use serde::Serialize;
+use serde_json::{Value, json};
 
 use super::rudder_message::Message as RudderMessage;
 use crate::server::OperatingSystemInfo;

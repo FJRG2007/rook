@@ -6,13 +6,13 @@ use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use rangemap::RangeSet;
-use string_offset::CharOffset;
 use rook_core::features::FeatureFlag;
 use rookui_core::assets::asset_cache::{AssetCache, AssetSource, AssetState};
 use rookui_core::fonts::{Properties, Style, Weight};
 use rookui_core::image_cache::ImageType;
 use rookui_core::text_layout::{LayoutCache, StyleAndFont, TextStyle};
 use rookui_core::{App, SingletonEntity};
+use string_offset::CharOffset;
 
 use super::{
     BlockLocation, LayOutArgs, LayoutTask, MAX_LAYOUT_CONTENT_CHARS_PER_PARALLEL_CHUNK,

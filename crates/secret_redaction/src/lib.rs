@@ -7,9 +7,9 @@ use itertools::Itertools;
 use lazy_static::lazy_static;
 use parking_lot::Mutex;
 use regex_dfas::RegexDFAs;
-use string_offset::StringRange;
 use rook_core::safe_warn;
 use rook_errors::report_error;
+use string_offset::StringRange;
 
 /// The character used to replace each redacted character of a detected secret.
 pub const SECRET_REDACTION_REPLACEMENT_CHARACTER: &str = "*";

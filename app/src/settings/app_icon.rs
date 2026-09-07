@@ -1,8 +1,8 @@
 use enum_iterator::Sequence;
-use serde::{Deserialize, Serialize};
 use rook_core::channel::{Channel, ChannelState};
 use rook_core::settings::macros::define_settings_group;
 use rook_core::settings::{SupportedPlatforms, SyncToCloud};
+use serde::{Deserialize, Serialize};
 
 /// The app icon to use (mac-only).
 ///

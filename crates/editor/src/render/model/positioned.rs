@@ -3,11 +3,11 @@
 
 use std::sync::Arc;
 
-use string_offset::CharOffset;
-use sum_tree::{Cursor, Dimension};
 use rookui_core::geometry::vector::Vector2F;
 use rookui_core::text_layout::Line;
 use rookui_core::units::{IntoPixels, Pixels};
+use string_offset::CharOffset;
+use sum_tree::{Cursor, Dimension};
 
 use super::{
     BlockItem, BlockSpacing, HorizontalRuleConfig, ImageBlockConfig, LaidOutEmbeddedItem,

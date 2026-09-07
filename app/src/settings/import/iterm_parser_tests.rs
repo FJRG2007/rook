@@ -1,10 +1,10 @@
 use async_io::block_on;
 use pathfinder_color::ColorU;
 use plist::{Dictionary, Value};
-use virtual_fs::{Stub, VirtualFS};
 use rook_core::ui::theme::{Fill, RookTheme};
 use rookui::fonts::FontInfo;
 use rookui::keymap::Keystroke;
+use virtual_fs::{Stub, VirtualFS};
 
 use super::{ITermTheme, ITermThemeType, color_dictionary_to_coloru};
 use crate::settings::import::config::{

@@ -11,9 +11,9 @@ use axum::extract::State;
 use axum::http::header::{AUTHORIZATION, HOST, ORIGIN};
 use axum::http::{HeaderMap, HeaderValue};
 use chrono::Duration;
-use settings::Setting as _;
 use rook_core::features::FeatureFlag;
 use rookui::SingletonEntity as _;
+use settings::Setting as _;
 
 #[cfg(unix)]
 use super::ensure_peer_uid;

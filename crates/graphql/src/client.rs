@@ -4,11 +4,11 @@ use cynic::{GraphQlResponse, QueryFragment, QueryVariables};
 use http::StatusCode;
 use instant::Duration;
 use reqwest::header::CONTENT_TYPE;
-use serde::Serialize;
-use serde::de::DeserializeOwned;
 use rook_core::channel::ChannelState;
 use rook_core::operating_system_info::OperatingSystemInfo;
 use rook_errors::{ErrorExt, register_error};
+use serde::Serialize;
+use serde::de::DeserializeOwned;
 
 use crate::error::{UserFacingError, UserFacingErrorInterface};
 use crate::request_context::{ClientContext, OsContext, RequestContext};

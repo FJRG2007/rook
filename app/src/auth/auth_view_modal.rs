@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use anyhow::{Result, anyhow};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use url::Url;
 use rook_core::features::FeatureFlag;
 use rook_core::{safe_anyhow, safe_error};
 use rook_errors::{ErrorExt, report_error};
@@ -18,6 +17,7 @@ use rookui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use url::Url;
 
 use super::UserUid;
 use super::auth_manager::{AuthManager, AuthManagerEvent};

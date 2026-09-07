@@ -9,11 +9,11 @@ use ::local_control::protocol::{
 use ::local_control::{
     Action, ActionKind, ActionMetadata, ControlError, ErrorCode, InstanceId, PROTOCOL_VERSION,
 };
+use rook_core::channel::ChannelState;
+use rookui::{AppContext, ModelContext, SingletonEntity, ViewHandle, WindowId};
 use serde::Serialize;
 use serde_json::{Value, json};
 use settings::Setting as _;
-use rook_core::channel::ChannelState;
-use rookui::{AppContext, ModelContext, SingletonEntity, ViewHandle, WindowId};
 
 use crate::drive::settings::RookDriveSettings;
 use crate::features::FeatureFlag;

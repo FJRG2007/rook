@@ -2,9 +2,9 @@ use std::collections::{HashMap, VecDeque};
 use std::mem;
 
 use pathfinder_color::ColorU;
-use string_offset::CharOffset;
 use rook_errors::report_error;
 use rook_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
+use string_offset::CharOffset;
 
 use super::ansi;
 use super::block::Block;

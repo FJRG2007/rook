@@ -26,9 +26,6 @@ use pathfinder_geometry::vector::Vector2F;
 use remote_server::manager::RemoteServerManager;
 #[cfg(feature = "local_fs")]
 use repo_metadata::repositories::DetectedRepositories;
-use string_offset::CharOffset;
-use vec1::Vec1;
-use vim::vim::{MotionType, VimMode};
 use rook_core::r#async::debounce;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::appearance::Appearance;
@@ -58,6 +55,9 @@ use rookui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WindowId,
 };
+use string_offset::CharOffset;
+use vec1::Vec1;
+use vim::vim::{MotionType, VimMode};
 
 use crate::ai::persisted_workspace::{PersistedWorkspace, PersistedWorkspaceEvent};
 use crate::code::buffer_location::LocalOrRemotePath as BufferFileLocation;

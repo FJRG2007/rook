@@ -1,9 +1,9 @@
-use settings::Setting;
 use rookui::elements::{
     Border, ChildView, Container, CornerRadius, DropTarget, Element, Flex, Hoverable,
     ParentElement, Radius, SavePosition, Stack,
 };
 use rookui::{AppContext, SingletonEntity};
+use settings::Setting;
 
 use super::Input;
 use super::common::{

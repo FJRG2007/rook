@@ -2,14 +2,14 @@
 
 use std::ops::Range;
 
-use string_offset::CharOffset;
-use vim::vim::VimMode;
 use rook_core::ui::appearance::DEFAULT_UI_FONT_SIZE;
 use rookui_core::PaintContext;
 use rookui_core::elements::{CornerRadius, Point, Radius};
 use rookui_core::geometry::rect::RectF;
 use rookui_core::geometry::vector::{Vector2F, vec2f};
 use rookui_core::text_layout::{Line, PaintStyleOverride, TextFrame};
+use string_offset::CharOffset;
+use vim::vim::VimMode;
 
 use crate::editor::TextDecoration;
 use crate::render::layout::line_height;

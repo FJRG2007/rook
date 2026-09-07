@@ -32,17 +32,17 @@ pub use active_session::ActiveSession;
 pub use global_actions::{
     ForkAIConversationParams, ForkFromExchange, ForkedConversationDestination,
 };
+use rook_core::context_flag::ContextFlag;
+use rookui::AppContext;
+use rookui::accessibility::AccessibilityVerbosity;
+use rookui::elements::DropTargetData;
+use rookui::keymap::{BindingDescription, EditableBinding, FixedBinding};
 use serde::{Deserialize, Serialize};
 pub use util::{PaneViewLocator, TabMovement, active_terminal_in_window};
 pub use view::{
     NEW_SESSION_MENU_BUTTON_POSITION_ID, NEW_TAB_BUTTON_POSITION_ID, PANEL_HEADER_HEIGHT,
     TAB_BAR_HEIGHT, TOTAL_TAB_BAR_HEIGHT, WORKSPACE_PADDING, Workspace,
 };
-use rook_core::context_flag::ContextFlag;
-use rookui::AppContext;
-use rookui::accessibility::AccessibilityVerbosity;
-use rookui::elements::DropTargetData;
-use rookui::keymap::{BindingDescription, EditableBinding, FixedBinding};
 
 use crate::ai::blocklist::NEW_AGENT_PANE_LABEL;
 use crate::channel::{Channel, ChannelState};
@@ -70,8 +70,8 @@ use crate::workspace::view::{
     NEW_TAB_BINDING_NAME, NEW_TERMINAL_TAB_BINDING_NAME, NEW_WINDOW_BINDING_NAME,
     OPEN_GLOBAL_SEARCH_BINDING_NAME, TOGGLE_CONVERSATION_LIST_VIEW_BINDING_NAME,
     TOGGLE_NOTIFICATION_MAILBOX_BINDING_NAME, TOGGLE_PROJECT_EXPLORER_BINDING_NAME,
-    TOGGLE_RIGHT_PANEL_BINDING_NAME, TOGGLE_TAB_CONFIGS_MENU_BINDING_NAME,
-    TOGGLE_VERTICAL_TABS_PANEL_BINDING_NAME, TOGGLE_ROOK_DRIVE_BINDING_NAME,
+    TOGGLE_RIGHT_PANEL_BINDING_NAME, TOGGLE_ROOK_DRIVE_BINDING_NAME,
+    TOGGLE_TAB_CONFIGS_MENU_BINDING_NAME, TOGGLE_VERTICAL_TABS_PANEL_BINDING_NAME,
 };
 
 pub fn init(app: &mut AppContext) {

@@ -7,12 +7,12 @@ mod package_installers;
 pub use history::{
     History, HistoryEntry, HistoryEvent, LinkedWorkflowData, ShellHost, UpArrowHistoryConfig,
 };
-pub use view::{Event, TerminalView};
 pub use rook_terminal::shell::{self, ShellLaunchData};
 pub use rook_terminal::{CellSizeAndWindowPadding, ClipboardType, SizeInfo};
 use rookui::geometry::vector::Vector2F;
 use rookui::units::Lines;
 use rookui::{AppContext, SingletonEntity, WindowId};
+pub use view::{Event, TerminalView};
 mod block_list_settings;
 
 mod alias;
@@ -72,11 +72,11 @@ pub mod shared_session;
 mod shell_launch_state;
 pub mod universal_developer_input;
 
+pub mod rookify;
 pub mod ssh;
 pub mod terminal_manager;
 mod terminal_size_element;
 pub mod view;
-pub mod rookify;
 mod waterfall_gap_element;
 mod writeable_pty;
 #[cfg(feature = "tui")]

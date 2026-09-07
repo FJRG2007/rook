@@ -1,5 +1,4 @@
 use pathfinder_color::ColorU;
-use settings::Setting as _;
 use rook_editor::editor::NavigationKey;
 use rook_errors::report_if_error;
 use rookui::accessibility::{AccessibilityContent, RookA11yRole};
@@ -20,6 +19,7 @@ use rookui::{
     AppContext, Entity, FocusContext, ModelHandle, SingletonEntity, Tracked, TypedActionView,
     UpdateModel, View, ViewContext, ViewHandle,
 };
+use settings::Setting as _;
 
 use super::theme;
 use crate::appearance::{Appearance, AppearanceManager};
@@ -35,7 +35,7 @@ use crate::send_telemetry_from_ctx;
 use crate::server::telemetry::TelemetryEvent;
 use crate::settings::{ThemeSettings, respect_system_theme};
 use crate::themes::theme::{
-    RespectSystemTheme, SelectedSystemThemes, ThemeKind, RookTheme, RookThemeConfig,
+    RespectSystemTheme, RookTheme, RookThemeConfig, SelectedSystemThemes, ThemeKind,
 };
 use crate::ui_components::buttons::{close_button, icon_button};
 use crate::ui_components::icons;

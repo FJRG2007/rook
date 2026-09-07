@@ -1,11 +1,11 @@
 use pathfinder_geometry::rect::RectF;
 use regex::Regex;
-use settings::Setting as _;
 use rook_util::path::user_friendly_path;
 use rookui::integration::{AssertionCallback, AssertionOutcome};
 use rookui::units::Lines;
 use rookui::windowing::WindowManager;
 use rookui::{App, SingletonEntity, ViewHandle, WindowId, async_assert, async_assert_eq};
+use settings::Setting as _;
 
 use super::util::ExpectedOutput;
 use crate::integration_testing::view_getters::{

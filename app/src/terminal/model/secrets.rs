@@ -1,6 +1,6 @@
-use string_offset::StringRange;
 pub use rook_terminal::model::secrets::*;
 use rookui::EntityId;
+use string_offset::StringRange;
 
 use crate::ai::blocklist::block::TextLocation;
 #[derive(Clone, Debug)]

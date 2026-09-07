@@ -4,14 +4,14 @@
 //! https://docs.google.com/document/d/1YMovEoXsPRziPk99a4i9LZNEKGm_rjEyzhcHsFkT3ac/edit.
 
 use getset::Getters;
-use serde::{Deserialize, Serialize};
 use rookui_core::color::ColorU;
+use serde::{Deserialize, Serialize};
 
 use self::internal_colors::{
     accent_overlay_2, fg_overlay_1, fg_overlay_2, fg_overlay_3, neutral_1, neutral_2, neutral_3,
     neutral_4,
 };
-use super::{AnsiColor, AnsiColorIdentifier, Fill, TerminalColors, RookTheme};
+use super::{AnsiColor, AnsiColorIdentifier, Fill, RookTheme, TerminalColors};
 use crate::ui::color::Opacity;
 use crate::ui::color::blend::Blend;
 use crate::ui::color::contrast::{MinimumAllowedContrast, pick_best_foreground_color};

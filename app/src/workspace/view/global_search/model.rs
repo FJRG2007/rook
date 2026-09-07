@@ -11,7 +11,6 @@ use remote_server::HostId;
 use remote_server::manager::{HostRequestError, RemoteServerManager, RipgrepSearchParams};
 use remote_server::proto::RipgrepSearchSuccess;
 use remote_server::protocol::RequestId;
-use string_offset::ByteOffset;
 use rook_errors::report_error;
 use rook_ripgrep::search::{Match as RipgrepMatch, Submatch};
 use rook_util::local_or_remote_path::LocalOrRemotePath;
@@ -19,6 +18,7 @@ use rook_util::remote_path::RemotePath;
 use rook_util::standardized_path::StandardizedPath;
 use rookui::r#async::SpawnedFutureHandle;
 use rookui::{Entity, ModelContext, ModelSpawner, SingletonEntity};
+use string_offset::ByteOffset;
 
 use crate::workspace::view::global_search::view::GlobalSearchEvent;
 use crate::workspace::view::global_search::{GlobalSearchMatch, SearchConfig};

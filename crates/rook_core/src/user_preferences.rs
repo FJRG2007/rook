@@ -6,9 +6,9 @@
 
 use std::ops::Deref;
 
-use settings::PrivatePreferences;
 use rookui_core::SingletonEntity;
 use rookui_extras::user_preferences::UserPreferences;
+use settings::PrivatePreferences;
 
 /// An extension trait on [`rookui_core::AppContext`] for accessing private user
 /// preferences.

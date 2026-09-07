@@ -3,11 +3,11 @@ use std::mem;
 use std::ops::Range;
 
 use pathfinder_geometry::vector::Vector2F;
+use rookui::AppContext;
+use rookui::text::point::Point;
 use serde::{Deserialize, Serialize};
 use string_offset::{ByteOffset, CharOffset};
 use vec1::Vec1;
-use rookui::AppContext;
-use rookui::text::point::Point;
 
 use super::buffer::{Anchor, Buffer, LamportValue, ToBufferOffset, ToCharOffset, ToPoint};
 use super::display_map::{DisplayMap, ToDisplayPoint};

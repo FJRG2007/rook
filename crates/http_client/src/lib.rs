@@ -17,12 +17,12 @@ use http::header::HeaderName;
 pub use http::{HeaderMap, StatusCode};
 use reqwest::IntoUrl;
 use reqwest_eventsource::RequestBuilderExt;
-use serde::Serialize;
-use serde::de::DeserializeOwned;
 use rook_core::channel::{Channel, ChannelState};
 use rook_core::execution_mode;
 use rook_core::operating_system_info::OperatingSystemInfo;
 use rook_errors::report_error;
+use serde::Serialize;
+use serde::de::DeserializeOwned;
 
 use crate::iap::{IapTokenProvider, proxy_auth_header};
 

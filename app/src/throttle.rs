@@ -3,8 +3,8 @@ use std::{pin, task};
 
 use futures_lite::{Stream, ready};
 use pin::Pin;
-use task::{Context, Poll};
 use rookui::r#async::Timer;
+use task::{Context, Poll};
 
 pub struct Throttle<S> {
     period: Duration,

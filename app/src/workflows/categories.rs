@@ -9,7 +9,6 @@ use itertools::Itertools;
 use rook_core::ui::builder::UiBuilder;
 use rook_core::ui::theme::color::internal_colors;
 use rook_editor::editor::NavigationKey;
-use warp_workflows::workflows as global_workflows;
 use rookui::accessibility::{AccessibilityContent, RookA11yRole};
 use rookui::color::ColorU;
 use rookui::elements::{
@@ -25,6 +24,7 @@ use rookui::ui_components::components::{UiComponent, UiComponentStyles};
 use rookui::{
     AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, WeakViewHandle,
 };
+use warp_workflows::workflows as global_workflows;
 
 use super::WorkflowSource;
 use super::workflow::Workflow;

@@ -1,7 +1,7 @@
-use settings::Setting as _;
 use rook_editor::content::buffer::ToBufferPoint;
 use rookui::integration::AssertionCallback;
 use rookui::{App, SingletonEntity, ViewHandle, WindowId, async_assert, async_assert_eq};
+use settings::Setting as _;
 
 use crate::code::editor::goto_line::view::GoToLineView;
 use crate::code::editor::view::CodeEditorView;

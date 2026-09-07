@@ -2,11 +2,11 @@
 
 use std::path::Path;
 
-use serde::{Deserialize, Serialize};
 use rook_core::features::FeatureFlag;
 pub use rook_util::file_type::{
     is_binary_file, is_file_content_binary, is_jupyter_notebook_file, is_markdown_file,
 };
+use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "local_fs")]
 use crate::util::file::external_editor::{Editor, EditorSettings, settings::EditorChoice};
