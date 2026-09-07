@@ -433,6 +433,11 @@ pub fn custom_tag_to_keystroke(custom: CustomTag) -> Option<Keystroke> {
                 Keystroke::parse("alt-2").ok()
             }
         }
+        // F2 renames whatever is selected, which is what it does in Explorer,
+        // Finder, every IDE and most browsers. The action already existed but
+        // shipped with no key at all, so renaming a tab meant finding it in a
+        // context menu.
+        CustomAction::RenameTab => Keystroke::parse("f2").ok(),
         CustomAction::NewTerminalTab
         | CustomAction::NewFile
         | CustomAction::ShowAboutRook
@@ -440,7 +445,6 @@ pub fn custom_tag_to_keystroke(custom: CustomTag) -> Option<Keystroke> {
         | CustomAction::SelectAllBlocks
         | CustomAction::SplitPaneUp
         | CustomAction::ConfigureKeybindings
-        | CustomAction::RenameTab
         | CustomAction::CloseTab
         | CustomAction::CloseOtherTabs
         | CustomAction::CloseTabsRight
