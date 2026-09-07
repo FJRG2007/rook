@@ -46,6 +46,9 @@ jobs:
           target_os: windows
           is_self_hosted: 'false'
           install_release_deps: 'true'
+          # Same key as CI's release-profile job, so a tag build starts from
+          # what that job already compiled instead of from nothing.
+          cache_key: windows-rlto
 
       - name: Install Inno Setup
         shell: pwsh

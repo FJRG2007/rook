@@ -32,6 +32,9 @@ jobs:
         with:
           target_os: windows
           is_self_hosted: 'false'
+          # Shares the dev-profile cache with the test job; a single key across
+          # every job just meant they overwrote each other and all started cold.
+          cache_key: windows-dev
 
       - name: Check formatting
         shell: bash
@@ -60,6 +63,7 @@ jobs:
           target_os: windows
           is_self_hosted: 'false'
           install_test_deps: 'true'
+          cache_key: windows-dev
 
       - name: Install cargo-nextest
         uses: taiki-e/install-action@v2
@@ -75,10 +79,10 @@ jobs:
             --exclude command-signatures-v2 \
             -E "not package(integration)"
 
-  build:
-    name: Release build
+  release-check:
+    name: Release profile compiles
     runs-on: windows-latest
-    timeout-minutes: 180
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v7
 
@@ -86,7 +90,12 @@ jobs:
         with:
           target_os: windows
           is_self_hosted: 'false'
+          cache_key: windows-rlto
 
-      - name: Build
-        shell: bash
-        run: cargo build --release --bin rook-oss --features release_bundle,gui
+      # Only the release profile and its feature set are being verified here,
+      # and `cargo check` establishes that without paying for codegen and LTO.
+      # The tag build in release.yml is what actually produces a binary, and it
+      # now reuses the cache this job leaves behind.
+      - name: Check release compilation
+        shell: pwsh
+        run: .\script\windows\bundle.ps1 -CHANNEL oss -ARCH x64 -CHECK_ONLY
