@@ -337,6 +337,9 @@ impl UdiChipConfig {
 pub enum DisplayChipAction {
     CloseMenu,
     ToggleMenu,
+    /// Opens the working directory in the platform's file manager. Used by the
+    /// working-directory chip when it has no menu to open.
+    RevealWorkingDirectory,
     ToggleCodeReview,
     OpenBranchSelector,
     OpenGithubPullRequest(String),
@@ -1209,6 +1212,21 @@ impl DisplayChip {
         &self.display_chip_kind
     }
 
+    /// The working directory as a path on this machine, or `None` when there
+    /// isn't one: a remote session's directory lives on the other host, and the
+    /// chip's own text abbreviates the home directory to `~`, so neither is
+    /// something the file manager can open.
+    fn local_working_directory(&self) -> Option<&str> {
+        let session_context = self.session_context.as_ref()?;
+        if !matches!(session_context.session.session_type(), SessionType::Local) {
+            return None;
+        }
+        session_context
+            .current_working_directory
+            .to_str()
+            .filter(|pwd| !pwd.is_empty())
+    }
+
     pub(crate) fn on_click_values(&self) -> &[String] {
         &self.on_click_values
     }
@@ -1845,6 +1863,14 @@ impl DisplayChip {
             let chip_text = self.text.clone();
             let is_in_agent_view = self.is_in_agent_view;
 
+            // With no menu to open this chip did nothing at all when clicked.
+            // Revealing the directory is the one useful thing left, and it is
+            // safe while an agent drives the shell because it does not touch
+            // the shell. An ambient agent runs somewhere else, so its working
+            // directory is not a path on this machine.
+            let can_reveal =
+                !is_in_active_ambient_agent && self.local_working_directory().is_some();
+
             Hoverable::new(self.mouse_state.clone(), move |state| {
                 let mut config =
                     UdiChipConfig::new_with_icon(Icon::Folder, font_color, chip_text.clone());
@@ -1855,10 +1881,15 @@ impl DisplayChip {
                 let chip_element = render_udi_chip(config, appearance);
                 let mut stack = Stack::new().with_child(chip_element);
 
-                if state.is_hovered() && !is_cli_agent_active {
+                if state.is_hovered() {
+                    let label = if can_reveal {
+                        crate::util::file::reveal_in_file_manager_label()
+                    } else {
+                        "Working directory"
+                    };
                     let tool_tip = appearance
                         .ui_builder()
-                        .tool_tip("Working directory".to_string())
+                        .tool_tip(label.to_string())
                         .build()
                         .finish();
 
@@ -1867,7 +1898,16 @@ impl DisplayChip {
 
                 stack.finish()
             })
-            .with_cursor(Cursor::Arrow)
+            .on_click(move |ctx, _app, _position| {
+                if can_reveal {
+                    ctx.dispatch_typed_action(DisplayChipAction::RevealWorkingDirectory);
+                }
+            })
+            .with_cursor(if can_reveal {
+                Cursor::PointingHand
+            } else {
+                Cursor::Arrow
+            })
             .finish()
         };
 
@@ -2135,6 +2175,11 @@ impl TypedActionView for DisplayChip {
 
     fn handle_action(&mut self, action: &DisplayChipAction, ctx: &mut ViewContext<Self>) {
         match action {
+            DisplayChipAction::RevealWorkingDirectory => {
+                if let Some(pwd) = self.local_working_directory() {
+                    ctx.open_file_path_in_explorer(std::path::Path::new(pwd));
+                }
+            }
             DisplayChipAction::CloseMenu => match &mut self.display_chip_kind {
                 DisplayChipKind::GitBranch { menu_open, menu }
                 | DisplayChipKind::GitBranchStatus {
