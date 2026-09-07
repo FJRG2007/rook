@@ -4,9 +4,9 @@ use std::path::Path;
 use std::{env, fmt};
 
 use clap::{CommandFactory, Parser, Subcommand, ValueEnum};
-use url::Url;
 use rook_core::channel::ChannelState;
 use rook_core::features::FeatureFlag;
+use url::Url;
 
 use crate::agent::OutputFormat;
 
@@ -726,6 +726,8 @@ pub enum RecoveryMechanism {
     X11,
     #[value(name = "force-dedicated-gpu")]
     DedicatedGpu,
+    #[value(name = "force-integrated-gpu")]
+    IntegratedGpu,
     #[value(name = "disable-opengl")]
     DisableOpenGL,
     #[value(name = "force-vulkan")]

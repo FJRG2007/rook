@@ -330,11 +330,17 @@ fn choose_crash_recovery_mechanism(
         return Some(RecoveryMechanism::ForceVulkan);
     }
 
-    // If the user hasn't specified a preference for which type of GPU to use,
-    // try recovering from a crash by forcing the use of the dedicated GPU.
+    // If the user hasn't specified a preference for which type of GPU to use, recover by moving to
+    // the other one. Which one that is depends on the platform default: Windows starts on the
+    // discrete GPU for rendering speed, so an unstable discrete driver recovers onto the
+    // integrated GPU, while the platforms that start integrated recover onto the discrete GPU.
     let prefer_low_power_gpu = settings::PreferLowPowerGPU::read_from_preferences(user_preferences);
     if prefer_low_power_gpu.is_none() {
-        return Some(RecoveryMechanism::DedicatedGpu);
+        return Some(if cfg!(windows) {
+            RecoveryMechanism::IntegratedGpu
+        } else {
+            RecoveryMechanism::DedicatedGpu
+        });
     }
 
     None
@@ -457,24 +463,26 @@ fn handle_parent_crash(
 
             true
         }
-        RecoveryMechanism::DedicatedGpu => {
+        RecoveryMechanism::DedicatedGpu | RecoveryMechanism::IntegratedGpu => {
             let prefer_low_power_gpu =
                 settings::PreferLowPowerGPU::read_from_preferences(user_preferences);
 
-            // If the user hasn't explicitly set a GPU preference, set
-            // the preference to dedicated GPU for them.
+            // If the user hasn't explicitly set a GPU preference, pin them to the GPU this
+            // recovery is switching to.
             if prefer_low_power_gpu.is_none() {
+                let prefer_low_power =
+                    matches!(recovery_mechanism, RecoveryMechanism::IntegratedGpu);
                 report_if_error!(settings::PreferLowPowerGPU::write_to_preferences(
-                    &false,
+                    &prefer_low_power,
                     user_preferences
                 ));
             }
 
             // We're not showing anything to the user when we
-            // recover from a crash by switching from preferring
-            // integrated to dedicated gpu due to the fact that
-            // this recovery mechanism is only used when the user
-            // has not explicitly set their preference.
+            // recover from a crash by switching which GPU is
+            // preferred due to the fact that this recovery
+            // mechanism is only used when the user has not
+            // explicitly set their preference.
             false
         }
         RecoveryMechanism::DisableOpenGL | RecoveryMechanism::ForceVulkan => {

@@ -29,10 +29,10 @@ pub fn banner_metadata(ctx: &AppContext) -> Option<WorkspaceBannerFields> {
             }),
         }),
         // We're not showing anything to the user when we recover from a crash
-        // by switching from preferring integrated to dedicated gpu due to the
-        // fact that this recovery mechanism is only used when the user has not
-        // explicitly set their preference.
-        RecoveryMechanism::DedicatedGpu => None,
+        // by switching which GPU is preferred due to the fact that these
+        // recovery mechanisms are only used when the user has not explicitly
+        // set their preference.
+        RecoveryMechanism::DedicatedGpu | RecoveryMechanism::IntegratedGpu => None,
         // We don't show any information to the user for the disable OpenGL / force Vulkan recovery
         // mechanisms. These set of crashes occur before there is a visible window, so any
         // information surfaced to the user would be unactionable noise that the user would see on
