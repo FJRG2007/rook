@@ -343,6 +343,37 @@ fn test_finishing_a_block_compacts_it_without_changing_its_content() {
     );
 }
 
+/// What reaches the database is the block's text with its escape sequences, not
+/// its storage layout, so compaction must not change a byte of it. A drift here
+/// would not show up until a session was restored from disk.
+#[test]
+fn test_compaction_does_not_change_what_gets_persisted() {
+    fn serialized(maximize: bool) -> String {
+        let _guard = FeatureFlag::MaximizeFlatStorage.override_enabled(maximize);
+        let size = SizeInfo::new_without_font_metrics(200, 50);
+        let mut block_grid = BlockGrid::new(
+            size,
+            10_000, /* max_scroll_limit */
+            ChannelEventListener::new_for_test(),
+            ObfuscateSecrets::No,
+            PerformResetGridChecks::default(),
+        );
+
+        for i in 0..120 {
+            for c in format!("[3{}mline {i}[0m of coloured output", i % 8).chars() {
+                block_grid.input(c);
+            }
+            block_grid.linefeed();
+            block_grid.carriage_return();
+        }
+        block_grid.finish();
+
+        block_grid.contents_to_string(true /* include_escape_sequences */, None)
+    }
+
+    assert_eq!(serialized(true), serialized(false));
+}
+
 /// Compaction is skipped for blocks too short to benefit, so a session full of
 /// one-line commands is not made worse by it.
 #[test]
