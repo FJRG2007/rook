@@ -79,7 +79,7 @@ _EMIT_EVENT_JQ_PROGRAM='
 '
 
 # Which agent this plugin integrates. Each plugin sets it before sourcing.
-: "${ROOK_PLUGIN_AGENT:=claude}"
+: "${ROOK_PLUGIN_AGENT:=codex}"
 
 # The sentinel this plugin sends. Rook accepts the upstream one as well, so a
 # plugin built against upstream keeps working, but a plugin shipped with Rook

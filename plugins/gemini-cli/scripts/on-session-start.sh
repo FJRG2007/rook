@@ -1,31 +1,16 @@
 #!/bin/bash
-# Hook script for Gemini CLI SessionStart event
-# Shows welcome message, Rook detection status, and emits plugin version
+# SessionStart: tells Rook a Gemini CLI session began.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/should-use-structured.sh"
+should_use_structured || exit 0
 
-if ! should_use_structured; then
+if ! command -v jq >/dev/null 2>&1; then
+    printf '%s\n' '{"systemMessage": "Rook notifications need jq. Install it with your package manager (brew install jq, apt install jq, winget install jqlang.jq)."}'
     exit 0
 fi
 
-if ! command -v jq &>/dev/null; then
-    cat << 'EOF'
-{
-  "systemMessage": "🚨 Rook notifications require jq! Install it with your system package manager (e.g. brew install jq, apt install jq) 🚨"
-}
-EOF
-    exit 0
-fi
-source "$SCRIPT_DIR/build-payload.sh"
-
-# Read hook input from stdin
-INPUT=$(cat)
-
-# Read plugin version from gemini-extension.json
-PLUGIN_VERSION=$(jq -r '.version // "unknown"' "$SCRIPT_DIR/../gemini-extension.json" 2>/dev/null)
-
-# Emit structured notification with plugin version so Rook can track it
-BODY=$(build_payload "$INPUT" "session_start" \
-    --arg plugin_version "$PLUGIN_VERSION")
-"$SCRIPT_DIR/rook-notify.sh" "rook://cli-agent" "$BODY"
+source "$SCRIPT_DIR/emit-event.sh"
+# --slurpfile reads the manifest inside the one jq that builds the payload.
+emit_event - "session_start" '{plugin_version: ($ext[0].version // "unknown")}' \
+    --slurpfile ext "$SCRIPT_DIR/../gemini-extension.json"

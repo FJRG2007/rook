@@ -21,8 +21,7 @@ use nix::pty::openpty;
 use nix::sys::termios::{self, InputFlags, SetArg};
 use rook_core::channel::ChannelState;
 use rook_core::cli_agent_protocol::{
-    CLI_AGENT_PROTOCOL_VERSION, COMPAT_CLI_AGENT_PROTOCOL_VERSION_ENV, COMPAT_CLIENT_VERSION_ENV,
-    ROOK_CLI_AGENT_PROTOCOL_VERSION_ENV, ROOK_CLIENT_VERSION_ENV,
+    CLI_AGENT_PROTOCOL_VERSION, ROOK_CLI_AGENT_PROTOCOL_VERSION_ENV, ROOK_CLIENT_VERSION_ENV,
 };
 use rook_core::features::FeatureFlag;
 use rook_core::safe_error;
@@ -341,14 +340,10 @@ fn build_host_shell_command(
         // that the version env var might be coming from a different terminal
         // (for ex., in the ssh case).
         builder.env(ROOK_CLIENT_VERSION_ENV, version);
-        // The published CLI-agent plugins read the upstream name; see the note on
-        // COMPAT_CLIENT_VERSION_ENV.
-        builder.env(COMPAT_CLIENT_VERSION_ENV, version);
     } else {
         // Local builds don't have GIT_RELEASE_TAG, so app_version() is None.
         // Use "local" so plugins can still distinguish this from a missing value.
         builder.env(ROOK_CLIENT_VERSION_ENV, "local");
-        builder.env(COMPAT_CLIENT_VERSION_ENV, "local");
     }
 
     // Set the `SHELL` environment variable to match the path of the shell we are using.
@@ -391,10 +386,6 @@ fn build_host_shell_command(
     if FeatureFlag::HOANotifications.is_enabled() {
         builder.env(
             ROOK_CLI_AGENT_PROTOCOL_VERSION_ENV,
-            CLI_AGENT_PROTOCOL_VERSION.to_string(),
-        );
-        builder.env(
-            COMPAT_CLI_AGENT_PROTOCOL_VERSION_ENV,
             CLI_AGENT_PROTOCOL_VERSION.to_string(),
         );
     }
@@ -881,10 +872,8 @@ fn build_docker_sandbox_command(
     if let Some(version) = ChannelState::app_version() {
         builder.env("TERM_PROGRAM_VERSION", version);
         builder.env(ROOK_CLIENT_VERSION_ENV, version);
-        builder.env(COMPAT_CLIENT_VERSION_ENV, version);
     } else {
         builder.env(ROOK_CLIENT_VERSION_ENV, "local");
-        builder.env(COMPAT_CLIENT_VERSION_ENV, "local");
     }
     builder.env("SHELL", docker_starter.logical_shell_path());
     if let Some(window_id) = window_id {
@@ -903,10 +892,6 @@ fn build_docker_sandbox_command(
     if FeatureFlag::HOANotifications.is_enabled() {
         builder.env(
             ROOK_CLI_AGENT_PROTOCOL_VERSION_ENV,
-            CLI_AGENT_PROTOCOL_VERSION.to_string(),
-        );
-        builder.env(
-            COMPAT_CLI_AGENT_PROTOCOL_VERSION_ENV,
             CLI_AGENT_PROTOCOL_VERSION.to_string(),
         );
     }

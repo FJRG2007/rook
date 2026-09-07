@@ -1,6 +1,8 @@
 # The CLI-agent plugin makes everything slower
 
-**Symptom.** Installing the Claude Code integration makes the terminal and the agent noticeably worse: every tool call pauses, prompts take a moment to register, and starting `claude` takes far longer than it should.
+**Symptom.** Installing the CLI-agent integration makes the terminal and the agent noticeably worse: every tool call pauses, prompts take a moment to register, and starting the agent takes far longer than it should.
+
+Applies to the Claude Code, Codex and Gemini CLI plugins, which share one implementation.
 
 ## Evidence
 
@@ -62,6 +64,22 @@ The floor for a shell hook on this machine - bash, reading stdin, one `jq` - mea
 
 The remaining ~90 ms is process creation, and no amount of shell restructuring removes it. Getting below it means not being a shell script.
 
-## Compatibility
+## The other integrations
 
-The plugins are now in this repository under `plugins/`, and the sentinel and environment variables they use are Rook's. Users who still have the upstream plugin installed are not broken by that: `is_cli_agent_notification` accepts the upstream sentinel as well, and the terminal exports the upstream environment variable names alongside its own. Those plugins are separate projects with their own release cadence, so their half of the protocol is not this repository's to rename.
+Upstream publishes five CLI-agent integrations. All of them are in `plugins/` now:
+
+| Plugin | State |
+| --- | --- |
+| Claude Code | Shell hooks, same bug, fixed |
+| Codex | Shell hooks, same bug (364 ms measured), fixed - 100 ms |
+| Gemini CLI | Shell hooks, same bug, fixed - 95 ms |
+| OpenCode | TypeScript, runs in-process and spawns nothing. Never had this bug and needed no change |
+| Antigravity CLI | The repository holds one commit and no files. There is nothing to bring in yet |
+
+Codex and Gemini share the Claude Code implementation, so they take the same emitter with the agent name passed in rather than hardcoded.
+
+## Only Rook's own plugins are accepted
+
+`is_cli_agent_notification` recognises Rook's sentinel and nothing else, and the terminal exports only its own environment variable names. An upstream plugin therefore neither activates nor is listened to.
+
+That is deliberate. Those plugins carry the per-hook cost measured above, and accepting them would leave a user paying it with no indication why. The client installs Rook's copies from this repository through the marketplace manifest at the root.

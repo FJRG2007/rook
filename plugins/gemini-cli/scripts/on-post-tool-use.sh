@@ -1,27 +1,14 @@
 #!/bin/bash
-# Hook script for Gemini CLI AfterTool event (equivalent to Claude Code's PostToolUse)
-# Sends a structured Rook notification after a tool call completes,
-# transitioning the session status from Blocked back to Running.
+# PostToolUse: moves the session from Blocked back to Running.
+#
+# This fires after every single tool call, so it is the hottest hook the plugin
+# has and the one worth keeping cheap.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/should-use-structured.sh"
 
-if ! should_use_structured; then
-    echo '{}'
-    exit 0
-fi
+# No legacy equivalent for this hook.
+should_use_structured || exit 0
 
-source "$SCRIPT_DIR/build-payload.sh"
-
-# Read hook input from stdin
-INPUT=$(cat)
-
-TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty' 2>/dev/null)
-
-BODY=$(build_payload "$INPUT" "tool_complete" \
-    --arg tool_name "$TOOL_NAME")
-
-"$SCRIPT_DIR/rook-notify.sh" "rook://cli-agent" "$BODY"
-
-# Output empty JSON so we don't interfere with the agent
-echo '{}'
+source "$SCRIPT_DIR/emit-event.sh"
+emit_event - "tool_complete" "{tool_name: (.tool_name // \"\")}"

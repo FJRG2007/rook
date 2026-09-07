@@ -1,26 +1,12 @@
 #!/bin/bash
-# Hook script for Codex UserPromptSubmit event.
-# Sends a structured Rook notification when the user submits a prompt.
-
-set -euo pipefail
+# UserPromptSubmit: reports the prompt the user just sent.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/should-use-structured.sh"
 
-if ! should_use_structured; then
-    exit 0
-fi
+# No legacy equivalent for this hook.
+should_use_structured || exit 0
 
-source "$SCRIPT_DIR/build-payload.sh"
-
-INPUT=$(cat)
-
-QUERY=$(echo "$INPUT" | jq -r '.prompt // empty' 2>/dev/null)
-if [ -n "$QUERY" ] && [ ${#QUERY} -gt 200 ]; then
-    QUERY="${QUERY:0:197}..."
-fi
-
-BODY=$(build_payload "$INPUT" "prompt_submit" \
-    --arg query "$QUERY")
-
-"$SCRIPT_DIR/rook-notify.sh" "rook://cli-agent" "$BODY"
+source "$SCRIPT_DIR/emit-event.sh"
+emit_event - "prompt_submit" \
+    "{query: ((.prompt // \"\") | if (. | length) > 200 then .[0:197] + \"...\" else . end)}"
