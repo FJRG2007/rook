@@ -1087,9 +1087,10 @@ pub const PREVIEW_FLAGS: &[FeatureFlag] = &[
 /// NOTE: if you are promoting a feature from Preview to launch, you'll likely
 /// want to enable the feature by default in app/Cargo.toml, rather than add it to RELEASE_FLAGS.
 pub const RELEASE_FLAGS: &[FeatureFlag] = &[
-    // Autoupdate is deliberately absent. It polls a release host every ten minutes, and Rook has
-    // no such host - the upstream one is not ours to call. New versions are published to GitHub
-    // releases instead, so leaving the flag on would only spend a DNS failure per poll.
+    // Drives the update check. On Rook's channel that check asks the GitHub releases API and
+    // reports a newer version rather than downloading one, since there is no unattended
+    // installer here. See app/src/autoupdate/github.rs.
+    FeatureFlag::Autoupdate,
     FeatureFlag::Changelog,
     FeatureFlag::CrashReporting,
     FeatureFlag::VideoRecording,

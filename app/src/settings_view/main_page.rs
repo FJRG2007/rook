@@ -4,7 +4,7 @@ use ::settings::{Setting, ToggleableSetting};
 use lazy_static::lazy_static;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use rook_core::channel::ChannelState;
+use rook_core::channel::{Channel, ChannelState};
 use rook_core::context_flag::ContextFlag;
 use rook_core::features::FeatureFlag;
 use rook_core::ui::icons::Icon;
@@ -908,17 +908,31 @@ impl VersionInfoWidget {
                             action: MainPageAction::Relaunch,
                         }),
                     ),
-                    AutoupdateStage::UnableToUpdateToNewVersion { .. } => (
-                        Some(StatusContent {
-                            text: "A new version of Rook is available but can't be installed",
-                            color: ansi_red,
-                        }),
-                        Some(CallToActionContent {
-                            text: "Update Rook manually",
-                            // note: the handler for this action is a no-op
-                            action: MainPageAction::DownloadUpdate,
-                        }),
-                    ),
+                    AutoupdateStage::UnableToUpdateToNewVersion { .. } => {
+                        // On the open-source channel this is the normal outcome,
+                        // not a failure: releases live on GitHub and are
+                        // installed by hand, so it reads as information rather
+                        // than an error in red.
+                        let is_oss = matches!(ChannelState::channel(), Channel::Oss);
+                        (
+                            Some(StatusContent {
+                                text: if is_oss {
+                                    "A new version of Rook is available"
+                                } else {
+                                    "A new version of Rook is available but can't be installed"
+                                },
+                                color: if is_oss { faded_text_color } else { ansi_red },
+                            }),
+                            Some(CallToActionContent {
+                                text: if is_oss {
+                                    "Get it from GitHub"
+                                } else {
+                                    "Update Rook manually"
+                                },
+                                action: MainPageAction::DownloadUpdate,
+                            }),
+                        )
+                    }
                     AutoupdateStage::UnableToLaunchNewVersion { .. } => (
                         Some(StatusContent {
                             text: "A new version of Rook is installed but can't be launched.",

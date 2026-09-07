@@ -1,5 +1,6 @@
 mod changelog;
 mod channel_versions;
+mod github;
 #[cfg(target_os = "linux")]
 pub mod linux;
 #[cfg(target_os = "macos")]
@@ -406,6 +407,16 @@ impl AutoupdateState {
                 new_version,
                 update_id,
             }) => {
+                // Rook publishes to GitHub releases and has no installer to run
+                // unattended, so the open-source channel reports the new version
+                // and stops rather than downloading one it could not apply.
+                if matches!(ChannelState::channel(), Channel::Oss) {
+                    self.stage = AutoupdateStage::UnableToUpdateToNewVersion {
+                        new_version: new_version.clone(),
+                    };
+                    ctx.notify();
+                    return;
+                }
                 self.download_new_update(update_id.clone(), request_type, new_version.clone(), ctx);
                 // We report the update status after attempting to download the update.
                 return;
@@ -773,6 +784,12 @@ async fn fetch_version(
     update_id: &str,
     server_api: Arc<ServerApi>,
 ) -> Result<VersionInfo> {
+    // Rook ships on the open-source channel, which the upstream version server
+    // does not serve. Releases are published to GitHub, so that is what is asked.
+    if matches!(channel, Channel::Oss) {
+        return github::fetch_latest_release_version(&http_client::Client::new()).await;
+    }
+
     let versions = fetch_channel_versions(update_id, server_api.clone(), false, is_daily).await?;
 
     let channel_version = match channel {
@@ -780,16 +797,11 @@ async fn fetch_version(
         Channel::Preview => versions.preview,
         Channel::Dev => versions.dev,
         Channel::Integration | Channel::Local | Channel::Oss => {
-            // These channels don't ship release artifacts, so there's no
-            // version to fetch. This branch is normally unreachable because
-            // `AutoupdateState::register` gates the poll loop on the
-            // `Autoupdate` feature flag, but builds (e.g. local wasm bundles)
-            // can end up with `Autoupdate` enabled while running on one of
-            // these channels. Return an error rather than panicking so the
-            // poll loop just logs and bails.
-            anyhow::bail!(
-                "Local, integration, and open-source channel binaries don't support autoupdate"
-            );
+            // These channels don't ship release artifacts through the version
+            // server, so there is no version to read here. Oss is handled above
+            // and never reaches this arm; the rest return an error rather than
+            // panicking, so the poll loop just logs and bails.
+            anyhow::bail!("Local and integration channel binaries don't support autoupdate");
         }
     };
     let version_info = channel_version.version_info();
@@ -1058,6 +1070,14 @@ pub fn manually_download_new_version(ctx: &mut AppContext) {
 
 #[allow(unused_variables)]
 fn manually_download_version(channel: &Channel, version: &VersionInfo, ctx: &mut AppContext) {
+    // Rook publishes to GitHub releases and has no unattended installer, so the
+    // button opens the page. Before this it called into a macOS-only path and
+    // did nothing at all on Windows or Linux.
+    if matches!(channel, Channel::Oss) {
+        ctx.open_url(github::RELEASES_URL);
+        return;
+    }
+
     #[cfg(target_os = "macos")]
     mac::manually_download_version(channel, version, ctx);
 }
