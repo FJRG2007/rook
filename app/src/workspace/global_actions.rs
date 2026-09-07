@@ -12,6 +12,7 @@ use crate::ai::agent::conversation::AIConversationId;
 use crate::app_state::get_app_state;
 use crate::network::NetworkStatus;
 use crate::persistence::ModelEvent;
+use crate::persistence::PersistenceWriter;
 use crate::root_view::OpenPath;
 use crate::server::server_api::ServerApiProvider;
 use crate::terminal::alt_screen_reporting::AltScreenReporting;
@@ -161,6 +162,17 @@ fn save_app(_: &(), ctx: &mut AppContext) {
 
     // Only compute the app state if we're definitely going to use it.
     let app_state = get_app_state(ctx);
+
+    // Autosave runs on a timer and window drags fire this on every frame, so
+    // most calls carry a session identical to the one already on disk. Writing
+    // it again would re-run a delete-and-insert transaction over every window,
+    // tab and pane for no change at all.
+    let is_new = PersistenceWriter::handle(ctx)
+        .update(ctx, |writer, _ctx| writer.snapshot_is_new(&app_state));
+    if !is_new {
+        return;
+    }
+
     let event = ModelEvent::Snapshot(app_state);
 
     if let Err(err) = model_event_sender.send(event) {

@@ -2571,6 +2571,7 @@ pub(crate) fn initialize_app(
         )
     });
     ctx.add_singleton_model(move |_| persistence_writer);
+    PersistenceWriter::handle(ctx).update(ctx, |writer, ctx| writer.start_autosaving(ctx));
 
     ctx.add_singleton_model(input_classifier::InputClassifierModel::new);
 

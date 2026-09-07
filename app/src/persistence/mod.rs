@@ -21,6 +21,7 @@ use std::path::PathBuf;
 use std::sync::mpsc::SyncSender;
 use std::sync::{Arc, OnceLock};
 use std::thread::JoinHandle;
+use std::time::Duration;
 
 use ai::project_context::model::ProjectRulePath;
 use ai::workspace::WorkspaceMetadata as CodeWorkspaceMetadata;
@@ -34,7 +35,8 @@ pub use sqlite::database_file_path_for_current_scope;
 use rook_core::command::ExitCode;
 use rook_errors::report_error;
 use rook_graphql::scalars::time::ServerTimestamp;
-use rookui::{AppContext, Entity, SingletonEntity};
+use rookui::r#async::Timer;
+use rookui::{AppContext, Entity, ModelContext, SingletonEntity};
 #[cfg(any(feature = "local_fs", feature = "integration_tests"))]
 #[cfg_attr(not(feature = "integration_tests"), expect(unused_imports))]
 pub use sqlite::database_file_path_for_scope;
@@ -218,10 +220,21 @@ pub struct WriterHandles {
     pub sender: SyncSender<ModelEvent>,
 }
 
+/// How often the session is written out while the app is running.
+///
+/// This is the ceiling on how much of a session a machine losing power can
+/// take with it, so it is short. Snapshots that match the last one written are
+/// dropped before reaching the writer, so an idle app pays for building a
+/// snapshot on this interval and nothing else.
+const AUTOSAVE_INTERVAL: Duration = Duration::from_secs(15);
+
 /// Model for interacting with the writer thread.
 pub struct PersistenceWriter {
     thread_handle: Option<JoinHandle<()>>,
     model_event_sender: Option<SyncSender<ModelEvent>>,
+    /// The last session handed to the writer, kept to recognise a snapshot that
+    /// would rewrite the same rows.
+    last_snapshot: Option<AppState>,
 }
 
 impl PersistenceWriter {
@@ -233,7 +246,39 @@ impl PersistenceWriter {
         Self {
             thread_handle,
             model_event_sender,
+            last_snapshot: None,
         }
+    }
+
+    /// Whether `state` differs from the last session written, recording it when
+    /// it does so the next call compares against it.
+    pub fn snapshot_is_new(&mut self, state: &AppState) -> bool {
+        if self.last_snapshot.as_ref() == Some(state) {
+            return false;
+        }
+        self.last_snapshot = Some(state.clone());
+        true
+    }
+
+    /// Starts writing the session out on a timer, and keeps it running.
+    ///
+    /// The event-driven saves cover window move, resize, focus change and close,
+    /// none of which a user has to do between opening a tab and cutting the
+    /// power. Termination is handled too, but only when the app is allowed to
+    /// terminate: a machine switched off at the wall, or a process killed
+    /// outright, never reaches that path.
+    pub fn start_autosaving(&mut self, ctx: &mut ModelContext<Self>) {
+        // The handle only carries a way to abort, and dropping it does not, so
+        // the timer keeps running for the life of the app.
+        ctx.spawn(
+            async {
+                Timer::after(AUTOSAVE_INTERVAL).await;
+            },
+            |me, _, ctx| {
+                ctx.dispatch_global_action("workspace:save_app", &());
+                me.start_autosaving(ctx);
+            },
+        );
     }
 
     /// Sending half for sending model updates to the persistence writer thread.
