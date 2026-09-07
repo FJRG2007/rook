@@ -3,7 +3,7 @@ use crate::channel::ChannelState;
 pub const USER_DOCS_URL: &str = "https://docs.rook.dev/";
 #[cfg_attr(not(target_os = "macos"), allow(dead_code))]
 pub const GITHUB_ISSUES_URL: &str = "https://github.com/FJRG2007/rook/issues";
-pub const SLACK_URL: &str = "http://go.rook.dev/join-preview";
+pub const DISCORD_URL: &str = "https://tpe.li/dsc";
 pub const PRIVACY_POLICY_URL: &str = "https://www.rook.dev/privacy";
 
 pub fn feedback_form_url() -> String {

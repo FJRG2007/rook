@@ -6707,8 +6707,8 @@ impl Workspace {
         ctx.notify();
     }
 
-    fn join_slack(&mut self, ctx: &mut ViewContext<Self>) {
-        ctx.open_url(links::SLACK_URL);
+    fn join_discord(&mut self, ctx: &mut ViewContext<Self>) {
+        ctx.open_url(links::DISCORD_URL);
     }
 
     fn view_user_docs(&mut self, ctx: &mut ViewContext<Self>) {
@@ -9892,8 +9892,8 @@ impl Workspace {
         );
 
         items.extend([
-            MenuItemFields::new("Join our Slack community")
-                .with_on_select_action(WorkspaceAction::JoinSlack)
+            MenuItemFields::new("Join our Discord community")
+                .with_on_select_action(WorkspaceAction::JoinDiscord)
                 .into_item(),
             MenuItem::Separator,
         ]);
@@ -24397,7 +24397,7 @@ impl TypedActionView for Workspace {
             ShowReferralSettingsPage => {
                 self.show_settings_with_section(Some(SettingsSection::Referrals), ctx);
             }
-            JoinSlack => self.join_slack(ctx),
+            JoinDiscord => self.join_discord(ctx),
             ViewUserDocs => self.view_user_docs(ctx),
             ViewLatestChangelog => self.view_latest_changelog(ctx),
             ViewPrivacyPolicy => self.view_privacy_policy(ctx),

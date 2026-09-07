@@ -136,7 +136,7 @@ Yes — that's what AGPL is for. The license prevents fully-proprietary relaunch
 
 - The [Rook docs](https://docs.rook.dev/) for using the product.
 - [GitHub Issues](https://github.com/FJRG2007/rook/issues) for bug reports and feature requests.
-- The [Slack community](https://go.rook.dev/join-preview) for general questions and discussion — contributors chat with each other and the Rook team in [`#oss-contributors`](https://rookcommunity.slack.com/archives/C0B0LM8N4DB).
+- The [Discord server](https://tpe.li/dsc) for general questions and discussion.
 - Mention **@oss-maintainers** on an issue or PR to escalate to the team.
 
 ### How do I report a security vulnerability?

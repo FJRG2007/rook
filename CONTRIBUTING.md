@@ -3,7 +3,7 @@
 Thanks for helping improve Rook! This guide explains how to open issues, propose changes, and get your work reviewed.
 
 > [!TIP]
-> **Chat with us in Slack.** Connect with other contributors and the Rook team in the [`#oss-contributors`](https://rookcommunity.slack.com/archives/C0B0LM8N4DB) channel — a good place for ad-hoc questions, design discussion, and pairing with maintainers as you work through an issue or PR. New here? [Join the Rook Slack community](https://go.rook.dev/join-preview) first, then hop into `#oss-contributors`.
+> **Chat with us on Discord.** Ask questions, talk through a design, or pair with maintainers as you work through an issue or PR: [join the Rook Discord](https://tpe.li/dsc).
 
 ## TL;DR
 
@@ -210,6 +210,6 @@ See [`SECURITY.md`](SECURITY.md) for our security disclosure policy and private 
 
 ## Getting Help
 
-- Chat with other contributors and the Rook team in [`#oss-contributors`](https://rookcommunity.slack.com/archives/C0B0LM8N4DB) on the [Rook Slack community](https://go.rook.dev/join-preview) (join the workspace first if you're new).
+- Chat with other contributors and the Rook team on [Discord](https://tpe.li/dsc).
 - Browse the [Rook docs](https://docs.rook.dev/).
 - Open a [GitHub issue](https://github.com/FJRG2007/rook/issues) for bugs or feature requests.
