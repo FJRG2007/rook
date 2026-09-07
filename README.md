@@ -59,7 +59,7 @@ To produce an installer:
 .\script\windows\bundle.ps1 -CHANNEL oss -ARCH x64         # Windows
 ```
 
-CI runs fmt, clippy, tests and a release-profile check on all three platforms. Pushing a `v*` tag builds every installer and attaches them to the GitHub release.
+CI runs clippy, tests and a release-profile check on all three platforms, and `cargo fmt --check` on Linux alone, since formatting is platform independent. Pushing a `v*` tag builds every installer and attaches them to the GitHub release.
 
 ## The CLI-agent plugins
 
