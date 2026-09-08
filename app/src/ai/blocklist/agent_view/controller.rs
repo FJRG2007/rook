@@ -70,8 +70,18 @@ impl AgentViewDisplayMode {
 /// human double-press; a loaded CI runner takes longer than that just to lay
 /// out the view between the presses, which failed
 /// `test_new_conversation_keybinding_requires_double_press_in_non_empty_agent_view`
-/// on Windows and nowhere else. No test asserts that the window expires, so
-/// nothing here goes uncovered that was covered before.
+/// on Windows and nowhere else.
+///
+/// What this does not cover, stated rather than implied. `cfg(test)` holds only
+/// while `rook` is itself the test target, so a crate that links `rook` as a
+/// library - `rook_tui`, `integration` - still sees one second and can still
+/// race. And no test can reach the expiry path at all now, so a regression
+/// leaving a confirmation armed forever would pass. The fix for both is to
+/// take `now` as an argument the way `rook_tui`'s `exit_confirmation` threads
+/// it through `arm`/`should_exit`/`disarm_expired`; it needs the two call
+/// sites in `input.rs` and `slash_commands/mod.rs` to supply it and the
+/// end-to-end test rewritten to drive the clock, because passing
+/// `Instant::now()` from those call sites would race exactly as before.
 #[cfg(not(test))]
 pub const ENTER_OR_EXIT_CONFIRMATION_WINDOW: Duration = Duration::from_secs(1);
 #[cfg(test)]

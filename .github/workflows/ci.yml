@@ -185,25 +185,31 @@ jobs:
       - name: Run tests
         if: needs.changes.outputs.code == 'true'
         shell: bash
-        # Excluded from the build, not just from the run. `Cargo.toml` keeps
-        # both out of `default-members` precisely because neither is meant to
-        # be regularly compiled: `serve-wasm` is a helper for serving wasm
-        # binaries and carries no tests at all, and `integration` drives a
-        # real window and is not run in CI upstream either. `--workspace`
-        # overrides `default-members` and pulls both back in, so filtering
-        # `integration` out with `-E` stopped its tests running while still
-        # paying to compile it, and `serve-wasm` was compiled on every test
-        # job for nothing - it is what the Linux runner was building when it
-        # was killed at 8m30s. Neither stops being checked: the `lints` job
-        # still compiles and lints the whole workspace with
-        # `--all-targets --tests`.
+        # `serve-wasm` is excluded from the build, not just from the run:
+        # `Cargo.toml` keeps it out of `default-members` because it is a helper
+        # for serving wasm binaries, it carries no tests at all, and
+        # `--workspace` overrides `default-members` and pulls it back in, so
+        # all three test jobs compiled it for nothing. It is what the Linux
+        # runner was building when it was killed at 8m30s.
+        #
+        # `integration` is filtered rather than excluded, even though it is
+        # equally never run here, because `--exclude integration` does more
+        # than skip a package: `crates/integration` is the only thing that
+        # depends on `rook` with `features = ["integration_tests"]`, so
+        # excluding it drops that feature from the unit-test build of `rook`
+        # itself. That flips every `cfg!(feature = "integration_tests")` branch
+        # under the other 11,300 tests - `SUBSHELL_BANNER_DELAY_DURATION` alone
+        # goes from zero to a real wall-clock second - and `lints` would not
+        # catch it, because that job does not exclude the package and so still
+        # builds `rook` with the feature on.
         #
         # --no-fail-fast because the default stops at the first failure: one
         # broken test hid the other 10,700 and made each fix another round trip.
         run: |
           cargo nextest run --workspace --locked --no-fail-fast \
-            --exclude serve-wasm --exclude integration \
-            ${{ matrix.test_excludes }}
+            --exclude serve-wasm \
+            ${{ matrix.test_excludes }} \
+            -E "not package(integration)"
 
   release-check:
     name: Release profile compiles (${{ matrix.name }})
