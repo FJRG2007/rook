@@ -39,7 +39,12 @@ define_settings_group!(GeneralSettings, settings: [
     },
     add_app_as_login_item: LoginItem {
         type: bool,
-        default: true,
+        // Upstream defaults this on, so the app registers itself in the
+        // user's startup list on first launch without being asked. A
+        // terminal is opened when it is wanted, so Rook waits to be asked:
+        // the toggle in Settings -> Features registers it, and leaving it
+        // off unregisters whatever an earlier build added.
+        default: false,
         supported_platforms: SupportedPlatforms::OR(
             Box::new(SupportedPlatforms::MAC),
             Box::new(SupportedPlatforms::WINDOWS),
