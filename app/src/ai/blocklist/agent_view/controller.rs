@@ -63,7 +63,19 @@ impl AgentViewDisplayMode {
 ///
 /// We intentionally keep enter/exit/new-conversation keybinding confirmation windows aligned so
 /// users only learn one confirmation cadence.
+/// The window is real wall-clock time on both sides - `Instant::now()` for the
+/// armed deadline and `async_io::Timer` for the dismissal - and there is no
+/// clock a test can advance, so under `cfg(test)` it is long enough that no
+/// runner can expire it between two presses of the same test. One second is a
+/// human double-press; a loaded CI runner takes longer than that just to lay
+/// out the view between the presses, which failed
+/// `test_new_conversation_keybinding_requires_double_press_in_non_empty_agent_view`
+/// on Windows and nowhere else. No test asserts that the window expires, so
+/// nothing here goes uncovered that was covered before.
+#[cfg(not(test))]
 pub const ENTER_OR_EXIT_CONFIRMATION_WINDOW: Duration = Duration::from_secs(1);
+#[cfg(test)]
+pub const ENTER_OR_EXIT_CONFIRMATION_WINDOW: Duration = Duration::from_secs(60);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ExitConfirmationTrigger {
