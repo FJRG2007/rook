@@ -3,7 +3,19 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore: &docs_only
+      # Only paths that provably cannot affect the build or the tests. Note
+      # what is NOT here: resources/** and plugins/** hold bundled skills whose
+      # markdown the tests read and assert on, so a "docs only" rule that
+      # matched every .md would skip the run that catches a broken one. That is
+      # not hypothetical - it is how a missing references/scorers.md reached
+      # main.
+      - 'docs/**'
+      - '*.md'
+      - 'LICENSE*'
+      - '.github/ISSUE_TEMPLATE/**'
   pull_request:
+    paths-ignore: *docs_only
   workflow_dispatch:
 
 concurrency:
@@ -19,6 +31,19 @@ concurrency:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
+  # Incremental compilation only pays off across edits on one machine. In CI it
+  # is dead weight in the build and in the cache that carries it between runs.
+  CARGO_INCREMENTAL: 0
+  # Enough debug info for a readable backtrace and no more. Set through the
+  # profile rather than RUSTFLAGS, because the environment variable replaces
+  # .cargo/config.toml's rustflags wholesale - which would drop the macOS
+  # `-headerpad_max_install_names` the bundle relies on, the wasm
+  # `web_sys_unstable_apis` cfg, and v0 symbol mangling. The test profile
+  # inherits this from dev.
+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+  # Carries fail-fast = false and immediate failure output; see
+  # .config/nextest.toml.
+  NEXTEST_PROFILE: ci
 
 jobs:
   lints:
