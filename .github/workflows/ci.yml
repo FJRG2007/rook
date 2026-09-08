@@ -3,19 +3,27 @@ name: CI
 on:
   push:
     branches: [main]
-    paths-ignore: &docs_only
-      # Only paths that provably cannot affect the build or the tests. Note
-      # what is NOT here: resources/** and plugins/** hold bundled skills whose
-      # markdown the tests read and assert on, so a "docs only" rule that
-      # matched every .md would skip the run that catches a broken one. That is
-      # not hypothetical - it is how a missing references/scorers.md reached
-      # main.
+    # Only paths that provably cannot affect the build or the tests. Note what
+    # is NOT here: resources/** and plugins/** hold bundled skills whose
+    # markdown the tests read and assert on, so a "docs only" rule that matched
+    # every .md would skip the run that catches a broken one. That is not
+    # hypothetical - it is how a missing references/scorers.md reached main.
+    #
+    # The list is repeated under `pull_request` rather than shared through a
+    # YAML anchor: the file would still be valid YAML, but GitHub's workflow
+    # parser rejects anchors outright ("Anchors are not currently supported"),
+    # which fails every run at load time before a single job starts.
+    paths-ignore:
       - 'docs/**'
       - '*.md'
       - 'LICENSE*'
       - '.github/ISSUE_TEMPLATE/**'
   pull_request:
-    paths-ignore: *docs_only
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - 'LICENSE*'
+      - '.github/ISSUE_TEMPLATE/**'
   workflow_dispatch:
 
 concurrency:
@@ -34,13 +42,6 @@ env:
   # Incremental compilation only pays off across edits on one machine. In CI it
   # is dead weight in the build and in the cache that carries it between runs.
   CARGO_INCREMENTAL: 0
-  # Enough debug info for a readable backtrace and no more. Set through the
-  # profile rather than RUSTFLAGS, because the environment variable replaces
-  # .cargo/config.toml's rustflags wholesale - which would drop the macOS
-  # `-headerpad_max_install_names` the bundle relies on, the wasm
-  # `web_sys_unstable_apis` cfg, and v0 symbol mangling. The test profile
-  # inherits this from dev.
-  CARGO_PROFILE_DEV_DEBUG: line-tables-only
   # Carries fail-fast = false and immediate failure output; see
   # .config/nextest.toml.
   NEXTEST_PROFILE: ci
@@ -75,9 +76,12 @@ jobs:
         with:
           target_os: ${{ matrix.os }}
           is_self_hosted: 'false'
-          # One cache per profile, shared with the test job. A single key across
-          # every job just meant they overwrote each other and all started cold.
-          cache_key: ${{ matrix.os }}-dev
+          # One cache per build mode. Clippy runs in check mode, so its
+          # dependencies land as .rmeta with no codegen - useless to the test
+          # job, which needs the rlibs. Sharing a key with it only made the two
+          # jobs race for the same entry, and rust-cache does not re-save after
+          # an exact hit, so whichever won left the other permanently cold.
+          cache_key: ${{ matrix.os }}-check
 
       - name: Check formatting
         # Formatting is platform independent, so one job is enough.
@@ -121,7 +125,7 @@ jobs:
           target_os: ${{ matrix.os }}
           is_self_hosted: 'false'
           install_test_deps: 'true'
-          cache_key: ${{ matrix.os }}-dev
+          cache_key: ${{ matrix.os }}-test
 
       - name: Install cargo-nextest
         uses: taiki-e/install-action@v2
@@ -164,12 +168,15 @@ jobs:
         with:
           target_os: ${{ matrix.os }}
           is_self_hosted: 'false'
-          cache_key: ${{ matrix.os }}-rlto
+          # Not the plain `-rlto` key release.yml uses. This job only checks,
+          # so its dependencies are .rmeta the tag build cannot link against,
+          # and sharing the entry would leave the tag build restoring a cache
+          # it cannot use and unable to save the one it could.
+          cache_key: ${{ matrix.os }}-rlto-check
 
       # Only the release profile and its feature set are verified here, and
       # `cargo check` establishes that without paying for codegen and LTO. The
-      # tag build in release.yml produces the binaries, and reuses the cache
-      # this job leaves behind.
+      # tag build in release.yml produces the binaries.
       - name: Check release compilation (Windows)
         if: matrix.os == 'windows'
         shell: pwsh

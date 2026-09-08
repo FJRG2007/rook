@@ -59,8 +59,11 @@ jobs:
           target_os: ${{ matrix.os }}
           is_self_hosted: 'false'
           install_release_deps: 'true'
-          # Same key as CI's release-profile job, so a tag build starts from
-          # what that job already compiled instead of from nothing.
+          # Kept to this workflow. CI's release-profile job only runs
+          # `cargo check`, so what it caches is metadata with no codegen behind
+          # it; a tag build sharing that key would restore artifacts it cannot
+          # link and then skip saving its own, and every release would compile
+          # from nothing. This way one tag build's output serves the next.
           cache_key: ${{ matrix.os }}-rlto
 
       - name: Install Inno Setup

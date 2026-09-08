@@ -73,9 +73,10 @@ runs:
       if: ${{ inputs.is_self_hosted != 'true' && !startsWith(runner.name, 'nsc-runner') }}
       with:
         # `shared-key` rather than `key`: `key` is *added* to a cache key that
-        # already includes the job, so every job kept its own copy and the test
-        # job could not reuse what the clippy job had already compiled. They
-        # build the same dev-profile graph, so one entry serves both.
+        # already includes the job, so a matrix leg could not reuse what the
+        # same leg of an earlier run had compiled. Callers pass one key per
+        # build mode, so jobs that produce the same artifacts share an entry and
+        # jobs that do not stay out of each other's way.
         #
         # Make sure x86_64-unknown-linux-gnu and wasm32-unknown-unknown builds
         # don't share a cache, despite running on the same _host_ architecture.

@@ -69,12 +69,21 @@ impl RookServerConfig {
     /// idle - the OSS channel has no telemetry, crash reporting or autoupdate -
     /// but a login attempt or any cloud feature would have sent requests, and
     /// the credentials in them, to a stranger.
+    ///
+    /// The Firebase key is empty for the same reason, and it needs its own
+    /// treatment because the `.invalid` hosts do not cover it: it is spent
+    /// against `securetoken.googleapis.com` and `identitytoolkit.googleapis.com`
+    /// (see `FirebaseToken::access_token_url` in `rook_server_auth`), which
+    /// resolve, so a token refresh would post the user's refresh token into a
+    /// Firebase project this fork does not own. Empty rather than unreachable
+    /// because it is a query parameter, not a host - nothing parses it as a
+    /// URL - and the request fails on a rejected key.
     pub fn without_server() -> Self {
         Self {
             server_root_url: "https://server.rook.invalid".into(),
             rtc_server_url: "wss://rtc.rook.invalid/graphql/v2".into(),
             session_sharing_server_url: Some("wss://sessions.rook.invalid".into()),
-            firebase_auth_api_key: "AIzaSyBdy3O3S9hrdayLJxJ7mriBR4qgUaUygAs".into(),
+            firebase_auth_api_key: "".into(),
             iap_config: None,
         }
     }
