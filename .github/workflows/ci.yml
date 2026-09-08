@@ -185,15 +185,25 @@ jobs:
       - name: Run tests
         if: needs.changes.outputs.code == 'true'
         shell: bash
-        # The integration package drives a real window and is not run in CI
-        # upstream either.
+        # Excluded from the build, not just from the run. `Cargo.toml` keeps
+        # both out of `default-members` precisely because neither is meant to
+        # be regularly compiled: `serve-wasm` is a helper for serving wasm
+        # binaries and carries no tests at all, and `integration` drives a
+        # real window and is not run in CI upstream either. `--workspace`
+        # overrides `default-members` and pulls both back in, so filtering
+        # `integration` out with `-E` stopped its tests running while still
+        # paying to compile it, and `serve-wasm` was compiled on every test
+        # job for nothing - it is what the Linux runner was building when it
+        # was killed at 8m30s. Neither stops being checked: the `lints` job
+        # still compiles and lints the whole workspace with
+        # `--all-targets --tests`.
         #
         # --no-fail-fast because the default stops at the first failure: one
         # broken test hid the other 10,700 and made each fix another round trip.
         run: |
           cargo nextest run --workspace --locked --no-fail-fast \
-            ${{ matrix.test_excludes }} \
-            -E "not package(integration)"
+            --exclude serve-wasm --exclude integration \
+            ${{ matrix.test_excludes }}
 
   release-check:
     name: Release profile compiles (${{ matrix.name }})
