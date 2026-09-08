@@ -77,18 +77,32 @@ fn a_prerelease_precedes_its_release() {
     }
 }
 
-/// Anything this does not understand orders as nothing rather than guessing -
-/// including upstream's channel-versions shape, which `ParsedVersion` handles
-/// before the fallback is ever reached.
+/// The dated tags releases carry, which have to order against each other and
+/// against the `v0.1.x` tags an older install is still running - the case the
+/// fallback exists for, since `ParsedVersion` refuses the semver side.
+#[test]
+fn a_dated_release_orders_against_anything_else_published() {
+    let dated = "v0.2026.09.08.21.45.oss_00";
+    for (left, right, expected) in [
+        ("v0.1.2", dated, Ordering::Less),
+        (dated, "v0.1.2", Ordering::Greater),
+        (dated, dated, Ordering::Equal),
+        // Two cut in the same minute are told apart by the counter.
+        (dated, "v0.2026.09.08.21.45.oss_01", Ordering::Less),
+        // A later minute wins whatever the counter says.
+        ("v0.2026.09.08.21.45.oss_01", "v0.2026.09.09.10.00.oss_00", Ordering::Less),
+        // The channel names where a release was published, not which one is
+        // newer, so it weighs no more than build metadata does.
+        ("v0.2023.05.15.08.04.stable_01", dated, Ordering::Less),
+    ] {
+        assert_eq!(compare_release_tags(left, right), Some(expected));
+    }
+}
+
+/// Anything this does not understand orders as nothing rather than guessing.
 #[test]
 fn an_unrecognised_tag_has_no_ordering() {
-    for tag in [
-        "v0.2023.05.15.08.04.stable_01",
-        "nightly",
-        "v",
-        "",
-        "v0.1.0-",
-    ] {
+    for tag in ["nightly", "v", "", "v0.1.0-"] {
         assert_eq!(compare_release_tags(tag, "v0.1.0"), None);
         assert_eq!(compare_release_tags("v0.1.0", tag), None);
     }

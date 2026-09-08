@@ -39,18 +39,21 @@ fn version_from_tag(tag: &str) -> VersionInfo {
 /// Orders two release tags, or `None` if either is not a version this
 /// understands.
 ///
-/// `ParsedVersion` cannot stand in here: its regex requires upstream's
-/// `v0.YYYY.MM.DD.HH.MM.channel_NN` shape, so a semver tag fails to parse and
-/// `is_current_version_ahead_of_latest_version` returns an error that the caller
-/// reads as "not ahead". Every tag that merely differed from the installed one
-/// was therefore treated as newer, so a build ahead of the published release -
-/// one tagged locally, or one whose release was later yanked - was offered a
-/// downgrade on every poll, permanently.
+/// `ParsedVersion` cannot stand in for this. Its regex accepts only the dated
+/// `v0.YYYY.MM.DD.HH.MM.channel_NN` shape, which releases now carry but the
+/// `v0.1.x` tags published before them do not - and an install on one of those
+/// still has to order itself against a dated release. A tag it cannot parse
+/// makes `is_current_version_ahead_of_latest_version` return an error that the
+/// caller reads as "not ahead", so every tag that merely differed from the
+/// installed one was treated as newer, and a build ahead of the published
+/// release - one tagged locally, or one whose release was later yanked - was
+/// offered a downgrade on every poll, permanently.
 pub fn compare_release_tags(left: &str, right: &str) -> Option<Ordering> {
     Some(ReleaseTag::parse(left)?.cmp(&ReleaseTag::parse(right)?))
 }
 
-/// A tag of the shape this fork publishes: `v0.1.0`, optionally with a
+/// A tag of either shape this fork has published: the dated
+/// `v0.2026.09.08.21.45.oss_00`, or the earlier `v0.1.0` with an optional
 /// prerelease suffix and build metadata.
 #[derive(Debug, PartialEq, Eq)]
 struct ReleaseTag {
@@ -79,10 +82,33 @@ impl ReleaseTag {
             None => (tag, None),
         };
 
-        let core = core
+        // Two shapes reach this. A dated tag ends in the channel and a counter
+        // for the minute it was cut in; a semver one does not. The counter
+        // becomes the last numeric component, and the channel is dropped, which
+        // affects precedence no more than build metadata does - it names where a
+        // release was published, not which release is newer.
+        let (core, counter) = match core.rsplit_once('.') {
+            Some((leading, last)) => match last.split_once('_') {
+                Some((channel, counter))
+                    if !channel.is_empty()
+                        && channel.chars().all(|c| c.is_ascii_lowercase())
+                        && !counter.is_empty()
+                        && counter.chars().all(|c| c.is_ascii_digit()) =>
+                {
+                    (leading, Some(counter))
+                }
+                _ => (core, None),
+            },
+            None => (core, None),
+        };
+
+        let mut core = core
             .split('.')
             .map(|component| component.parse::<u64>().ok())
             .collect::<Option<Vec<_>>>()?;
+        if let Some(counter) = counter {
+            core.push(counter.parse().ok()?);
+        }
 
         let prerelease = match prerelease {
             Some(prerelease) => prerelease
