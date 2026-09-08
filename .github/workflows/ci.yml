@@ -182,6 +182,20 @@ jobs:
         with:
           tool: nextest
 
+      # The Linux job has twice been killed with exit 143 - "the runner has
+      # received a shutdown signal" - at 9m38s into the build, both times after
+      # eight minutes without a line of output while `rook`, `rook_tui` and
+      # `integration` compiled in parallel. Nothing is logged when a runner is
+      # reclaimed that way, so record what the machine started with; if the next
+      # failure looks the same, this says whether it was memory or disk.
+      - name: Report runner resources
+        if: needs.changes.outputs.code == 'true'
+        shell: bash
+        run: |
+          df -h . || true
+          free -h || true
+          nproc || true
+
       - name: Run tests
         if: needs.changes.outputs.code == 'true'
         shell: bash
@@ -206,6 +220,15 @@ jobs:
         # --no-fail-fast because the default stops at the first failure: one
         # broken test hid the other 10,700 and made each fix another round trip.
         run: |
+          # Four parallel rustc processes, and the three heaviest crates in this
+          # workspace land in the same wave. Capping the Linux job trades compile
+          # time for a peak the runner survives - it is the only platform that dies,
+          # and the one with the most headroom to spare (its release-profile check
+          # takes 2 minutes against Windows' 7).
+          if [ "${{ matrix.os }}" = "linux" ]; then
+            export CARGO_BUILD_JOBS=2
+          fi
+
           cargo nextest run --workspace --locked --no-fail-fast \
             --exclude serve-wasm \
             ${{ matrix.test_excludes }} \
