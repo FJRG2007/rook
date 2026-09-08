@@ -634,7 +634,15 @@ fn test_update_object_server_id_for_folder() {
 }
 
 fn base_mock_cloud_object_server_api() -> MockObjectClient {
-    MockObjectClient::new()
+    let mut mock_object_client = MockObjectClient::new();
+    // The update manager polls this from a background task, so whether it is
+    // called at all depends on how the executor interleaves with the test. An
+    // unstubbed call panics, which made these tests fail on CI and pass
+    // locally. Stubbed with no `times`, so zero calls is still fine.
+    mock_object_client
+        .expect_fetch_environment_last_task_run_timestamps()
+        .returning(|| Ok(std::collections::HashMap::new()));
+    mock_object_client
 }
 
 fn check_cloud_folders(app: &mut App, number_of_folders: usize) {
