@@ -1236,7 +1236,7 @@ fn test_environment_matches_search_query_name_description_image_repos() {
     assert!(environment.matches_search_query("node:20"));
     assert!(environment.matches_search_query("rook-internal"));
     assert!(environment.matches_search_query("warpdotdev"));
-    assert!(environment.matches_search_query("FJRG2007/rook"));
+    assert!(environment.matches_search_query("warpdotdev/rook-internal"));
 
     assert!(!environment.matches_search_query("definitely-not-present"));
 }

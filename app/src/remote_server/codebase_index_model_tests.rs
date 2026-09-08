@@ -392,16 +392,18 @@ fn codebases_for_agent_context_includes_searchable_remote_paths() {
 
     let entries = model.codebases_for_agent_context(&host());
 
+    // Sorted by name, and "rook" sorts before "stale" where upstream's "warp"
+    // sorted after it.
     assert_eq!(
         entries,
         vec![
             RemoteCodebaseContextEntry {
-                name: "stale".to_string(),
-                path: "/workspaces/stale".to_string(),
-            },
-            RemoteCodebaseContextEntry {
                 name: "rook".to_string(),
                 path: "/workspaces/rook".to_string(),
+            },
+            RemoteCodebaseContextEntry {
+                name: "stale".to_string(),
+                path: "/workspaces/stale".to_string(),
             },
         ]
     );

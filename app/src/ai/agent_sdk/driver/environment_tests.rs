@@ -214,15 +214,15 @@ fn repo(forge: CodeForge, owner: &str, name: &str) -> SourceRepo {
 fn merge_repos_dedupes_case_insensitively_and_preserves_environment_order() {
     let environment = vec![repo(CodeForge::GitHub, "RookDotDev", "Rook")];
     let additional = vec![
-        repo(CodeForge::GitHub, "warpdotdev", "rook"),
-        repo(CodeForge::GitHub, "warpdotdev", "rook-server"),
+        repo(CodeForge::GitHub, "rookdotdev", "rook"),
+        repo(CodeForge::GitHub, "rookdotdev", "rook-server"),
     ];
 
     assert_eq!(
         merge_repos_deduped(environment, additional).unwrap(),
         vec![
             repo(CodeForge::GitHub, "RookDotDev", "Rook"),
-            repo(CodeForge::GitHub, "warpdotdev", "rook-server"),
+            repo(CodeForge::GitHub, "rookdotdev", "rook-server"),
         ]
     );
 }
@@ -316,8 +316,8 @@ fn parallel_clone_command_runs_repos_in_background_and_waits() {
     );
 
     assert!(command.starts_with("sh -c '"));
-    assert!(command.contains("FJRG2007/rook"));
-    assert!(command.contains("https://github.com/warpdotdev/warp.git"));
+    assert!(command.contains("warpdotdev/rook"));
+    assert!(command.contains("https://github.com/warpdotdev/rook.git"));
     assert!(command.contains("platform/backend/api"));
     assert!(command.contains("https://gitlab.com/platform/backend/api.git"));
     assert_eq!(command.matches("clone_repo").count(), 3);
@@ -331,7 +331,7 @@ fn parallel_clone_command_runs_repos_in_background_and_waits() {
     assert!(command.contains(">\"$log_file_1\" 2>&1 &"));
     assert!(command.contains("pids=\"$pids $!\""));
     assert!(command.contains("wait \"$pid\""));
-    assert!(command.contains("===== FJRG2007/rook ====="));
+    assert!(command.contains("===== warpdotdev/rook ====="));
     assert!(command.contains("cat \"$log_file_0\""));
     assert!(command.contains("===== platform/backend/api ====="));
     assert!(!command.contains("repository revision results"));
@@ -515,13 +515,13 @@ fn clone_requests_use_each_repository_host() {
 
     assert_eq!(
         prepared[0].repo.https_clone_url(),
-        "https://github.com/warpdotdev/warp.git"
+        "https://github.com/warpdotdev/rook.git"
     );
     assert_eq!(
         prepared[1].repo.https_clone_url(),
         "https://gitlab.com/platform/backend/api.git"
     );
-    assert!(command.contains("https://github.com/warpdotdev/warp.git"));
+    assert!(command.contains("https://github.com/warpdotdev/rook.git"));
     assert!(command.contains("https://gitlab.com/platform/backend/api.git"));
 }
 
@@ -637,7 +637,7 @@ fn clone_requests_reject_a_repository_with_an_unrecognized_forge() {
     assert!(matches!(
         error,
         PrepareEnvironmentError::UnsupportedRepositoryForge { repo_name }
-            if repo_name == "FJRG2007/rook"
+            if repo_name == "warpdotdev/rook"
     ));
 }
 
