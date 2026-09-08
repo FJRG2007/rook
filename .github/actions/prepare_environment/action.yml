@@ -86,7 +86,15 @@ runs:
         # workspace from scratch: 39 of its 52 minutes were compilation and 13
         # were tests.
         cache-on-failure: true
-        # Save from main and from release tags. Tags were excluded before, so a
+        # Cache the workspace's own crates, not just its dependencies. Without
+        # this the action deletes them before saving, which is why a job could
+        # restore a cache on a full match and still spend 28 of its 43 minutes
+        # compiling. It costs cache size, and the repo shares a 10 GB ceiling
+        # across every key - which is affordable now that a push runs one
+        # platform rather than three, and that 8 GB of entries under renamed
+        # keys have been deleted. If eviction starts again, this is the first
+        # thing to reconsider.
+        cache-workspace-crates: true        # Save from main and from release tags. Tags were excluded before, so a
         # release build found no cache, compiled the whole graph from scratch,
         # and saved nothing for the next tag to reuse - which is where nearly
         # all of a release's wall clock went.

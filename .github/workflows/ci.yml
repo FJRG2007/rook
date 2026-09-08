@@ -13,6 +13,10 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  # The platforms a push no longer covers still get covered, once a day, so a
+  # macOS- or Windows-only break surfaces within a day rather than at release.
+  schedule:
+    - cron: '0 3 * * *'
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -44,6 +48,14 @@ jobs:
     timeout-minutes: 5
     outputs:
       code: ${{ steps.filter.outputs.code }}
+      # Whether to run every platform, or just the one that answers fastest.
+      # A push to main gets Linux: it runs the whole suite in 23 minutes
+      # against Windows' 43, and it is where a Unix-only break shows up - the
+      # ref-test failure that took a day to find was invisible on Windows. The
+      # other two run on a tag, on the nightly schedule, and on demand, which
+      # is where a platform-specific regression can still be caught before it
+      # ships without every push paying for it.
+      full: ${{ github.event_name != 'push' || startsWith(github.ref, 'refs/tags/v') }}
     steps:
       - name: Compare the range being checked
         id: filter
@@ -114,10 +126,10 @@ jobs:
             clippy_excludes: --exclude rook_completer
     steps:
       - uses: actions/checkout@v7
-        if: needs.changes.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true' && (matrix.os == 'linux' || needs.changes.outputs.full == 'true')
 
       - uses: ./.github/actions/prepare_environment
-        if: needs.changes.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true' && (matrix.os == 'linux' || needs.changes.outputs.full == 'true')
         with:
           target_os: ${{ matrix.os }}
           is_self_hosted: 'false'
@@ -135,7 +147,7 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: Clippy
-        if: needs.changes.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true' && (matrix.os == 'linux' || needs.changes.outputs.full == 'true')
         shell: bash
         # `--all-features` is omitted: pprof and the other profiling features do
         # not compile on every target.
@@ -166,10 +178,10 @@ jobs:
             test_excludes: --exclude command-signatures-v2
     steps:
       - uses: actions/checkout@v7
-        if: needs.changes.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true' && (matrix.os == 'linux' || needs.changes.outputs.full == 'true')
 
       - uses: ./.github/actions/prepare_environment
-        if: needs.changes.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true' && (matrix.os == 'linux' || needs.changes.outputs.full == 'true')
         with:
           target_os: ${{ matrix.os }}
           is_self_hosted: 'false'
@@ -177,7 +189,7 @@ jobs:
           cache_key: ${{ matrix.os }}-test
 
       - name: Install cargo-nextest
-        if: needs.changes.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true' && (matrix.os == 'linux' || needs.changes.outputs.full == 'true')
         uses: taiki-e/install-action@v2
         with:
           tool: nextest
@@ -192,7 +204,7 @@ jobs:
       # question is what the machine does during the build, which needs sampling
       # rather than a snapshot.
       - name: Report runner resources
-        if: needs.changes.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true' && (matrix.os == 'linux' || needs.changes.outputs.full == 'true')
         shell: bash
         run: |
           df -h . || true
@@ -200,7 +212,7 @@ jobs:
           nproc || true
 
       - name: Run tests
-        if: needs.changes.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true' && (matrix.os == 'linux' || needs.changes.outputs.full == 'true')
         shell: bash
         # `serve-wasm` is excluded from the build, not just from the run:
         # `Cargo.toml` keeps it out of `default-members` because it is a helper
@@ -299,10 +311,10 @@ jobs:
             runner: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-        if: needs.changes.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true' && (matrix.os == 'linux' || needs.changes.outputs.full == 'true')
 
       - uses: ./.github/actions/prepare_environment
-        if: needs.changes.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true' && (matrix.os == 'linux' || needs.changes.outputs.full == 'true')
         with:
           target_os: ${{ matrix.os }}
           is_self_hosted: 'false'
@@ -316,12 +328,12 @@ jobs:
       # `cargo check` establishes that without paying for codegen and LTO. The
       # tag build in release.yml produces the binaries.
       - name: Check release compilation (Windows)
-        if: needs.changes.outputs.code == 'true' && matrix.os == 'windows'
+        if: needs.changes.outputs.code == 'true' && needs.changes.outputs.full == 'true' && matrix.os == 'windows'
         shell: pwsh
         run: .\script\windows\bundle.ps1 -CHANNEL oss -ARCH x64 -CHECK_ONLY
 
       - name: Check release compilation (Unix)
-        if: needs.changes.outputs.code == 'true' && matrix.os != 'windows'
+        if: needs.changes.outputs.code == 'true' && (matrix.os == 'linux' || needs.changes.outputs.full == 'true') && matrix.os != 'windows'
         shell: bash
         run: |
           cargo check --locked -p rook --profile rlto \
