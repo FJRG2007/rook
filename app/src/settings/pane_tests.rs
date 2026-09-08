@@ -27,10 +27,7 @@ fn covers_the_directories_inside_it() {
 
 #[test]
 fn the_longest_configured_path_wins() {
-    let names = [
-        ("/home/me/rook", "Rook"),
-        ("/home/me/rook/app", "App"),
-    ];
+    let names = [("/home/me/rook", "Rook"), ("/home/me/rook/app", "App")];
     let in_app = "/home/me/rook/app/src";
     assert_eq!(name_for(&names, in_app).as_deref(), Some("App"));
 
