@@ -72,7 +72,10 @@ __pycache__/
 .claude/scheduled_tasks.lock
 
 # Upstream reference checkouts (not part of this repo)
-references/
+# Anchored: unanchored, this matched every directory named "references"
+# anywhere in the tree and silently kept eight directories of bundled skill
+# and plugin content out of the repository.
+/references/
 
 # Local work ledger
 .ledger/
