@@ -575,8 +575,10 @@ impl TabData {
             let configuration = configuration.as_ref(ctx);
             let title = configuration
                 .custom_vertical_tabs_title()
-                .unwrap_or_else(|| configuration.title());
-            Self::copyable_metadata_value(Some(title.to_string()))
+                .map(str::to_owned)
+                .or_else(|| pane_group.configured_pane_name(pane_id, ctx))
+                .unwrap_or_else(|| configuration.title().to_owned());
+            Self::copyable_metadata_value(Some(title))
         })
     }
 

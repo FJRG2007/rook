@@ -392,6 +392,7 @@ fn render_pane_row_element(
         title: _,
         subtitle: _,
         custom_vertical_tabs_title: _,
+        configured_pane_name: _,
         display_title_override: _,
         is_focused,
         typed: _,
@@ -828,6 +829,9 @@ struct PaneProps<'a> {
     title: String,
     subtitle: String,
     custom_vertical_tabs_title: Option<String>,
+    /// The name this pane's working directory is configured to give it, if
+    /// any. Ranks below a name the user typed and above the generated one.
+    configured_pane_name: Option<String>,
     display_title_override: Option<String>,
     is_focused: bool,
     typed: TypedPane<'a>,
@@ -3942,6 +3946,9 @@ impl<'a> PaneProps<'a> {
                         .map(str::to_owned)
                 })
                 .flatten(),
+            configured_pane_name: include_custom_vertical_tabs_title
+                .then(|| pane_group.configured_pane_name(display_pane_id, app))
+                .flatten(),
             display_title_override,
             is_focused: pane_group.focused_pane_id(app) == pane_id,
             typed,
@@ -3974,6 +3981,7 @@ impl<'a> PaneProps<'a> {
     fn displayed_title(&self) -> &str {
         self.custom_vertical_tabs_title
             .as_deref()
+            .or(self.configured_pane_name.as_deref())
             .or(self.display_title_override.as_deref())
             .unwrap_or(self.title.as_str())
     }
@@ -3990,7 +3998,7 @@ impl<'a> PaneProps<'a> {
     }
 
     fn rendered_search_text_fragments(&self, app: &AppContext) -> Vec<String> {
-        let generated_fragments = match &self.typed {
+        let mut generated_fragments = match &self.typed {
             TypedPane::Terminal(terminal_pane) => terminal_pane_search_text_fragments(
                 terminal_pane,
                 self.display_title_override.as_deref(),
@@ -4011,6 +4019,12 @@ impl<'a> PaneProps<'a> {
                 non_terminal_search_text_fragments(self.generated_or_tab_title(), &self.subtitle)
             }
         };
+        // The name a directory gives the pane is on screen, so filtering the
+        // list by it has to find the pane. It goes ahead of the generated
+        // title for the same reason it is drawn instead of it.
+        if let Some(configured_pane_name) = self.configured_pane_name.as_deref() {
+            generated_fragments.insert(0, configured_pane_name.to_owned());
+        }
         pane_search_text_fragments(
             self.custom_vertical_tabs_title.as_deref(),
             generated_fragments,
@@ -4670,6 +4684,7 @@ fn render_title_override(
     props
         .custom_vertical_tabs_title
         .as_ref()
+        .or(props.configured_pane_name.as_ref())
         .or(props.display_title_override.as_ref())
         .map(|title| {
             Text::new_inline(title.clone(), appearance.ui_font_family(), font_size)

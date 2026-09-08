@@ -116,7 +116,7 @@ use crate::server::telemetry::{
     AnonymousUserSignupEntrypoint, PaletteSource, SharingDialogSource, TelemetryEvent,
 };
 use crate::session_management::SessionNavigationData;
-use crate::settings::{AISettings, DefaultSessionMode, PaneSettings};
+use crate::settings::{AISettings, DefaultSessionMode, PaneSettings, default_pane_name_for_path};
 use crate::settings_view::SettingsSection;
 use crate::settings_view::mcp_servers_page::MCPServersSettingsPage;
 use crate::shell_indicator::ShellIndicatorType;
@@ -7144,6 +7144,38 @@ impl PaneGroup {
         self.pane_contents
             .get(&pane_id.into())
             .and_then(|contents| contents.as_any().downcast_ref::<TerminalPane>())
+    }
+
+    /// The name configured for this pane's working directory under
+    /// `appearance.panes.default_names_by_path`, if there is one.
+    ///
+    /// Resolved where the name is drawn rather than stored on the pane. That
+    /// way it follows the pane into a new directory, and an edit to the
+    /// setting takes effect on the next frame, with nothing to invalidate. A
+    /// name the user typed still wins over it, and typing one leaves the
+    /// setting alone - which is the point: one directory can have a default
+    /// name and a second pane in it can be called something else.
+    pub fn configured_pane_name(
+        &self,
+        pane_id: impl Into<PaneId>,
+        ctx: &AppContext,
+    ) -> Option<String> {
+        let names_by_path = PaneSettings::as_ref(ctx).default_names_by_path.value();
+        // Nothing is configured in the default case, and the lookup below asks
+        // the filesystem whether the working directory still exists. Skip it.
+        if names_by_path.is_empty() {
+            return None;
+        }
+        let terminal_view = self.terminal_view_from_pane_id(pane_id, ctx)?;
+        let terminal_view = terminal_view.as_ref(ctx);
+        // The local path where there is one: the raw CWD is whatever the shell
+        // reports, which under Git Bash is `/c/Users/...` and would never match
+        // a directory written the way Windows writes it.
+        let working_directory = terminal_view
+            .active_session_path_if_local(ctx)
+            .map(|path| path.to_string_lossy().into_owned())
+            .or_else(|| terminal_view.pwd())?;
+        default_pane_name_for_path(names_by_path, &working_directory).map(str::to_owned)
     }
 
     /// Given a pane ID, retrieve its backing terminal view, if the pane is a terminal pane.

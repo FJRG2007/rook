@@ -5801,6 +5801,12 @@ impl Workspace {
             return;
         };
 
+        // The editor opens on whatever the pane is currently called, so a pane
+        // named by its directory is edited from that name rather than from the
+        // generated one the user never saw.
+        let pane_group = tab.pane_group.as_ref(ctx);
+        let configured_name = pane_group.configured_pane_name(locator.pane_id, ctx);
+
         let Some(title) = tab
             .pane_group
             .as_ref(ctx)
@@ -5811,6 +5817,7 @@ impl Workspace {
                 configuration
                     .custom_vertical_tabs_title()
                     .map(str::to_owned)
+                    .or_else(|| configured_name.clone())
                     .unwrap_or_else(|| {
                         let title = configuration.title().trim();
                         if title.is_empty() {
