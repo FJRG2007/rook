@@ -82,6 +82,55 @@ jobs:
           if (-not $iscc) { throw 'ISCC.exe not found after installing Inno Setup' }
           $iscc.DirectoryName | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
+      - name: Install linuxdeploy (Linux)
+        if: matrix.os == 'linux'
+        shell: bash
+        run: |
+          # `script/linux/bundle_appimage` shells out to linuxdeploy, and it is
+          # installed to ~/.local/bin, which is not on a runner's PATH. Upstream
+          # has both of these steps in its own release workflow; this one was
+          # rewritten to publish to GitHub releases and they did not come across.
+          ./script/linux/install_linuxdeploy
+          if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          fi
+
+      # Three release builds this repository has attempted died on a missing
+      # packaging tool - `cargo about`, `cargo bundle`, `linuxdeploy` - and every
+      # one of them died at the end, after twenty to thirty minutes of compiling,
+      # because that is when the bundling step first reaches for the tool. The
+      # build is the expensive part and it is entirely wasted when the packaging
+      # cannot run, so ask for every tool up front and fail in seconds instead.
+      - name: Check the packaging tools are present
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=()
+          require() {
+            command -v "$1" >/dev/null 2>&1 || missing+=("$1 - $2")
+          }
+
+          case "${{ matrix.os }}" in
+            windows)
+              require ISCC 'Inno Setup, builds the .exe installer'
+              require cargo-about 'generates THIRD_PARTY_LICENSES.txt'
+              ;;
+            macos)
+              require cargo-bundle 'packages the .app that becomes the .dmg'
+              require cargo-about 'generates THIRD_PARTY_LICENSES.txt'
+              ;;
+            linux)
+              require linuxdeploy 'builds the AppImage'
+              require cargo-about 'generates THIRD_PARTY_LICENSES.txt'
+              ;;
+          esac
+
+          if [ ${#missing[@]} -gt 0 ]; then
+            for tool in "${missing[@]}"; do
+              echo "::error::missing packaging tool: $tool"
+            done
+            exit 1
+          fi
       # Nothing here is code-signed: this repository holds no Apple certificate
       # and no Windows one. Both platforms warn on first run as a result, and
       # docs/INSTALL covers what to do about it.
