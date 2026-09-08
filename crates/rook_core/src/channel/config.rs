@@ -54,11 +54,26 @@ pub struct RookServerConfig {
 }
 
 impl RookServerConfig {
-    pub fn production() -> Self {
+    /// Rook has no server of its own.
+    ///
+    /// The hosts below are under `.invalid`, which RFC 2606 reserves so that it
+    /// can never be registered or resolve. They are deliberately unreachable
+    /// rather than empty: several call sites parse this as a URL and one of
+    /// them expects the parse to succeed, so an empty string would panic where
+    /// an unresolvable host simply fails the request.
+    ///
+    /// What this replaces mattered. The rename rewrote upstream's own
+    /// `warp.dev` into `rook.dev`, which is registered to someone else and
+    /// resolves to live infrastructure, and the shipped OSS binary pointed its
+    /// server, RTC, session-sharing and Oz endpoints at it. Nothing is sent at
+    /// idle - the OSS channel has no telemetry, crash reporting or autoupdate -
+    /// but a login attempt or any cloud feature would have sent requests, and
+    /// the credentials in them, to a stranger.
+    pub fn without_server() -> Self {
         Self {
-            server_root_url: "https://app.rook.dev".into(),
-            rtc_server_url: "wss://rtc.app.rook.dev/graphql/v2".into(),
-            session_sharing_server_url: Some("wss://sessions.app.rook.dev".into()),
+            server_root_url: "https://server.rook.invalid".into(),
+            rtc_server_url: "wss://rtc.rook.invalid/graphql/v2".into(),
+            session_sharing_server_url: Some("wss://sessions.rook.invalid".into()),
             firebase_auth_api_key: "AIzaSyBdy3O3S9hrdayLJxJ7mriBR4qgUaUygAs".into(),
             iap_config: None,
         }
@@ -77,9 +92,10 @@ pub struct OzConfig {
 }
 
 impl OzConfig {
-    pub fn production() -> Self {
+    /// See [`RookServerConfig::without_server`].
+    pub fn without_server() -> Self {
         Self {
-            oz_root_url: "https://oz.rook.dev".into(),
+            oz_root_url: "https://oz.rook.invalid".into(),
             workload_audience_url: None,
         }
     }

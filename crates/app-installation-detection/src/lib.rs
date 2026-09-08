@@ -32,13 +32,12 @@ pub fn make_router() -> Router {
             .on_failure(()),
     );
 
-    // We allow requests from localhost, rook.dev and any subdomain of rook.dev.
+    // Localhost only. This allowed rook.dev and every subdomain of it, which
+    // the rename produced from upstream's own domain - so any page on a domain
+    // this project does not own could reach the local install-detection server.
     let allow_origin_predicate =
         AllowOrigin::predicate(|origin: &HeaderValue, _request_parts: &Parts| {
-            origin == "http://localhost:8080"
-                || origin == "http://localhost:8082"
-                || origin == "https://rook.dev"
-                || origin.as_bytes().ends_with(b".rook.dev")
+            origin == "http://localhost:8080" || origin == "http://localhost:8082"
         });
 
     let cors = CorsLayer::new()
