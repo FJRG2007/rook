@@ -90,7 +90,11 @@ fn a_dated_release_orders_against_anything_else_published() {
         // Two cut in the same minute are told apart by the counter.
         (dated, "v0.2026.09.08.21.45.oss_01", Ordering::Less),
         // A later minute wins whatever the counter says.
-        ("v0.2026.09.08.21.45.oss_01", "v0.2026.09.09.10.00.oss_00", Ordering::Less),
+        (
+            "v0.2026.09.08.21.45.oss_01",
+            "v0.2026.09.09.10.00.oss_00",
+            Ordering::Less,
+        ),
         // The channel names where a release was published, not which one is
         // newer, so it weighs no more than build metadata does.
         ("v0.2023.05.15.08.04.stable_01", dated, Ordering::Less),
