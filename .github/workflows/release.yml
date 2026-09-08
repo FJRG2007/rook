@@ -105,9 +105,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          missing=()
+
+          # A counter and not an array: the macOS runner's /bin/bash is 3.2, where
+          # expanding an empty array under `set -u` is an "unbound variable" error,
+          # which would make this check the thing that fails the macOS build.
+          missing=0
           require() {
-            command -v "$1" >/dev/null 2>&1 || missing+=("$1 - $2")
+            if ! command -v "$1" >/dev/null 2>&1; then
+              echo "::error::missing packaging tool: $1 - $2"
+              missing=1
+            fi
           }
 
           case "${{ matrix.os }}" in
@@ -125,10 +132,7 @@ jobs:
               ;;
           esac
 
-          if [ ${#missing[@]} -gt 0 ]; then
-            for tool in "${missing[@]}"; do
-              echo "::error::missing packaging tool: $tool"
-            done
+          if [ "$missing" -ne 0 ]; then
             exit 1
           fi
       # Nothing here is code-signed: this repository holds no Apple certificate
@@ -161,16 +165,20 @@ jobs:
         id: artifacts
         shell: bash
         run: |
+          # Spelled out rather than written with `**`, which only recurses when
+          # `globstar` is set - and that needs bash 4, where the macOS runner has
+          # 3.2. Two depths each because the bundle scripts insert the target
+          # triple into the path when asked to cross-compile, and do not otherwise.
           case "${{ matrix.os }}" in
             windows) pattern='script/windows/Output/*.exe' ;;
-            macos)   pattern='target/**/*.dmg' ;;
-            linux)   pattern='target/**/bundle/linux/*.AppImage' ;;
+            macos)   pattern='target/*/bundle/osx/*.dmg target/*/*/bundle/osx/*.dmg' ;;
+            linux)   pattern='target/*/bundle/linux/*.AppImage target/*/*/bundle/linux/*.AppImage' ;;
           esac
           # shellcheck disable=SC2086
           found=$(ls -1 $pattern 2>/dev/null | head -1 || true)
           if [ -z "$found" ]; then
             echo "::error::no artifact matched $pattern"
-            find target script/windows/Output -maxdepth 4 \
+            find target script/windows/Output -maxdepth 6 \
               \( -name '*.exe' -o -name '*.dmg' -o -name '*.AppImage' \) 2>/dev/null || true
             exit 1
           fi
