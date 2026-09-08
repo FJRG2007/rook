@@ -110,6 +110,8 @@ jobs:
           # expanding an empty array under `set -u` is an "unbound variable" error,
           # which would make this check the thing that fails the macOS build.
           missing=0
+
+          # A plain binary, reached through PATH.
           require() {
             if ! command -v "$1" >/dev/null 2>&1; then
               echo "::error::missing packaging tool: $1 - $2"
@@ -117,18 +119,33 @@ jobs:
             fi
           }
 
+          # A cargo subcommand, which is NOT the same question. Cargo finds its
+          # subcommands in $CARGO_HOME/bin itself, without consulting PATH, so
+          # `cargo about` runs happily on the Windows runner where the binary sits
+          # in C:\cargo\bin and nothing puts that directory on PATH. Asking PATH
+          # about it reports a tool missing that is installed and working - which is
+          # exactly what this check did on its first run, failing the one platform
+          # that had been building fine. Ask cargo, the way the bundle scripts do.
+          subcommands=$(cargo --list 2>/dev/null | awk '{print $1}')
+          require_cargo() {
+            if ! echo "$subcommands" | grep -qx "$1"; then
+              echo "::error::missing packaging tool: cargo $1 - $2"
+              missing=1
+            fi
+          }
+
           case "${{ matrix.os }}" in
             windows)
               require ISCC 'Inno Setup, builds the .exe installer'
-              require cargo-about 'generates THIRD_PARTY_LICENSES.txt'
+              require_cargo about 'generates THIRD_PARTY_LICENSES.txt'
               ;;
             macos)
-              require cargo-bundle 'packages the .app that becomes the .dmg'
-              require cargo-about 'generates THIRD_PARTY_LICENSES.txt'
+              require_cargo bundle 'packages the .app that becomes the .dmg'
+              require_cargo about 'generates THIRD_PARTY_LICENSES.txt'
               ;;
             linux)
               require linuxdeploy 'builds the AppImage'
-              require cargo-about 'generates THIRD_PARTY_LICENSES.txt'
+              require_cargo about 'generates THIRD_PARTY_LICENSES.txt'
               ;;
           esac
 
