@@ -228,17 +228,15 @@ jobs:
           # last thing in the log is a `Compiling` line from minutes earlier and
           # every explanation is inference. Cheap, and it only has to survive
           # until the question is answered.
-          # Measured: two rustc processes reach 7.3G and 7.0G, 14.2G of the 15G this
-          # runner has, with all 3G of swap consumed - then the service reclaims it.
-          # `CARGO_BUILD_JOBS=2` is why there are two rather than four, but capping
-          # how many run says nothing about how large each gets, so the peak has to
-          # come down instead. Debug info is the cheapest part to give up here:
-          # `#[track_caller]` panic locations are compiled in regardless, so a
-          # failing test still names its file and line - only the symbolicated
-          # backtrace below it is lost, and only on this platform.
+          # Measured, twice. With two build jobs, two rustc processes reached 7.3G
+          # and 7.0G of this runner's 15G and it died; dropping debug info did not
+          # help, because the peak is not debug info - one rustc alone climbed to
+          # 9.4G. A single crate wanting two thirds of the machine cannot share it
+          # with anything, so nothing runs beside it. That costs wall-clock time
+          # and buys a job that finishes at all, which is the trade worth making
+          # while it is the only platform that cannot complete a run.
           if [ "${{ matrix.os }}" = "linux" ]; then
-            export CARGO_BUILD_JOBS=2
-            export CARGO_PROFILE_DEV_DEBUG=0
+            export CARGO_BUILD_JOBS=1
 
             (
               while :; do
