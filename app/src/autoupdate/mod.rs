@@ -8,6 +8,7 @@ mod mac;
 #[cfg(windows)]
 mod windows;
 
+use std::cmp::Ordering;
 use std::collections::VecDeque;
 use std::sync::Arc;
 use std::time::Duration;
@@ -374,14 +375,26 @@ impl AutoupdateState {
 
     /// Returns whether the current version is ahead of the version reported by the server as the "latest" version
     /// in channel versions.
+    ///
+    /// Two shapes reach this: the channel-versions shape `ParsedVersion` parses,
+    /// and the semver release tags this fork publishes, which it does not. Only
+    /// the second falls back to [`github::compare_release_tags`], so upstream's
+    /// ordering is untouched.
     fn is_current_version_ahead_of_latest_version(
         &self,
         new_version: &VersionInfo,
         current_version: &str,
     ) -> Result<bool> {
-        let current_version = ParsedVersion::try_from(current_version)?;
-        let new_version = ParsedVersion::try_from(new_version.version.as_str())?;
-        Ok(current_version > new_version)
+        if let (Ok(current_version), Ok(new_version)) = (
+            ParsedVersion::try_from(current_version),
+            ParsedVersion::try_from(new_version.version.as_str()),
+        ) {
+            return Ok(current_version > new_version);
+        }
+
+        github::compare_release_tags(current_version, &new_version.version)
+            .map(Ordering::is_gt)
+            .context("neither version could be parsed for comparison")
     }
 
     fn on_update_check_complete(

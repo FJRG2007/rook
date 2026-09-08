@@ -2,8 +2,13 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 #include "environment.iss"
 
-#define MyAppPublisher "Denver Technologies, Inc."
-#define MyAppURL "https://www.rook.dev/"
+// Publisher, "Support" and "Update" in Add/Remove Programs. Both were
+// upstream's: the company that publishes this fork's binaries is not Denver
+// Technologies, and the rename turned upstream's own domain into rook.dev,
+// which is registered to someone else - the same value the OSS server config
+// had to drop. The repository is the only address this fork can source.
+#define MyAppPublisher "Rook"
+#define MyAppURL "https://github.com/FJRG2007/rook"
 #ifndef MyAppName
   #define MyAppName "RookDev"
 #endif
@@ -150,9 +155,13 @@ Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\{#MyAppName}Wind
 Name: addToPath; Description: "Add Rook to PATH"
 
 [InstallDelete]
-// An install made before the display name was split from the identity name put its shortcuts under the identity name. Upgrading renames nothing, so without this both sit in the Start menu and Search still offers the old one. Harmless when the two names are the same: the shortcut is recreated below.
+#if MyAppDisplayName != MyAppName
+// An install made before the display name was split from the identity name put its shortcuts under the identity name. Upgrading renames nothing, so without this both sit in the Start menu and Search still offers the old one.
+//
+// Only where the two names actually differ. On the channels where they are the same these entries name the shortcuts [Icons] is about to create, and the Start-menu one comes back but the desktop one only if the desktopicon task is selected - so an upgrade that left it unticked would delete a desktop shortcut the user had and put nothing back.
 Type: files; Name: "{autoprograms}\{#MyAppName}.lnk"
 Type: files; Name: "{autodesktop}\{#MyAppName}.lnk"
+#endif
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{userappdata}\rook\{#MyAppName}"

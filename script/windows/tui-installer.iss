@@ -1,7 +1,12 @@
 #include "environment.iss"
 
-#define MyAppPublisher "Denver Technologies, Inc."
-#define MyAppURL "https://www.rook.dev/"
+// Publisher, "Support" and "Update" in Add/Remove Programs. Both were
+// upstream's: the company that publishes this fork's binaries is not Denver
+// Technologies, and the rename turned upstream's own domain into rook.dev,
+// which is registered to someone else - the same value the OSS server config
+// had to drop. The repository is the only address this fork can source.
+#define MyAppPublisher "Rook"
+#define MyAppURL "https://github.com/FJRG2007/rook"
 #ifndef MyAppName
   #define MyAppName "RookAgentCLIDev"
 #endif

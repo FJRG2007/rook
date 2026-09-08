@@ -13,7 +13,7 @@ crates/command-signatures-v2/js/build
 crates/command-signatures-v2/js/node_modules
 
 # For testing changes to the channel versions file
-channel_versions_test.json
+/channel_versions_test.json
 
 # Don't include any profiling output by accident.
 profile.pb
@@ -58,24 +58,27 @@ app/src/persistence/schema.rs.orig
 .claude/scheduled_tasks.lock
 
 # Don't include ctags output
-tags
+/tags
 
 # Tab drag development notes
-pr_cleanup.md
-desired_behavior.md
+/pr_cleanup.md
+/desired_behavior.md
 
 # Don't include the python cache for bundled skills.
 __pycache__/
 
 # Project notes
-.note/
+/.note/
 .claude/scheduled_tasks.lock
 
 # Upstream reference checkouts (not part of this repo)
-# Anchored: unanchored, this matched every directory named "references"
-# anywhere in the tree and silently kept eight directories of bundled skill
-# and plugin content out of the repository.
+# Anchored, as is every other entry here that names one file or directory the
+# repository keeps at its root: unanchored, "references/" matched every
+# directory of that name anywhere in the tree and silently kept eight
+# directories of bundled skill and plugin content out of the repository. The
+# tests read that content, and "tags" above is a generic enough name to lose
+# the next one the same way.
 /references/
 
 # Local work ledger
-.ledger/
+/.ledger/
