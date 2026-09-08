@@ -182,12 +182,15 @@ jobs:
         with:
           tool: nextest
 
-      # The Linux job has twice been killed with exit 143 - "the runner has
-      # received a shutdown signal" - at 9m38s into the build, both times after
-      # eight minutes without a line of output while `rook`, `rook_tui` and
-      # `integration` compiled in parallel. Nothing is logged when a runner is
-      # reclaimed that way, so record what the machine started with; if the next
-      # failure looks the same, this says whether it was memory or disk.
+      # The Linux job keeps being killed with exit 143 - "the runner has received
+      # a shutdown signal" - minutes into the build, with no output in between and
+      # nothing logged when a runner is reclaimed that way. Two guesses have been
+      # wrong: it is not `serve-wasm` (excluding it only moved the kill to the
+      # crate before), and it is not build concurrency (`CARGO_BUILD_JOBS=2` made
+      # it die sooner). The starting figures rule out the easy answers - 78G free
+      # disk, 13G available of 15G, 4 cores, swap untouched - so the remaining
+      # question is what the machine does during the build, which needs sampling
+      # rather than a snapshot.
       - name: Report runner resources
         if: needs.changes.outputs.code == 'true'
         shell: bash
@@ -220,15 +223,24 @@ jobs:
         # --no-fail-fast because the default stops at the first failure: one
         # broken test hid the other 10,700 and made each fix another round trip.
         run: |
-          # Four parallel rustc processes, and the three heaviest crates in this
-          # workspace land in the same wave. Capping the Linux job trades compile
-          # time for a peak the runner survives - it is the only platform that dies,
-          # and the one with the most headroom to spare (its release-profile check
-          # takes 2 minutes against Windows' 7).
+          # Report what the machine is doing every 15 seconds for as long as the
+          # build runs. The kill leaves no trace of its own, so without this the
+          # last thing in the log is a `Compiling` line from minutes earlier and
+          # every explanation is inference. Cheap, and it only has to survive
+          # until the question is answered.
           if [ "${{ matrix.os }}" = "linux" ]; then
-            export CARGO_BUILD_JOBS=2
+            (
+              while :; do
+                printf '[resources] %s %s | %s\n' \
+                  "$(date -u +%H:%M:%S)" \
+                  "$(free -m | awk '/^Mem:/ {printf "used=%sM avail=%sM", $3, $7} /^Swap:/ {printf " swap=%sM", $3}')" \
+                  "$(ps -eo rss,comm --sort=-rss | awk 'NR>1 && NR<5 {printf "%s=%dM ", $2, $1/1024}')"
+                sleep 15
+              done
+            ) &
+            resource_monitor=$!
+            trap 'kill "$resource_monitor" 2>/dev/null || true' EXIT
           fi
-
           cargo nextest run --workspace --locked --no-fail-fast \
             --exclude serve-wasm \
             ${{ matrix.test_excludes }} \
