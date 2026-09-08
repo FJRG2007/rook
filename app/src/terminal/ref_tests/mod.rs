@@ -160,6 +160,15 @@ fn ref_test(dir: &Path) {
     assert_eq!(term_grid.total_rows(), grid.total_rows());
     assert_eq!(term_grid.visible_rows(), grid.visible_rows());
     assert_eq!(term_grid.history_size(), grid.history_size());
+    // Width was the one dimension left unchecked, which is why a mismatch here
+    // surfaced as thousands of differing cells rather than as one number: every
+    // row wraps at a different column, so nothing lines up and the per-cell
+    // diff below is unreadable.
+    assert_eq!(
+        term_grid.columns(),
+        grid.columns(),
+        "grid width does not match the reference"
+    );
 
     let mut grids_equal = true;
     for i in 0..grid.total_rows() {
