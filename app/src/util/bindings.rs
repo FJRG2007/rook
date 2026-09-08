@@ -61,7 +61,7 @@ pub enum CustomAction {
     IncreaseZoom,
     DecreaseZoom,
     ResetZoom,
-    RenameTab,
+    RenamePane,
     SplitPaneRight,
     SplitPaneLeft,
     SplitPaneUp,
@@ -434,10 +434,17 @@ pub fn custom_tag_to_keystroke(custom: CustomTag) -> Option<Keystroke> {
             }
         }
         // F2 renames whatever is selected, which is what it does in Explorer,
-        // Finder, every IDE and most browsers. The action already existed but
-        // shipped with no key at all, so renaming a tab meant finding it in a
+        // Finder, every IDE and most browsers. Both rename actions already
+        // existed with no key at all, so renaming anything meant reaching for a
         // context menu.
-        CustomAction::RenameTab => Keystroke::parse("f2").ok(),
+        //
+        // It takes the pane, not the tab: a pane is what you are working in, and
+        // in the Panes view the tab has no visible name to edit at all. Renaming
+        // the specific tab or pane you are only pointing at stays on
+        // double-click, which already knows what is under the cursor.
+        // `workspace:rename_active_tab` is still registered for anyone who wants
+        // that one on a key instead.
+        CustomAction::RenamePane => Keystroke::parse("f2").ok(),
         CustomAction::NewTerminalTab
         | CustomAction::NewFile
         | CustomAction::ShowAboutRook

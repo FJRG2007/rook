@@ -958,20 +958,21 @@ pub fn init(app: &mut AppContext) {
         WorkspaceAction::RenameActiveTab,
     )
     .with_group(bindings::BindingGroup::Settings.as_str())
-    .with_custom_action(CustomAction::RenameTab)
     .with_context_predicate(id!("Workspace"))]);
 
     // Pane rename — same shape as RenameActiveTab but acts on the focused pane
-    // in the active tab. Ships with no default keybinding so it surfaces in
-    // Settings → Keyboard shortcuts as remappable; resolves issue #9351, where
-    // the action existed only in the right-click context menu and was not
-    // reachable via the binding registry.
+    // in the active tab. Upstream ships it with no default keybinding, which is
+    // issue #9351: the action existed only in the right-click context menu and
+    // was not reachable from the binding registry at all. It carries F2 here,
+    // because the pane is what a person is actually working in - the tab rename
+    // that held the key first is still registered and still bindable.
     app.register_editable_bindings([EditableBinding::new(
         "workspace:rename_active_pane",
         "Rename the current pane",
         WorkspaceAction::RenameActivePane,
     )
     .with_group(bindings::BindingGroup::Settings.as_str())
+    .with_custom_action(CustomAction::RenamePane)
     .with_context_predicate(id!("Workspace"))]);
 
     app.register_editable_bindings([EditableBinding::new(
