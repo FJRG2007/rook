@@ -142,6 +142,12 @@ runs:
           ./script/install_channel_config || true
           if ${{ inputs.install_release_deps == 'true' }}; then
             ./script/install_cargo_release_deps
+            # Only macOS needs it: `script/macos/bundle` packages the .app with
+            # `cargo bundle`, where Windows uses Inno Setup and Linux its own
+            # packaging. The script has always been in the repository; nothing
+            # called it, so every macOS release build got as far as the bundling
+            # step and stopped at `no such command: bundle`.
+            ./script/install_cargo_bundle
           else
             ./script/install_cargo_build_deps
           fi
