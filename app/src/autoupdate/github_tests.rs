@@ -107,3 +107,22 @@ fn an_unrecognised_tag_has_no_ordering() {
         assert_eq!(compare_release_tags("v0.1.0", tag), None);
     }
 }
+
+/// The button offering a new version has to land on that version, not on a
+/// list of every release the fork has ever cut.
+#[test]
+fn a_release_url_points_at_the_version_it_names() {
+    assert_eq!(
+        release_url("v0.2026.09.08.21.45.oss_00"),
+        "https://github.com/FJRG2007/rook/releases/tag/v0.2026.09.08.21.45.oss_00"
+    );
+}
+
+/// A tag that would build a URL for a page that does not exist falls back to
+/// the index, a list being a better answer than a 404.
+#[test]
+fn a_tag_that_cannot_be_a_url_falls_back_to_the_index() {
+    for tag in ["", "../../etc", "v0.1.0 ", "a?b", "a#b"] {
+        assert_eq!(release_url(tag), RELEASES_URL);
+    }
+}

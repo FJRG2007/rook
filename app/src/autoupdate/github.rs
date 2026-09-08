@@ -21,6 +21,19 @@ pub const RELEASES_URL: &str = "https://github.com/FJRG2007/rook/releases";
 
 const LATEST_RELEASE_API: &str = "https://api.github.com/repos/FJRG2007/rook/releases/latest";
 
+/// The page for one release, which is where someone told to get a specific
+/// version needs to land. The index lists every release Rook has ever had, and
+/// leaving them to pick the right one out of it is the kind of last step that
+/// gets skipped.
+pub fn release_url(tag: &str) -> String {
+    // A tag carrying anything path-like would build a URL for a page that does
+    // not exist, and a 404 is worse than the index it came from.
+    if tag.is_empty() || tag.contains(['/', '?', '#', ' ']) {
+        return RELEASES_URL.to_owned();
+    }
+    format!("{RELEASES_URL}/tag/{tag}")
+}
+
 /// Kept short: this runs on a poll, and a hung request must not accumulate.
 const FETCH_TIMEOUT: Duration = Duration::from_secs(10);
 

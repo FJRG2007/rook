@@ -1084,10 +1084,10 @@ pub fn manually_download_new_version(ctx: &mut AppContext) {
 #[allow(unused_variables)]
 fn manually_download_version(channel: &Channel, version: &VersionInfo, ctx: &mut AppContext) {
     // Rook publishes to GitHub releases and has no unattended installer, so the
-    // button opens the page. Before this it called into a macOS-only path and
-    // did nothing at all on Windows or Linux.
+    // button opens the page for the version being offered. Before this it called
+    // into a macOS-only path and did nothing at all on Windows or Linux.
     if matches!(channel, Channel::Oss) {
-        ctx.open_url(github::RELEASES_URL);
+        ctx.open_url(&github::release_url(&version.version));
         return;
     }
 
