@@ -134,11 +134,11 @@ Yes — that's what AGPL is for. The license prevents fully-proprietary relaunch
 
 ### Where do I get help?
 
-- The [Rook docs](https://docs.rook.dev/) for using the product.
+- The docs under [`docs/`](docs/).
 - [GitHub Issues](https://github.com/FJRG2007/rook/issues) for bug reports and feature requests.
 - The [Discord server](https://tpe.li/dsc) for general questions and discussion.
 - Mention **@oss-maintainers** on an issue or PR to escalate to the team.
 
 ### How do I report a security vulnerability?
 
-Please don't open a public GitHub issue. See [SECURITY.md](SECURITY.md) — report via [security@rook.dev](mailto:security@rook.dev) or open a private [GitHub Security Advisory](https://github.com/FJRG2007/rook/security/advisories/new).
+Please don't open a public GitHub issue. See [SECURITY.md](SECURITY.md) — open a private [GitHub Security Advisory](https://github.com/FJRG2007/rook/security/advisories/new).

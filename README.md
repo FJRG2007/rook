@@ -2,9 +2,27 @@
 
 A terminal built from the open-source [Warp](https://github.com/warpdotdev/warp) client, with the performance work upstream has not done. Windows, macOS and Linux.
 
+**10x less memory for the output a session holds, and a per-command database check 100x cheaper.** Both come from a real 76 MB session: the database figure timed directly, the memory figure a measured per-block cost applied to that session's actual blocks. The table below says what each number measures and what it does not.
+
 Upstream is an excellent terminal that behaves poorly under sustained use: input and scrolling stutter on machines with a discrete GPU, opening a tab stalls, tabs vanish after a restart, and it gets slower the longer it stays open. Rook keeps the terminal and fixes what was behind those symptoms.
 
 Every change below rests on a measurement taken on a real machine, not on reasoning about what ought to be faster. `docs/bugs/` records each one: the symptom, the evidence, the cause, and what the fix does not cover.
+
+## Measured against upstream
+
+Each row is one operation on one machine, not a benchmark suite, and each says what it measures. The gains are in what Rook *consumes* - memory and work per command. Nothing here measures how fast the terminal feels, so nothing here claims it.
+
+| | Upstream | Rook | Measured on |
+| --- | ---: | ---: | --- |
+| Retention check after every command | 2.14 ms | 0.02 ms | A real 76 MB database. The `blocks` table had no index, so the check scanned all of it. |
+| Memory held by retained output | 127 MB | 12.7 MB | The block-size distribution in that same database - 1,618 blocks - against the per-block cost measured below. |
+| One finished 300-row block | 251 kB | 18.7 kB | A 200-column grid. Upstream keeps it as 24-byte cells; Rook compacts it once the block can no longer change. |
+| CLI-agent hook, per tool call | ~400 ms | 97 ms | The Claude Code plugin's hooks, rewritten to one process each. |
+| Orphaned rows in the database | 97% | 0 | That 76 MB database. Blocks whose pane had been closed were never deleted. |
+
+Two of those want the fine print. The memory row is a measured per-block cost curve applied to real block sizes rather than a reading of live RSS, and it is a floor: the database keeps at most 100 blocks per pane while the running session kept every one. And reading compacted output costs ~325 ns a row, so a frame pays around 16 us of its 16.6 ms budget - real, and far below what anyone can see.
+
+Not measured, and so not claimed: the GPU fix, session persistence and tab restore are correctness, and how much faster the terminal *feels* is not something this table can tell you.
 
 ## What differs from upstream
 
