@@ -23,6 +23,20 @@ const LATEST_RELEASE_API: &str = "https://api.github.com/repos/FJRG2007/rook/rel
 /// Kept short: this runs on a poll, and a hung request must not accumulate.
 const FETCH_TIMEOUT: Duration = Duration::from_secs(10);
 
+/// The version a release tag reports as: the tag, verbatim.
+///
+/// `ChannelState::app_version` hands back `GIT_RELEASE_TAG` exactly as the build
+/// passed it - `v0.1.0`, `v` and all - and `should_update` compares the two with
+/// `==`. Normalising one side and not the other made every check disagree with a
+/// build of that very tag, and the mismatch does not stop there: the fallback
+/// comparison parses both through `ParsedVersion`, whose regex requires
+/// upstream's `v0.YYYY.MM.DD.HH.MM.channel_NN` shape, so a semver tag fails to
+/// parse and the check falls through to reporting an update. The result was a
+/// permanent notice offering an update this fork does not install.
+fn version_from_tag(tag: &str) -> VersionInfo {
+    VersionInfo::new(tag.to_owned())
+}
+
 /// The subset of GitHub's release payload that matters here.
 #[derive(Debug, Deserialize)]
 struct LatestRelease {
@@ -35,9 +49,6 @@ struct LatestRelease {
 
 /// The version of the most recent published release, as a `VersionInfo` so it
 /// travels through the same reporting path as any other update check.
-///
-/// Tags are written `v0.1.0`; the leading `v` is dropped so the value compares
-/// against `ChannelState::app_version`, which carries no prefix.
 pub async fn fetch_latest_release_version(client: &http_client::Client) -> Result<VersionInfo> {
     let response = client
         .get(LATEST_RELEASE_API)
@@ -63,7 +74,9 @@ pub async fn fetch_latest_release_version(client: &http_client::Client) -> Resul
         anyhow::bail!("latest GitHub release is a draft or prerelease");
     }
 
-    Ok(VersionInfo::new(
-        release.tag_name.trim_start_matches('v').to_owned(),
-    ))
+    Ok(version_from_tag(&release.tag_name))
 }
+
+#[cfg(test)]
+#[path = "github_tests.rs"]
+mod tests;

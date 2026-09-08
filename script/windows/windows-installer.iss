@@ -149,6 +149,11 @@ Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\{#MyAppName}Wind
 [Tasks]
 Name: addToPath; Description: "Add Rook to PATH"
 
+[InstallDelete]
+// An install made before the display name was split from the identity name put its shortcuts under the identity name. Upgrading renames nothing, so without this both sit in the Start menu and Search still offers the old one. Harmless when the two names are the same: the shortcut is recreated below.
+Type: files; Name: "{autoprograms}\{#MyAppName}.lnk"
+Type: files; Name: "{autodesktop}\{#MyAppName}.lnk"
+
 [UninstallDelete]
 Type: filesandordirs; Name: "{userappdata}\rook\{#MyAppName}"
 Type: filesandordirs; Name: "{localappdata}\rook\{#MyAppName}"
