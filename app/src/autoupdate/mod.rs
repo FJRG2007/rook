@@ -1,6 +1,6 @@
 mod changelog;
 mod channel_versions;
-mod github;
+pub(crate) mod github;
 #[cfg(target_os = "linux")]
 pub mod linux;
 #[cfg(target_os = "macos")]

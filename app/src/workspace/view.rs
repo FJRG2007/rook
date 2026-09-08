@@ -8076,9 +8076,13 @@ impl Workspace {
                         .into_item(),
                 ),
                 AutoupdateStage::UnableToUpdateToNewVersion { .. } => menu_items.push(
-                    MenuItemFields::new("Update Rook manually")
-                        .with_on_select_action(WorkspaceAction::DownloadNewVersion)
-                        .into_item(),
+                    MenuItemFields::new(if matches!(ChannelState::channel(), Channel::Oss) {
+                        "Get the new version"
+                    } else {
+                        "Update Rook manually"
+                    })
+                    .with_on_select_action(WorkspaceAction::DownloadNewVersion)
+                    .into_item(),
                 ),
                 AutoupdateStage::NoUpdateAvailable
                 | AutoupdateStage::CheckingForUpdate
@@ -9861,12 +9865,17 @@ impl Workspace {
                         new_version.last_prominent_update.as_deref(),
                     ) =>
                 {
-                    items.push(
-                        MenuItemFields::new("Update Rook manually")
-                            .with_on_select_action(WorkspaceAction::DownloadNewVersion)
-                            .with_override_text_color(appearance.theme().ansi_fg_red())
-                            .into_item(),
-                    )
+                    let is_oss = matches!(ChannelState::channel(), Channel::Oss);
+                    let mut item = MenuItemFields::new(if is_oss {
+                        "Get the new version"
+                    } else {
+                        "Update Rook manually"
+                    })
+                    .with_on_select_action(WorkspaceAction::DownloadNewVersion);
+                    if !is_oss {
+                        item = item.with_override_text_color(appearance.theme().ansi_fg_red());
+                    }
+                    items.push(item.into_item())
                 }
                 _ => {}
             }
@@ -12562,9 +12571,10 @@ impl Workspace {
     }
 
     pub fn open_autoupdate_failure_link(&mut self, ctx: &mut ViewContext<Self>) {
-        ctx.open_url(
-            "https://docs.rook.dev/support-and-community/troubleshooting-and-support/updating-rook",
-        );
+        // The rename turned upstream's own documentation host into one this
+        // project does not own and which resolves to somebody else. Rook's
+        // answer to "the update did not apply" is the release page anyway.
+        ctx.open_url(crate::autoupdate::github::RELEASES_URL);
     }
 
     pub fn add_terminal_tab(&mut self, hide_homepage: bool, ctx: &mut ViewContext<Self>) {
@@ -22216,9 +22226,18 @@ impl Workspace {
                 AutoupdateStage::UnableToUpdateToNewVersion { new_version }
                     if !self.autoupdate_unable_to_update_banner_dismissed =>
                 {
+                    // On the open-source channel this stage is the ordinary
+                    // outcome and not a failure: Rook publishes to GitHub
+                    // releases and has no unattended installer, so it reports
+                    // the new version and stops. Saying it in red, as an error
+                    // the person has to work around, is what made "there is a
+                    // new version" read as "the update broke".
+                    let is_oss = matches!(ChannelState::channel(), Channel::Oss);
                     let description =
                         if is_incoming_version_past_current(new_version.soft_cutoff.as_deref()) {
                             VERSION_DEPRECATION_WITHOUT_PERMISSIONS_BANNER_TEXT.to_owned()
+                        } else if is_oss {
+                            format!("Rook {} is available on GitHub.", new_version.version)
                         } else {
                             "A new version is available but Rook is unable to perform the update."
                                 .to_owned()
@@ -22226,16 +22245,27 @@ impl Workspace {
 
                     Some(WorkspaceBannerFields {
                         banner_type: WorkspaceBanner::UnableToUpdateToNewVersion,
-                        severity: BannerSeverity::Error,
+                        severity: if is_oss {
+                            BannerSeverity::Warning
+                        } else {
+                            BannerSeverity::Error
+                        },
                         heading: None,
                         description,
                         secondary_button: None,
                         button: Some(WorkspaceBannerButtonDetails {
-                            text: "Update Rook manually".to_string(),
+                            text: if is_oss {
+                                "Get it from GitHub".to_string()
+                            } else {
+                                "Update Rook manually".to_string()
+                            },
                             action: WorkspaceAction::DownloadNewVersion,
                             variant: BannerButtonVariant::Outlined,
                             icon: None,
-                            more_info_button_action: Some(WorkspaceAction::AutoupdateFailureLink),
+                            // The link behind it explains how to recover a
+                            // failed update. Nothing failed here.
+                            more_info_button_action: (!is_oss)
+                                .then_some(WorkspaceAction::AutoupdateFailureLink),
                         }),
                     })
                 }
