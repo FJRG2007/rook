@@ -1,3 +1,4 @@
+use std::fmt;
 use std::time::Duration;
 
 use instant::Instant;
@@ -109,6 +110,18 @@ pub struct TimingDataPoint {
     name: String,
     marginal_duration_ms: u64,
     cumulative_duration_ms: u64,
+}
+
+impl fmt::Display for TimingDataPoint {
+    /// `NAME +12ms (345ms)`: what this stage cost, and where the process was
+    /// by the end of it.
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{} +{}ms ({}ms)",
+            self.name, self.marginal_duration_ms, self.cumulative_duration_ms
+        )
+    }
 }
 
 impl TimingDataPoint {

@@ -1916,16 +1916,41 @@ pub(crate) fn initialize_app(
 
     let user_is_logged_in = auth_state.is_logged_in();
 
-    if user_is_logged_in {
-        // Set the first frame callback to record the app's startup time.
-        // This is only sent for logged-in users so that new users don't skew performance metrics.
-        let is_screen_reader_enabled = ctx.is_screen_reader_enabled();
-        let from_relaunch = launch_mode.args().finish_update;
-        ctx.on_first_frame_drawn(move |ctx| {
-            let timing_data = IntervalTimer::handle(ctx).update(ctx, |timer, _| {
-                timer.mark_interval_end("FIRST_FRAME_DRAWN");
-                timer.compute_stats()
-            });
+    // The first frame is where a launch stops being a wait and starts being an
+    // app, so the work hung off it has to happen on every launch. Upstream
+    // registers this callback only for logged-in users, because its only
+    // consumer was the startup telemetry event; in a build with no server to
+    // log in to, that also meant the GPU state and the graphics-backend
+    // dropdown were never refreshed, and the timings the IntervalTimer had been
+    // collecting since before the window existed were computed nowhere and read
+    // by no one. Only the telemetry send stays conditional, so logged-out
+    // launches still don't skew the startup metrics.
+    let is_screen_reader_enabled = ctx.is_screen_reader_enabled();
+    let from_relaunch = launch_mode.args().finish_update;
+    ctx.on_first_frame_drawn(move |ctx| {
+        let timing_data = IntervalTimer::handle(ctx).update(ctx, |timer, _| {
+            timer.mark_interval_end("FIRST_FRAME_DRAWN");
+            timer.compute_stats()
+        });
+
+        // The one place a build without telemetry can see where its startup
+        // went. The timer starts before settings, SQLite and the window, so
+        // the last cumulative figure is the app's own share of the launch.
+        log::info!("Startup timings: {}", timing_data.iter().join(", "));
+
+        GPUState::handle(ctx).update(ctx, |gpu_state, ctx| {
+            gpu_state.set_has_lower_power_gpu(rookui::rendering::is_low_power_gpu_available(), ctx);
+        });
+
+        for window_id in ctx.window_ids().collect_vec() {
+            SettingsPaneManager::handle(ctx)
+                .read(ctx, |model, _| model.settings_view(window_id))
+                .update(ctx, |settings, ctx| {
+                    settings.refresh_preferred_graphics_backend_dropdown(ctx);
+                })
+        }
+
+        if user_is_logged_in {
             let event = TelemetryEvent::AppStartup(AppStartupInfo {
                 is_session_restoration_on: user_defaults_on_startup.should_restore_session,
                 is_screen_reader_enabled,
@@ -1933,23 +1958,11 @@ pub(crate) fn initialize_app(
                 is_crash_reporting_enabled,
                 timing_data,
             });
-
-            GPUState::handle(ctx).update(ctx, |gpu_state, ctx| {
-                gpu_state
-                    .set_has_lower_power_gpu(rookui::rendering::is_low_power_gpu_available(), ctx);
-            });
-
-            for window_id in ctx.window_ids().collect_vec() {
-                SettingsPaneManager::handle(ctx)
-                    .read(ctx, |model, _| model.settings_view(window_id))
-                    .update(ctx, |settings, ctx| {
-                        settings.refresh_preferred_graphics_backend_dropdown(ctx);
-                    })
-            }
-
             send_telemetry_from_app_ctx!(event, ctx);
-        });
+        }
+    });
 
+    if user_is_logged_in {
         #[cfg(enable_crash_recovery)]
         ctx.on_frame_drawn(|ctx, window_id| {
             crash_recovery::CrashRecovery::handle(ctx).update(ctx, |crash_recovery, ctx| {
