@@ -210,6 +210,14 @@ if ($IS_TUI) {
     $FEATURES = "$FEATURES,nld_classifier_v3,nld_heuristic_v2"
 }
 
+# What the installer shows the user, as opposed to what identifies the app.
+# $APP_NAME is identity: it feeds the bundle id, the AppUserModelID and the
+# per-user data directories, all of which have to keep matching what the Rust
+# side derives from the channel. The oss channel is the only one that ships
+# under a different name, because in this fork it is not one channel among
+# several - it is the product, and users look for it as Rook.
+$APP_DISPLAY_NAME = if (-not $IS_TUI -and "$CHANNEL" -eq 'oss') { 'Rook' } else { $APP_NAME }
+
 $BINARY_PATH = "$CARGO_TARGET_OUTPUT_DIR\$BINARY_NAME"
 $BUNDLE_ID = "dev.rook.$APP_NAME"
 $INSTALLER_OUTPUT_DIR = "$WINDOWS_INSTALLER_DIR\Output"
@@ -350,6 +358,7 @@ $ISCC_ARGS = @(
     "/DMyAppExeName=$BINARY_NAME",
     "/DTargetProfileDir=$CARGO_TARGET_OUTPUT_DIR",
     "/DMyAppName=$APP_NAME",
+    "/DMyAppDisplayName=$APP_DISPLAY_NAME",
     "/DMyAppVersion=$env:GIT_RELEASE_TAG",
     "/DArch=$ARCH",
     "/DOutputName=$INSTALLER_NAME"
