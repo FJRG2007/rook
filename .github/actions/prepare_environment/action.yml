@@ -72,9 +72,19 @@ runs:
     - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
       if: ${{ inputs.is_self_hosted != 'true' && !startsWith(runner.name, 'nsc-runner') }}
       with:
+        # `shared-key` rather than `key`: `key` is *added* to a cache key that
+        # already includes the job, so every job kept its own copy and the test
+        # job could not reuse what the clippy job had already compiled. They
+        # build the same dev-profile graph, so one entry serves both.
+        #
         # Make sure x86_64-unknown-linux-gnu and wasm32-unknown-unknown builds
         # don't share a cache, despite running on the same _host_ architecture.
-        key: ${{ inputs.cache_key != '' && inputs.cache_key || inputs.target_os }}
+        shared-key: ${{ inputs.cache_key != '' && inputs.cache_key || inputs.target_os }}
+        # Save even when the job fails. Without this the test job, which had
+        # never yet passed, never wrote a cache, so every run compiled the whole
+        # workspace from scratch: 39 of its 52 minutes were compilation and 13
+        # were tests.
+        cache-on-failure: true
         # Save from main and from release tags. Tags were excluded before, so a
         # release build found no cache, compiled the whole graph from scratch,
         # and saved nothing for the next tag to reuse - which is where nearly
