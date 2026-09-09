@@ -1,36 +1,126 @@
 # The session is not saved on shutdown
 
-**Symptom.** Restore session is on, but after shutting the machine down and starting it again the tabs do not come back. Usually a couple return, often stale, sometimes none, and their names and order are gone.
+**Symptom.** Restore session is on, but after shutting the machine down and
+starting it again the tabs do not come back. Usually a couple return, often
+stale, sometimes none, and their names and order are gone.
 
-## Cause
+This was diagnosed twice. The first pass found a real gap and fixed it with a
+timer; the timer then ran for two days without writing anything, because of a
+second defect that hid it. Both are recorded here, because the second one is
+the interesting one and the first one alone reads as a complete explanation.
 
-Nothing wrote the session when the app was closing, and almost nothing wrote it while it was open.
+## Cause 1: nothing wrote the session while it was closing
 
-`save_app` in `app/src/workspace/global_actions.rs` is the only producer of `ModelEvent::Snapshot`. It was reached from exactly four window callbacks - move, resize, focus change, close - plus a handful of scattered dispatches from menu and agent code. Two consequences:
+`save_app` in `app/src/workspace/global_actions.rs` is the only producer of
+`ModelEvent::Snapshot`. It was reached from four window callbacks - move,
+resize, focus change, close - plus scattered dispatches from menu and agent
+code. `on_window_will_close` returns early once the stage is `Terminating`,
+and `on_will_terminate` stopped the persistence writer without snapshotting
+first, so what came back was the layout as of the last window move or focus
+change, arbitrarily far behind.
 
-- **Opening, closing, renaming and reordering tabs write nothing.** None of those touch a window callback, so tab structure was only ever persisted if the user happened to move, resize or refocus a window afterwards.
-- **Shutdown wrote nothing at all.** `on_window_will_close` returns early once the stage is `Terminating`, and `on_will_terminate` stopped the persistence writer without taking a snapshot first.
+The fix was a snapshot on the way out and a write every 15 seconds, the
+latter bounding what an abrupt stop can take.
 
-So what came back was the layout as of the last window move or focus change, which can be arbitrarily far behind. That is exactly "a couple of tabs, stale, or none".
+## Cause 2: the timer's dispatch was dropped before it reached the handler
+
+The timer ran. Its saves did nothing.
+
+There are two `dispatch_global_action` methods, and they want opposite
+arguments for the same action:
+
+```rust
+// AppContext: takes the argument by value, then boxes it for the downcast.
+pub fn dispatch_global_action<T: 'static + Any>(&self, name: &str, arg: T)
+
+// MutableAppContext: takes it already erased.
+pub fn dispatch_global_action(&mut self, name: &str, arg: &dyn Any)
+```
+
+An action registered for `()` must be given `()` through the first and `&()`
+through the second. Passing `&()` to the first makes `T = &()`, the downcast
+to `()` fails, and the dispatch is discarded. The autosave was on the first
+and passed `&()`.
+
+Nothing about that fails to compile - both forms are valid `T` - and in a
+release build nothing is visible either. `add_global_action` carries a
+`debug_assert!` on the failed downcast and a `report_error!`, and in a build
+with assertions off and no telemetry host the only trace is one line in the
+log file:
+
+```
+[ERROR] Could not downcast argument for action [action=workspace:save_app]
+```
+
+### How it was established
+
+Counted in the user's own logs, not reasoned about:
+
+| Log | save_app dispatched | dropped by the downcast |
+| --- | --- | --- |
+| The session open across the shutdown | 35 | 23 |
+| A longer session the next day | 313 | 92 |
+
+The dropped ones are exactly 15 seconds apart - 04:00:01, 04:00:16, 04:00:31,
+04:00:46, 04:01:01 - which identifies them as the timer rather than anything
+a user did. The window-event saves, which pass `&()` through the reference
+method, are in the other column and had been working all along. That is why
+the loss looked arbitrary: some tabs survived, on the schedule of whenever a
+window had last been moved or focused.
+
+## Cause 3: shutdown persists the app taking itself apart
+
+Closing the last window tears the workspace down a tab at a time, and every
+one of those closes dispatches `save_app` again. From the same log:
+
+```
+04:01:03Z storing data for closed tab
+04:01:03Z dispatching global action for workspace:save_app
+04:01:03Z dispatching global action for workspace:save_app
+04:01:03Z dispatching typed action: PaneGroupAction::HandleFocusChange
+04:01:03Z dispatching global action for workspace:save_app
+04:01:03Z No windows left, terminating app
+04:01:03Z application will terminate
+```
+
+Those saves are on the reference method, so they were not dropped. Each one
+records a workspace with one fewer tab than the last, and the final state on
+disk is whatever the teardown had reached. `save_app_state` deletes before it
+inserts, so a snapshot with no windows at all does not fail - it leaves
+nothing to restore.
 
 ## Fix
 
-Two changes, because there are two ways to lose a session.
+- The autosave dispatches `()` through the by-value method. Ten menu items on
+  macOS had the same mistake and are corrected with it.
+- `save_app` stops writing once the stage is `Terminating`, and refuses a
+  snapshot with no windows.
+- The session is captured where it is still whole: on entry to
+  `on_should_terminate_app`, which is where a logout, a restart or an OS
+  shutdown arrives, and immediately before the last window closes. The
+  snapshot in `on_will_terminate` is gone; by the time it ran there were no
+  windows left to record.
 
-**A graceful exit** - which is what a normal Windows shutdown does - now snapshots before the writer stops. Global actions run their handlers inline (`dispatch_global_action_internal` calls them directly, then flushes effects), so the snapshot reaches the writer's channel ahead of the event that stops it, and `terminate` joins the thread rather than abandoning it.
-
-**An abrupt stop** - the wall switch, a power cut, a killed process - never reaches that path, so the session is also written every 15 seconds. That interval is the ceiling on how much of a session an unexpected stop can take.
-
-To keep a timer affordable, a snapshot equal to the last one written is dropped before it reaches the writer. An idle app builds a snapshot every 15 seconds and stops there, instead of re-running a delete-and-insert over every window, tab and pane. Window drags benefit from the same check for a different reason: they fire this path on every frame.
-
-`app/src/lib.rs`, `app/src/persistence/mod.rs`, `app/src/workspace/global_actions.rs`.
+`app/src/lib.rs`, `app/src/persistence/mod.rs`,
+`app/src/workspace/global_actions.rs`.
 
 ## Durability
 
-Writes that complete survive a power cut. The connection runs in WAL with SQLite's default `synchronous`, so each commit is flushed. The problem was never that writes were lost, only that they were not made.
+Writes that complete survive a power cut. The connection runs in WAL with
+SQLite's default `synchronous`, so each commit is flushed. The problem was
+never that writes were lost, only that they were not made.
 
-The database on the machine this was diagnosed on showed repeated `A WAL mode database file was recovered` warnings, which is how it was established that ungraceful exits actually happen here rather than being hypothetical.
+The database showed repeated `A WAL mode database file was recovered`
+warnings, which is how it was established that ungraceful exits actually
+happen here rather than being hypothetical.
 
 ## What this does not cover
 
-Anything changed in the last 15 seconds before an abrupt stop is still lost. Making that window smaller means writing more often; 15 seconds was chosen as the point where the cost is invisible and the loss is a few seconds of tab arrangement.
+Anything changed in the last 15 seconds before an abrupt stop is still lost.
+
+A text scan cannot tell the two dispatch methods apart, so there is no test
+for the argument shape; the `debug_assert!` in `add_global_action` is the
+guard, and it only fires where assertions are on. A dispatch whose action
+name matches nothing registered is checked, in
+`app/src/workspace/global_actions_tests.rs` - `root_view::open_new` in the
+URI handler had a second colon and reached no handler at all.
