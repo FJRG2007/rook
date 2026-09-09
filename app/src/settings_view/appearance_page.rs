@@ -58,11 +58,10 @@ use crate::settings::app_icon::{AppIcon, AppIconSettings, ShowDockIconState};
 use crate::settings::{
     AIFontName, AISettings, AISettingsChangedEvent, AppEditorSettings, CodeSettings, CursorBlink,
     CursorBlinkEnabled, CursorDisplayType, DEFAULT_MONOSPACE_FONT_NAME, DefaultPaneNamesByPath,
-    EnforceMinimumContrast,
-    FocusPaneOnHover, FontSettings, FontSettingsChangedEvent, GPUSettings, InputBoxType,
-    InputModeSettings, InputModeState, InputSettings, InputSettingsChangedEvent, MonospaceFontName,
-    PaneSettings, ShouldDimInactivePanes, ThemeSettings, UsageDisplayUnit, UseSystemTheme,
-    UseThinStrokes, active_theme_kind, respect_system_theme,
+    EnforceMinimumContrast, FocusPaneOnHover, FontSettings, FontSettingsChangedEvent, GPUSettings,
+    InputBoxType, InputModeSettings, InputModeState, InputSettings, InputSettingsChangedEvent,
+    MonospaceFontName, PaneSettings, ShouldDimInactivePanes, ThemeSettings, UsageDisplayUnit,
+    UseSystemTheme, UseThinStrokes, active_theme_kind, respect_system_theme,
 };
 use crate::terminal::block_list_viewport::InputMode;
 use crate::terminal::blockgrid_element::BlockGridElement;

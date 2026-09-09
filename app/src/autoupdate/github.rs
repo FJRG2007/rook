@@ -243,11 +243,12 @@ pub async fn fetch_latest_release_version(client: &http_client::Client) -> Resul
     let Some(asset) = installer_asset_name() else {
         anyhow::bail!("no installer is published for this platform");
     };
-    if !release.assets.iter().any(|published| published.name == asset) {
-        anyhow::bail!(
-            "release {} has not published {asset} yet",
-            release.tag_name
-        );
+    if !release
+        .assets
+        .iter()
+        .any(|published| published.name == asset)
+    {
+        anyhow::bail!("release {} has not published {asset} yet", release.tag_name);
     }
 
     Ok(version_from_tag(&release.tag_name))

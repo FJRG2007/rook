@@ -4,7 +4,7 @@ use std::fs;
 use std::path::Path;
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use chrono::Local;
 use cloud_object_models::CodeForge;
@@ -74,6 +74,34 @@ fn idle_timeout_sender_send_now_only_delivers_once() {
     assert_eq!(rx.try_recv().unwrap(), Some(1));
 }
 
+/// Long enough that a runner under load still reaches it, and short enough
+/// that a genuine failure does not hold the suite up.
+const DELIVERY_DEADLINE: Duration = Duration::from_secs(2);
+
+/// Waits for the value an armed timer will deliver.
+///
+/// These tests arm a window of a few tens of milliseconds and then slept twice
+/// that before asserting, which assumes a sleep of 80ms leaves a 30ms timer
+/// room to fire. A shared CI runner does not honour that: three of them failed
+/// together on one loaded macOS run, all of them reading `None` where the value
+/// was expected. Polling to a deadline asserts the same thing without depending
+/// on how long a sleep actually takes.
+///
+/// The tests that assert a value is *not* delivered still sleep, because an
+/// absence cannot be polled for - waiting is the whole assertion there.
+fn delivered_within<T>(rx: &mut oneshot::Receiver<T>, deadline: Duration) -> Option<T> {
+    let start = Instant::now();
+    loop {
+        if let Ok(Some(value)) = rx.try_recv() {
+            return Some(value);
+        }
+        if start.elapsed() >= deadline {
+            return None;
+        }
+        std::thread::sleep(Duration::from_millis(5));
+    }
+}
+
 #[test]
 fn idle_timeout_sender_send_after_delivers_after_timeout() {
     let (tx, mut rx) = oneshot::channel::<i32>();
@@ -83,8 +111,7 @@ fn idle_timeout_sender_send_after_delivers_after_timeout() {
     // Not yet delivered.
     assert_eq!(rx.try_recv().unwrap(), None);
 
-    std::thread::sleep(Duration::from_millis(100));
-    assert_eq!(rx.try_recv().unwrap(), Some(99));
+    assert_eq!(delivered_within(&mut rx, DELIVERY_DEADLINE), Some(99));
 }
 
 #[test]
@@ -119,8 +146,7 @@ fn idle_timeout_sender_later_send_after_supersedes_earlier() {
     // Second timer: short timeout. The first is implicitly cancelled.
     idle_timeout.end_run_after(Duration::from_millis(50), 2);
 
-    std::thread::sleep(Duration::from_millis(100));
-    assert_eq!(rx.try_recv().unwrap(), Some(2));
+    assert_eq!(delivered_within(&mut rx, DELIVERY_DEADLINE), Some(2));
 }
 
 #[test]
@@ -144,8 +170,7 @@ fn idle_timeout_sender_complete_with_optional_idle_some_defers_then_delivers() {
     // Not delivered yet.
     assert_eq!(rx.try_recv().unwrap(), None);
 
-    std::thread::sleep(Duration::from_millis(100));
-    assert_eq!(rx.try_recv().unwrap(), Some(7));
+    assert_eq!(delivered_within(&mut rx, DELIVERY_DEADLINE), Some(7));
 }
 
 #[test]
@@ -196,9 +221,8 @@ fn debug_window_controller_pin_blocks_refresh_and_finish_rearms() {
         controller.finish_turn(turn_id, (), Duration::from_millis(30)),
         "finishing a tracked turn must report a real transition"
     );
-    std::thread::sleep(Duration::from_millis(80));
     assert_eq!(
-        rx.try_recv().unwrap(),
+        delivered_within(&mut rx, DELIVERY_DEADLINE),
         Some(()),
         "finishing the last active turn must re-arm the full idle window"
     );
@@ -273,9 +297,8 @@ fn debug_window_controller_duplicate_finish_is_idempotent() {
         "a duplicate terminal event for the same turn id must be a no-op"
     );
 
-    std::thread::sleep(Duration::from_millis(80));
     assert_eq!(
-        rx.try_recv().unwrap(),
+        delivered_within(&mut rx, DELIVERY_DEADLINE),
         Some(()),
         "the single real finish must still re-arm exactly one full window"
     );
@@ -293,8 +316,7 @@ fn debug_window_controller_finish_of_unknown_turn_is_a_no_op() {
     );
 
     // The unrelated finish_turn call must not have disturbed the already-armed window.
-    std::thread::sleep(Duration::from_millis(80));
-    assert_eq!(rx.try_recv().unwrap(), Some(()));
+    assert_eq!(delivered_within(&mut rx, DELIVERY_DEADLINE), Some(()));
 }
 
 #[test]
