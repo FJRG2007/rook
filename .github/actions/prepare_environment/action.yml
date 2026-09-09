@@ -154,7 +154,15 @@ runs:
         elif ${{ inputs.target_os == 'linux' }}; then
           # Update the apt cache before installing dependencies - it can be slow, so the install scripts
           # don't do it.
-          sudo apt-get update -y
+          # A vendor repository the runner image ships with - Google Chrome's,
+          # among others - can be caught mid-publish and fail its hash check,
+          # which makes `apt-get update` exit 100 and takes the whole job with
+          # it before a line is compiled. That happened on a release-profile
+          # run and failed all three Linux jobs at once. None of those
+          # repositories provides a package this build installs, so retry once
+          # and carry on: the installs below are what fail, loudly, if a
+          # package is genuinely unavailable.
+          sudo apt-get update -y || sudo apt-get update -y || true
 
           if ${{ inputs.install_test_deps == 'true' }}; then
             ./script/linux/install_test_deps
@@ -172,7 +180,7 @@ runs:
         elif ${{ inputs.target_os == 'wasm' }}; then
           # Update the apt cache before installing dependencies - it can be slow, so the install scripts
           # don't do it (to avoid doing it more than once).
-          sudo apt update -y
+          sudo apt update -y || sudo apt update -y || true
           ./script/wasm/install_build_deps
         else
           echo "::error::Missing logic to install build dependencies for OS \"${{ inputs.target_os }}\""
