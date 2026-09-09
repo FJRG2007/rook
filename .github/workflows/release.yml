@@ -82,6 +82,15 @@ jobs:
           if (-not $iscc) { throw 'ISCC.exe not found after installing Inno Setup' }
           $iscc.DirectoryName | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
+      - name: Install create-dmg (macOS)
+        if: matrix.os == 'macos'
+        shell: bash
+        run: |
+          # `script/macos/bundle` shells out to create-dmg to lay out the disk
+          # image. Upstream's runners have it; a hosted one does not, and nothing
+          # in the tree installs it.
+          brew install create-dmg
+
       - name: Install linuxdeploy (Linux)
         if: matrix.os == 'linux'
         shell: bash
@@ -151,6 +160,7 @@ jobs:
               require_cargo about 'generates THIRD_PARTY_LICENSES.txt'
               ;;
             macos)
+              require create-dmg 'lays out the .dmg'
               require_cargo bundle 'packages the .app that becomes the .dmg'
               require_cargo about 'generates THIRD_PARTY_LICENSES.txt'
               ;;
