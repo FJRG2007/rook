@@ -271,7 +271,7 @@ impl UndoCloseStack {
 
                 // Make sure we update our session restoration state now that the
                 // window has been reopened.
-                ctx.dispatch_global_action("workspace:save_app", ());
+                ctx.dispatch_global_action("workspace:save_app", &());
             }
             ClosedItem::Tab {
                 workspace,
@@ -293,7 +293,7 @@ impl UndoCloseStack {
                 }
                 // Make sure we update our session restoration state now that the
                 // tab has been reopened.
-                ctx.dispatch_global_action("workspace:save_app", ());
+                ctx.dispatch_global_action("workspace:save_app", &());
             }
             ClosedItem::Pane { data } => {
                 if let Some(pane_group) = data.pane_group.upgrade(ctx) {
@@ -326,7 +326,7 @@ impl UndoCloseStack {
                             });
                         }
 
-                        ctx.dispatch_global_action("workspace:save_app", ());
+                        ctx.dispatch_global_action("workspace:save_app", &());
                     }
                 }
             }

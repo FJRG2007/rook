@@ -2677,7 +2677,7 @@ pub(crate) fn app_callbacks(
                         *enabled_from,
                         voice_input::VoiceInputToggledFrom::Key { .. }
                     ) {
-                        ctx.dispatch_global_action("root_view:abort_voice_input", ());
+                        ctx.dispatch_global_action("root_view:abort_voice_input", &());
                     }
                 }
             }
@@ -2768,7 +2768,7 @@ pub(crate) fn app_callbacks(
                 // The last moment the session is intact: termination closes the
                 // tabs one by one, and `save_app` stops writing once the app is
                 // Terminating, so this is what gets restored.
-                ctx.dispatch_global_action("workspace:save_app", ());
+                ctx.dispatch_global_action("workspace:save_app", &());
                 ctx.terminate_app(TerminationMode::Cancellable, None);
                 return ApproveTerminateResult::Cancel;
             }
@@ -2810,7 +2810,7 @@ pub(crate) fn app_callbacks(
             // Before anything else, and for every source: a logout, a restart or
             // an OS shutdown arrives here with the workspace still whole, and
             // everything past this point is teardown.
-            ctx.dispatch_global_action("workspace:save_app", ());
+            ctx.dispatch_global_action("workspace:save_app", &());
 
             // Never interrupt a system-initiated termination (logout / restart /
             // scheduled OS update): both cancel paths below return
@@ -2904,8 +2904,8 @@ pub(crate) fn app_callbacks(
             // e.g. clicking on the Dock icon. It is NOT called from the New Window
             // menu item.
             App::record_last_active_timestamp();
-            ctx.dispatch_global_action("root_view:open_new", ());
-            ctx.dispatch_global_action("workspace:save_app", ());
+            ctx.dispatch_global_action("root_view:open_new", &());
+            ctx.dispatch_global_action("workspace:save_app", &());
         })),
         on_open_urls: Some(Box::new(move |urls, ctx| {
             for url in &urls {
@@ -2940,7 +2940,7 @@ pub(crate) fn app_callbacks(
                 });
             }
 
-            ctx.dispatch_global_action("workspace:save_app", ());
+            ctx.dispatch_global_action("workspace:save_app", &());
         })),
         on_window_will_close: Some(Box::new(move |closed_window_data, ctx| {
             if ctx.windows().stage() == ApplicationStage::Terminating {
@@ -2952,13 +2952,13 @@ pub(crate) fn app_callbacks(
                     stack.handle_window_closed(window_data, ctx);
                 });
             }
-            ctx.dispatch_global_action("workspace:save_app", ());
+            ctx.dispatch_global_action("workspace:save_app", &());
         })),
         on_window_moved: Some(Box::new(move |ctx| {
-            ctx.dispatch_global_action("workspace:save_app", ());
+            ctx.dispatch_global_action("workspace:save_app", &());
         })),
         on_window_resized: Some(Box::new(move |ctx| {
-            ctx.dispatch_global_action("workspace:save_app", ());
+            ctx.dispatch_global_action("workspace:save_app", &());
         })),
         ..Default::default()
     }
@@ -3138,7 +3138,7 @@ fn launch(ctx: &mut rookui::AppContext, app_state: Option<AppState>, launch_mode
             // If, after session restoration and command-line argument handling, we
             // haven't opened any windows, open a new window.
             if ctx.window_ids().count() == 0 {
-                ctx.dispatch_global_action("root_view:open_new", ());
+                ctx.dispatch_global_action("root_view:open_new", &());
             }
 
             IntervalTimer::handle(ctx).update(ctx, |timer, _| {
