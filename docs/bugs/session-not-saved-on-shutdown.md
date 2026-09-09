@@ -39,8 +39,14 @@ pub fn dispatch_global_action(&mut self, name: &str, arg: &dyn Any)
 
 An action registered for `()` must be given `()` through the first and `&()`
 through the second. Passing `&()` to the first makes `T = &()`, the downcast
-to `()` fails, and the dispatch is discarded. The autosave was on the first
-and passed `&()`.
+to `()` fails, and the dispatch is discarded.
+
+Every call site in the tree is on the second method and correct, except one:
+the autosave, which is on the first and passed `&()`. Finding that took two
+wrong sweeps. The first changed all of them and the compiler rejected the
+fifteen it could see; the second missed thirteen more in `app_menus.rs`,
+which is `#[cfg(target_os = "macos")]` and so is not compiled by a Linux or
+Windows job at all. Only the macOS runner reports on that file.
 
 Nothing about that fails to compile - both forms are valid `T` - and in a
 release build nothing is visible either. `add_global_action` carries a
@@ -91,8 +97,7 @@ nothing to restore.
 
 ## Fix
 
-- The autosave dispatches `()` through the by-value method. Ten menu items on
-  macOS had the same mistake and are corrected with it.
+- The autosave dispatches `()` through the by-value method.
 - `save_app` stops writing once the stage is `Terminating`, and refuses a
   snapshot with no windows.
 - The session is captured where it is still whole: on entry to
