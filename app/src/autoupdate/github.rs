@@ -171,6 +171,26 @@ impl PartialOrd for ReleaseTag {
     }
 }
 
+/// The installer this platform needs out of a release, named the way the
+/// bundle scripts name it. `None` on a target nothing is built for.
+pub fn installer_asset_name() -> Option<&'static str> {
+    if cfg!(windows) {
+        if cfg!(target_arch = "aarch64") {
+            Some("RookOssSetup-arm64.exe")
+        } else if cfg!(target_arch = "x86_64") {
+            Some("RookOssSetup.exe")
+        } else {
+            None
+        }
+    } else if cfg!(target_os = "macos") {
+        Some("RookOss.dmg")
+    } else if cfg!(target_os = "linux") && cfg!(target_arch = "x86_64") {
+        Some("RookOss-x86_64.AppImage")
+    } else {
+        None
+    }
+}
+
 /// The subset of GitHub's release payload that matters here.
 #[derive(Debug, Deserialize)]
 struct LatestRelease {
@@ -179,6 +199,13 @@ struct LatestRelease {
     draft: bool,
     #[serde(default)]
     prerelease: bool,
+    #[serde(default)]
+    assets: Vec<ReleaseAsset>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ReleaseAsset {
+    name: String,
 }
 
 /// The version of the most recent published release, as a `VersionInfo` so it
@@ -206,6 +233,21 @@ pub async fn fetch_latest_release_version(client: &http_client::Client) -> Resul
     // offering nothing.
     if release.draft || release.prerelease {
         anyhow::bail!("latest GitHub release is a draft or prerelease");
+    }
+
+    // The three installers are built by separate jobs and published as each
+    // finishes, so a release exists, and is `latest`, from the moment the
+    // first one lands. Reporting it to everyone at that point offers an
+    // update that only one platform can act on - and the one platform whose
+    // job failed outright would be offered it forever.
+    let Some(asset) = installer_asset_name() else {
+        anyhow::bail!("no installer is published for this platform");
+    };
+    if !release.assets.iter().any(|published| published.name == asset) {
+        anyhow::bail!(
+            "release {} has not published {asset} yet",
+            release.tag_name
+        );
     }
 
     Ok(version_from_tag(&release.tag_name))

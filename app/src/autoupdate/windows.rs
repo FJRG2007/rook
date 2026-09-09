@@ -295,6 +295,15 @@ pub(super) fn relaunch() -> Result<()> {
 }
 
 fn installer_file_name() -> Result<String> {
+    // The open-source channel takes the name from the release it is about to
+    // download, so the file asked for and the file checked for are the same
+    // string in one place.
+    if ChannelState::channel() == Channel::Oss {
+        return super::github::installer_asset_name()
+            .map(str::to_owned)
+            .ok_or_else(|| anyhow!("no installer is published for this platform"));
+    }
+
     let app_name_prefix = app_name_prefix(ChannelState::channel());
 
     // For example, on arm64 this is RookSetup-arm64.exe and on x64 this is

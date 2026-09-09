@@ -57,7 +57,8 @@ use crate::server::telemetry::{InputUXChangeOrigin, TelemetryEvent};
 use crate::settings::app_icon::{AppIcon, AppIconSettings, ShowDockIconState};
 use crate::settings::{
     AIFontName, AISettings, AISettingsChangedEvent, AppEditorSettings, CodeSettings, CursorBlink,
-    CursorBlinkEnabled, CursorDisplayType, DEFAULT_MONOSPACE_FONT_NAME, EnforceMinimumContrast,
+    CursorBlinkEnabled, CursorDisplayType, DEFAULT_MONOSPACE_FONT_NAME, DefaultPaneNamesByPath,
+    EnforceMinimumContrast,
     FocusPaneOnHover, FontSettings, FontSettingsChangedEvent, GPUSettings, InputBoxType,
     InputModeSettings, InputModeState, InputSettings, InputSettingsChangedEvent, MonospaceFontName,
     PaneSettings, ShouldDimInactivePanes, ThemeSettings, UsageDisplayUnit, UseSystemTheme,
@@ -1499,6 +1500,7 @@ impl AppearanceSettingsPageView {
             vec![
                 Box::new(DimInactivePanesWidget::default()),
                 Box::new(FocusFollowsMouseWidget::default()),
+                Box::new(PaneNamesByPathWidget),
             ],
         ));
 
@@ -3987,6 +3989,65 @@ impl SettingsWidget for DimInactivePanesWidget {
                 })
                 .finish(),
             None,
+        )
+    }
+}
+
+/// The directory-to-name map has no control of its own: a map is not a switch,
+/// and no collection setting in Rook has an editor. What it does have is a
+/// place in the page that names it and shows what is set, so it can be found
+/// without knowing it exists. The footer's "Open settings file" is where it is
+/// edited, as with every other collection.
+struct PaneNamesByPathWidget;
+
+impl SettingsWidget for PaneNamesByPathWidget {
+    type View = AppearanceSettingsPageView;
+
+    fn search_terms(&self) -> &str {
+        "pane names by directory path default names"
+    }
+
+    fn render(
+        &self,
+        view: &Self::View,
+        appearance: &Appearance,
+        app: &AppContext,
+    ) -> Box<dyn Element> {
+        let configured = PaneSettings::as_ref(app).default_names_by_path.value();
+        let summary = if configured.is_empty() {
+            "None set".to_owned()
+        } else {
+            let mut entries: Vec<String> = configured
+                .iter()
+                .map(|(directory, name)| format!("{name} - {directory}"))
+                .collect();
+            entries.sort();
+            entries.join(", ")
+        };
+
+        render_body_item::<AppearancePageAction>(
+            "Pane names by directory".into(),
+            None,
+            LocalOnlyIconState::for_setting(
+                DefaultPaneNamesByPath::storage_key(),
+                DefaultPaneNamesByPath::sync_to_cloud(),
+                &mut view.local_only_icon_tooltip_states.borrow_mut(),
+                app,
+            ),
+            ToggleState::Enabled,
+            appearance,
+            Text::new(
+                summary,
+                appearance.ui_font_family(),
+                appearance.ui_font_size(),
+            )
+            .finish(),
+            Some(
+                "A pane working in one of these directories, or anywhere inside it, \
+                 takes that name until it is renamed. Set them in settings.toml, \
+                 under [appearance.panes.default_names_by_path]."
+                    .to_owned(),
+            ),
         )
     }
 }

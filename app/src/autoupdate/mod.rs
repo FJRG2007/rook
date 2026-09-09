@@ -420,16 +420,10 @@ impl AutoupdateState {
                 new_version,
                 update_id,
             }) => {
-                // Rook publishes to GitHub releases and has no installer to run
-                // unattended, so the open-source channel reports the new version
-                // and stops rather than downloading one it could not apply.
-                if matches!(ChannelState::channel(), Channel::Oss) {
-                    self.stage = AutoupdateStage::UnableToUpdateToNewVersion {
-                        new_version: new_version.clone(),
-                    };
-                    ctx.notify();
-                    return;
-                }
+                // The open-source channel updates like any other now. Each
+                // platform's downloader already handled the artifact this fork
+                // publishes - an Inno installer, a disk image, an AppImage - and
+                // only ever needed pointing at the release it lives in.
                 self.download_new_update(update_id.clone(), request_type, new_version.clone(), ctx);
                 // We report the update status after attempting to download the update.
                 return;
@@ -1188,8 +1182,12 @@ fn release_assets_directory_url(channel: Channel, version: &str) -> String {
             format!("{releases_base_url}/preview/{version}")
         }
         Channel::Dev => format!("{releases_base_url}/dev/{version}"),
-        Channel::Local | Channel::Integration | Channel::Oss => {
-            unreachable!("local/integration/oss autoupdate not supported");
+        // Rook publishes to GitHub releases, where one release's assets sit
+        // under its tag. `version` is that tag verbatim - see
+        // `github::version_from_tag`.
+        Channel::Oss => format!("{}/download/{version}", github::RELEASES_URL),
+        Channel::Local | Channel::Integration => {
+            unreachable!("local/integration autoupdate not supported");
         }
     }
 }

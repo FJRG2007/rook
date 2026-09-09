@@ -550,19 +550,28 @@ async fn download_and_extract_binary(
 
     // Ensure that the new app we just downloaded has both integrity (e.g. no corrupted files)
     // and validity (it was signed by us).
-    // Store the executable path in a variable to prevent temporary value issues.
-    let executable_path_buf = target.join(executable_path(channel));
-    let verification_start = Instant::now();
-    future::try_zip(
-        verify_code_signature("bundle", &target),
-        verify_code_signature("executable", executable_path_buf.as_path()),
-    )
-    .await?;
+    //
+    // Nothing signs an open-source build: this repository holds no Apple
+    // certificate, so there is no team identifier to check against and
+    // `codesign` would reject the release this very build came from. What is
+    // left is what the manual download it replaces already rests on - HTTPS to
+    // the release page, and nothing more. Said plainly rather than hidden
+    // behind a check that cannot run.
+    if !matches!(channel, Channel::Oss) {
+        // Store the executable path in a variable to prevent temporary value issues.
+        let executable_path_buf = target.join(executable_path(channel));
+        let verification_start = Instant::now();
+        future::try_zip(
+            verify_code_signature("bundle", &target),
+            verify_code_signature("executable", executable_path_buf.as_path()),
+        )
+        .await?;
 
-    log::info!(
-        "Verified new app code signature in {:?}",
-        verification_start.elapsed()
-    );
+        log::info!(
+            "Verified new app code signature in {:?}",
+            verification_start.elapsed()
+        );
+    }
 
     Ok(DownloadReady::Yes)
 }
@@ -714,6 +723,16 @@ fn versioned_app_name(channel: Channel, version: &str) -> String {
 }
 
 fn dmg_name(channel: Channel) -> String {
+    // The open-source channel publishes one disk image per release, for both
+    // architectures, and `github::installer_asset_name` is the single place
+    // its name is written down - the same string the update check looks for
+    // in the release before offering it.
+    if matches!(channel, Channel::Oss)
+        && let Some(name) = super::github::installer_asset_name()
+    {
+        return name.to_owned();
+    }
+
     // If the user is on an Apple Silicon Mac, download an arm64-only bundle.
     let is_arm64 = command::blocking::Command::new("uname")
         .arg("-m")
