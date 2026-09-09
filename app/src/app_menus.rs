@@ -86,8 +86,8 @@ pub fn dock_menu() -> Menu {
         vec![MenuItem::Custom(CustomMenuItem::new(
             "New Window",
             move |ctx| {
-                ctx.dispatch_global_action("root_view:open_new", &());
-                ctx.dispatch_global_action("workspace:save_app", &());
+                ctx.dispatch_global_action("root_view:open_new", ());
+                ctx.dispatch_global_action("workspace:save_app", ());
             },
             no_updates,
             Some(Keystroke::parse("cmd-n").expect("Valid keystroke")),
@@ -302,7 +302,7 @@ fn make_new_edit_menu(ctx: &AppContext) -> Menu {
     let group_5 = vec![
         MenuItem::Custom(CustomMenuItem::new(
             "Use Rook's Prompt",
-            move |ctx| ctx.dispatch_global_action("app:toggle_user_ps1", &()),
+            move |ctx| ctx.dispatch_global_action("app:toggle_user_ps1", ()),
             move |_props, ctx| MenuItemPropertyChanges {
                 checked: Some(
                     SessionSettings::handle(ctx).read(ctx, |session_settings, _ctx| {
@@ -316,7 +316,7 @@ fn make_new_edit_menu(ctx: &AppContext) -> Menu {
         MenuItem::Custom(CustomMenuItem::new(
             "Copy on Select within the Terminal",
             move |ctx| {
-                ctx.dispatch_global_action("app:toggle_copy_on_select", &());
+                ctx.dispatch_global_action("app:toggle_copy_on_select", ());
             },
             move |_props, ctx| MenuItemPropertyChanges {
                 checked: Some(
@@ -392,7 +392,7 @@ fn make_new_view_menu(ctx: &AppContext) -> Menu {
         MenuItem::Custom(CustomMenuItem::new(
             "Toggle Mouse Reporting",
             move |ctx| {
-                ctx.dispatch_global_action("workspace:toggle_mouse_reporting", &());
+                ctx.dispatch_global_action("workspace:toggle_mouse_reporting", ());
             },
             move |_props, ctx| {
                 let mouse_reporting_enabled = AltScreenReporting::handle(ctx)
@@ -409,7 +409,7 @@ fn make_new_view_menu(ctx: &AppContext) -> Menu {
         MenuItem::Custom(CustomMenuItem::new(
             "Toggle Scroll Reporting",
             move |ctx| {
-                ctx.dispatch_global_action("workspace:toggle_scroll_reporting", &());
+                ctx.dispatch_global_action("workspace:toggle_scroll_reporting", ());
             },
             move |_props, ctx| {
                 let reporting = AltScreenReporting::handle(ctx).as_ref(ctx);
@@ -424,7 +424,7 @@ fn make_new_view_menu(ctx: &AppContext) -> Menu {
         MenuItem::Custom(CustomMenuItem::new(
             "Toggle Focus Reporting",
             move |ctx| {
-                ctx.dispatch_global_action("workspace:toggle_focus_reporting", &());
+                ctx.dispatch_global_action("workspace:toggle_focus_reporting", ());
             },
             move |_props, ctx| {
                 let reporting = AltScreenReporting::handle(ctx).as_ref(ctx);
@@ -854,7 +854,7 @@ fn debug_menu_items() -> Vec<MenuItem> {
 
         debug_menu_items.push(MenuItem::Custom(CustomMenuItem::new(
             "Manually Toggle Network Status",
-            move |ctx| ctx.dispatch_global_action("workspace:toggle_debug_network_status", &()),
+            move |ctx| ctx.dispatch_global_action("workspace:toggle_debug_network_status", ()),
             no_updates,
             None,
         )));
@@ -888,7 +888,7 @@ fn debug_menu_items() -> Vec<MenuItem> {
 
         debug_menu_items.push(MenuItem::Custom(CustomMenuItem::new(
             "Create anonymous user",
-            move |ctx| ctx.dispatch_global_action("workspace:debug_create_anonymous_user", &()),
+            move |ctx| ctx.dispatch_global_action("workspace:debug_create_anonymous_user", ()),
             no_updates,
             None,
         )));
@@ -919,7 +919,7 @@ fn feedback_menu_item() -> MenuItem {
             // Route through the root-view action so workspace windows can open the
             // guided AI flow, while non-workspace windows still fall back to the
             // browser-based feedback form.
-            ctx.dispatch_global_action("root_view:send_feedback", &());
+            ctx.dispatch_global_action("root_view:send_feedback", ());
         },
         no_updates,
         None,
@@ -954,7 +954,7 @@ fn make_launch_config_menu_items(ctx: &mut AppContext) -> Vec<MenuItem> {
                         open_in_active_window: false,
                     }
                 );
-                ctx.dispatch_global_action("workspace:save_app", &());
+                ctx.dispatch_global_action("workspace:save_app", ());
             }),
             no_updates,
             None,
@@ -1116,8 +1116,8 @@ fn open_new_agent_tab_or_window(ctx: &mut AppContext) {
 
 /// Dispatch event to open a new Rook window
 fn open_new_window(ctx: &mut AppContext) {
-    ctx.dispatch_global_action("root_view:open_new", &());
-    ctx.dispatch_global_action("workspace:save_app", &());
+    ctx.dispatch_global_action("root_view:open_new", ());
+    ctx.dispatch_global_action("workspace:save_app", ());
 }
 
 /// No-op updater function for custom menu items that never change.

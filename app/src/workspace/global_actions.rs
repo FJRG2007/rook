@@ -5,6 +5,7 @@ use rook_core::execution_mode::AppExecutionMode;
 use rook_errors::report_error;
 use rook_graphql::mutations::create_anonymous_user::AnonymousUserType;
 use rookui::windowing::WindowManager;
+use rookui::windowing::state::ApplicationStage;
 use rookui::{AppContext, SingletonEntity, TypedActionView};
 
 use crate::ai::agent::AIAgentExchangeId;
@@ -160,8 +161,25 @@ fn save_app(_: &(), ctx: &mut AppContext) {
         return;
     };
 
+    // Closing the last window tears the workspace down a tab at a time, and
+    // every one of those closes saves again. Nothing after that point describes
+    // a session anyone asked to keep, so the last write before the app exits
+    // has to be the one taken while it was still whole - see the two saves
+    // ahead of `terminate_app` in `app_callbacks`.
+    if ctx.windows().stage() == ApplicationStage::Terminating {
+        return;
+    }
+
     // Only compute the app state if we're definitely going to use it.
     let app_state = get_app_state(ctx);
+
+    // A snapshot with no windows is not a session, and `save_app_state`
+    // deletes before it inserts, so writing one leaves nothing on disk to
+    // restore. The drag above is one way to reach it; a window closing on the
+    // way out is the other, and that one shipped.
+    if app_state.windows.is_empty() {
+        return;
+    }
 
     // Autosave runs on a timer and window drags fire this on every frame, so
     // most calls carry a session identical to the one already on disk. Writing
@@ -273,3 +291,7 @@ fn summarize_ai_conversation(prompt: &Option<String>, ctx: &mut AppContext) {
 fn trigger_log_out(_: &(), ctx: &mut AppContext) {
     auth::log_out(ctx)
 }
+
+#[cfg(test)]
+#[path = "global_actions_tests.rs"]
+mod tests;

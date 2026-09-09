@@ -498,7 +498,7 @@ impl UriHost {
                 }
             }
             UriHost::Home => {
-                ctx.dispatch_global_action("root_view::open_new", &());
+                ctx.dispatch_global_action("root_view:open_new", ());
             }
             UriHost::Mcp => {
                 #[cfg(not(target_family = "wasm"))]
@@ -1536,7 +1536,7 @@ fn open_window_with_action(active_window_id: Option<WindowId>, action: &str, ctx
         log::warn!("no primary window id to dispatch action to");
 
         // Open a new window and dispatch action there
-        ctx.dispatch_global_action("root_view:open_new", &());
+        ctx.dispatch_global_action("root_view:open_new", ());
         // TODO: Note we cannot just dispatch here as it will be a no-op.
         // Need to send a callback once window is fully open.
     }

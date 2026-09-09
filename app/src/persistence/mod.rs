@@ -275,7 +275,7 @@ impl PersistenceWriter {
                 Timer::after(AUTOSAVE_INTERVAL).await;
             },
             |me, _, ctx| {
-                ctx.dispatch_global_action("workspace:save_app", &());
+                ctx.dispatch_global_action("workspace:save_app", ());
                 me.start_autosaving(ctx);
             },
         );

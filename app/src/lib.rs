@@ -2677,7 +2677,7 @@ pub(crate) fn app_callbacks(
                         *enabled_from,
                         voice_input::VoiceInputToggledFrom::Key { .. }
                     ) {
-                        ctx.dispatch_global_action("root_view:abort_voice_input", &());
+                        ctx.dispatch_global_action("root_view:abort_voice_input", ());
                     }
                 }
             }
@@ -2696,18 +2696,11 @@ pub(crate) fn app_callbacks(
                 manager.close_notebooks(ctx);
             });
 
-            // Snapshot the session before the writer stops. Nothing else here does:
-            // `save_app` is driven by window move, resize, focus change and close, and
-            // the close handler returns early once the app is Terminating. Opening,
-            // closing, renaming and reordering tabs write nothing on their own, so
-            // without this the restored session is whatever the window layout happened
-            // to be the last time a window was moved or focused, which is why tabs came
-            // back missing or stale after a shutdown.
-            //
-            // This is dispatched rather than queued: global actions run their handlers
-            // inline, so the snapshot is on the writer's channel before `terminate`
-            // sends the event that stops it, and `terminate` joins the thread.
-            ctx.dispatch_global_action("workspace:save_app", &());
+            // No snapshot here. By the time this runs the windows are gone and
+            // the workspace has been taken apart, so what it would capture is the
+            // teardown rather than the session. The saves that matter happen
+            // earlier, in `on_should_terminate_app` and `on_should_close_window`,
+            // while everything is still open.
 
             PersistenceWriter::handle(ctx).update(ctx, |writer, _ctx| {
                 writer.terminate();
@@ -2772,6 +2765,10 @@ pub(crate) fn app_callbacks(
                     || *general_settings.quit_on_last_window_closed;
             if ctx.window_ids().count() == 1 && quit_on_last_window_closed {
                 log::info!("No windows left, terminating app");
+                // The last moment the session is intact: termination closes the
+                // tabs one by one, and `save_app` stops writing once the app is
+                // Terminating, so this is what gets restored.
+                ctx.dispatch_global_action("workspace:save_app", ());
                 ctx.terminate_app(TerminationMode::Cancellable, None);
                 return ApproveTerminateResult::Cancel;
             }
@@ -2810,6 +2807,11 @@ pub(crate) fn app_callbacks(
             }
         })),
         on_should_terminate_app: Some(Box::new(move |source, ctx| {
+            // Before anything else, and for every source: a logout, a restart or
+            // an OS shutdown arrives here with the workspace still whole, and
+            // everything past this point is teardown.
+            ctx.dispatch_global_action("workspace:save_app", ());
+
             // Never interrupt a system-initiated termination (logout / restart /
             // scheduled OS update): both cancel paths below return
             // `ApproveTerminateResult::Cancel`, which macOS interprets as Rook
@@ -2902,8 +2904,8 @@ pub(crate) fn app_callbacks(
             // e.g. clicking on the Dock icon. It is NOT called from the New Window
             // menu item.
             App::record_last_active_timestamp();
-            ctx.dispatch_global_action("root_view:open_new", &());
-            ctx.dispatch_global_action("workspace:save_app", &());
+            ctx.dispatch_global_action("root_view:open_new", ());
+            ctx.dispatch_global_action("workspace:save_app", ());
         })),
         on_open_urls: Some(Box::new(move |urls, ctx| {
             for url in &urls {
@@ -2938,7 +2940,7 @@ pub(crate) fn app_callbacks(
                 });
             }
 
-            ctx.dispatch_global_action("workspace:save_app", &());
+            ctx.dispatch_global_action("workspace:save_app", ());
         })),
         on_window_will_close: Some(Box::new(move |closed_window_data, ctx| {
             if ctx.windows().stage() == ApplicationStage::Terminating {
@@ -2950,13 +2952,13 @@ pub(crate) fn app_callbacks(
                     stack.handle_window_closed(window_data, ctx);
                 });
             }
-            ctx.dispatch_global_action("workspace:save_app", &());
+            ctx.dispatch_global_action("workspace:save_app", ());
         })),
         on_window_moved: Some(Box::new(move |ctx| {
-            ctx.dispatch_global_action("workspace:save_app", &());
+            ctx.dispatch_global_action("workspace:save_app", ());
         })),
         on_window_resized: Some(Box::new(move |ctx| {
-            ctx.dispatch_global_action("workspace:save_app", &());
+            ctx.dispatch_global_action("workspace:save_app", ());
         })),
         ..Default::default()
     }
@@ -3136,7 +3138,7 @@ fn launch(ctx: &mut rookui::AppContext, app_state: Option<AppState>, launch_mode
             // If, after session restoration and command-line argument handling, we
             // haven't opened any windows, open a new window.
             if ctx.window_ids().count() == 0 {
-                ctx.dispatch_global_action("root_view:open_new", &());
+                ctx.dispatch_global_action("root_view:open_new", ());
             }
 
             IntervalTimer::handle(ctx).update(ctx, |timer, _| {
