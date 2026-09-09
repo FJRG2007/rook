@@ -119,19 +119,30 @@ jobs:
             fi
           }
 
-          # A cargo subcommand, which is NOT the same question. Cargo finds its
-          # subcommands in $CARGO_HOME/bin itself, without consulting PATH, so
-          # `cargo about` runs happily on the Windows runner where the binary sits
-          # in C:\cargo\bin and nothing puts that directory on PATH. Asking PATH
-          # about it reports a tool missing that is installed and working - which is
-          # exactly what this check did on its first run, failing the one platform
-          # that had been building fine. Ask cargo, the way the bundle scripts do.
-          subcommands=$(cargo --list 2>/dev/null | awk '{print $1}')
+          # A cargo subcommand, which is NOT the same question. Cargo runs one by
+          # finding `cargo-<name>` in $CARGO_HOME/bin as well as on PATH, so on the
+          # Windows runner `cargo about` works with the binary in C:\cargo\bin and
+          # nothing putting that directory on PATH. Asking PATH alone reported a
+          # tool that was installed and working as missing, and failed the one
+          # platform that had been building fine.
+          #
+          # `cargo --list` was the second attempt and was worse: it came back
+          # without `about` on all three runners, including the Linux one that had
+          # just installed it to ~/.cargo/bin and generated the licence file with
+          # it minutes earlier. Whatever that output depends on, this does not need
+          # it - look where cargo looks.
           require_cargo() {
-            if ! echo "$subcommands" | grep -qx "$1"; then
-              echo "::error::missing packaging tool: cargo $1 - $2"
-              missing=1
+            home="${CARGO_HOME:-$HOME/.cargo}"
+            # Windows spells $CARGO_HOME with backslashes and this runs in bash.
+            home="${home//\\//}"
+            if command -v "cargo-$1" >/dev/null 2>&1 \
+              || [ -x "$home/bin/cargo-$1" ] \
+              || [ -x "$home/bin/cargo-$1.exe" ]; then
+              return
             fi
+            echo "::error::missing packaging tool: cargo $1 - $2"
+            echo "::error::not on PATH as cargo-$1, and not in $home/bin"
+            missing=1
           }
 
           case "${{ matrix.os }}" in
