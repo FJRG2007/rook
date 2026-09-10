@@ -16334,26 +16334,6 @@ impl TerminalView {
     pub fn is_login_shell_bootstrapped(&self) -> bool {
         self.is_login_shell_bootstrapped
     }
-
-    /// Whether the shell ended because it was asked to: `exit` or `logout`
-    /// typed at the prompt, or Rook shutting the pty down itself. Anything
-    /// else ended under the user - a crash, or the OS killing the process.
-    ///
-    /// Read after the shell has gone. The block that was running when it went
-    /// keeps its command, so an `exit` is still there to be seen.
-    pub fn shell_exit_was_requested(&self, ctx: &AppContext) -> bool {
-        if self.manual_pty_shutdown_requested {
-            return true;
-        }
-        self.model
-            .lock()
-            .block_list()
-            .active_block()
-            .top_level_command(self.sessions.as_ref(ctx))
-            .is_some_and(|command| {
-                command.eq_ignore_ascii_case("exit") || command.eq_ignore_ascii_case("logout")
-            })
-    }
     pub fn has_pending_command_or_awaiting_completion(&self, ctx: &AppContext) -> bool {
         self.awaiting_pending_command_completion
             || !self.pending_command_queue.is_empty()

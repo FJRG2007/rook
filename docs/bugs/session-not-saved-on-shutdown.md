@@ -109,30 +109,66 @@ already carried causes 1 to 3 fixed, after a Windows Update restart:
 03:21:59Z No windows left, terminating app
 ```
 
-Five shells ended in the same second, at an idle prompt, with no key pressed.
-Ending a session, Windows kills the console processes it can reach - every
-shell inside a Rook tab - and gets to the window itself much later: 95
-seconds here. `terminal_pane.rs` closed a pane whenever its shell exited, so
-each tab was removed as its shell died. The autosave then did its job and
-wrote, every 15 seconds, a session with one tab in it.
+Five shells ended in the same second, at an idle prompt, with no key pressed,
+and nothing happened to the window until the last shell died 95 seconds later
+and took the last tab with it. `terminal_pane.rs` closed a pane whenever its
+shell exited, so each tab was removed as its shell died. The autosave then did
+its job and wrote, every 15 seconds, a session with one tab in it.
 
 Nothing was lost in the write. The workspace had genuinely been reduced to
 one tab by the time anything was saved, which is why the cure was never
 going to be another save path.
 
-The exit reason does not tell the two apart - the local event loop reports
-`ShellProcessExited` whether the shell was killed or told to `exit` - and the
-exit code is not carried as far as the pane. What the pane can see is the
-command the shell was running when it went: an idle prompt, in every one of
-these. A pane now closes on a shell exit only when that exit was asked for -
-`exit` or `logout` at the prompt, or Rook shutting the pty down itself - and
-otherwise stays under the "process terminated" banner it was already shown,
-the same treatment a shell that dies before bootstrapping has always had.
-Kept, the tab is in the snapshot and restores with a fresh shell in its
-directory.
+### Why the shells went first
 
-`app/src/terminal/view.rs` (`shell_exit_was_requested`),
+Csrss ends a session one process at a time, in descending order of shutdown
+level (*Windows Internals*, "Shutdown"). A GUI process is sent
+`WM_QUERYENDSESSION` and `WM_ENDSESSION`; a console process gets
+`CTRL_LOGOFF_EVENT`. Every process starts at level 0x280, so Rook and the
+shells in its tabs were in no particular order. `conhost` opts out entirely
+(level 0) and exits with its clients.
+
+Rook would not have noticed its turn anyway. Winit does not handle
+`WM_QUERYENDSESSION` or `WM_ENDSESSION`, and `TerminationRequestSource::System`
+was only ever produced on macOS; on Windows the default window procedure
+approved the shutdown and nothing reached the app.
+
+### The fix
+
+What Windows Terminal does - `WindowEmperor.cpp` handles both messages on a
+hidden top-level window - plus a place in the shutdown order:
+
+- At startup Rook calls `SetProcessShutdownParameters(0x300, 0)`, the bottom
+  of the range reserved for applications that go first. Csrss now reaches
+  Rook before any shell.
+- Each window is subclassed (`SetWindowSubclass`) for the two messages winit
+  drops. `WM_QUERYENDSESSION` sets a process-wide flag,
+  `rookui::windowing::is_os_session_ending()`, and approves;
+  `WM_ENDSESSION` with `FALSE` - another application refused - clears it.
+  `WM_ENDSESSION` with `TRUE` posts `CustomEvent::SessionEnded`, which the
+  event loop turns into `should_terminate_app(TerminationRequestSource::System)`:
+  the path a macOS logout already takes, which saves the session and never
+  cancels.
+- While the flag is set, a shell exit does not close its pane. Outside it,
+  `exit`, `Ctrl+D` and a crashed shell close the tab exactly as upstream does.
+
+Windows may end the process as soon as `WM_ENDSESSION` returns, so the posted
+event is a courtesy: Rook saves once more and stops the writer cleanly if it
+gets the time. The fix does not depend on it. The shells are still alive when
+Rook is reached, no tab has closed, and the autosave already holds all of them.
+
+`crates/rookui/src/windowing/winit/windows/session_end.rs`,
+`crates/rookui_core/src/windowing/session.rs`,
 `app/src/pane_group/pane/terminal_pane.rs`.
+
+### The first attempt at this cause
+
+Before the ordering was understood, a pane was kept whenever its shell exited
+without `exit` or `logout` at the prompt. That covered the shutdown but read
+the wrong signal: `Ctrl+D` sends no command, so on bash, zsh and fish it left
+the tab open behind a "process terminated" banner, as did any shell that
+crashed or was ended by a script. It was replaced by the flag above, which
+changes nothing outside a session that is actually ending.
 
 ## Fix
 
@@ -162,11 +198,9 @@ happen here rather than being hypothetical.
 
 Anything changed in the last 15 seconds before an abrupt stop is still lost.
 
-A shell that exits on its own for any other reason - it crashes, or a
-program ends it - now leaves its tab open with the banner rather than
-closing it. That is deliberate: there is no way to tell that apart from the
-OS killing it, and a tab left open is one keystroke to close, where a tab
-closed on a shutdown was gone.
+A shutdown that skips the messages - a forced one, or power lost - still
+kills the shells and Rook together. Whatever the last autosave held is what
+comes back; a tab closed in the second between them is not.
 
 A text scan cannot tell the two dispatch methods apart, so there is no test
 for the argument shape; the `debug_assert!` in `add_global_action` is the

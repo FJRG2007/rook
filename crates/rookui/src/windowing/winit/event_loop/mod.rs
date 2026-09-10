@@ -580,6 +580,9 @@ impl EventLoop {
                 }
 
                 #[cfg(windows)]
+                super::windows::watch_session_end(self.proxy.clone());
+
+                #[cfg(windows)]
                 match add_network_connection_listener(self.proxy.clone()) {
                     Ok(listener) => {
                         self.state.network_connection_listener = Some(listener);
@@ -638,6 +641,19 @@ impl EventLoop {
             Event::UserEvent(CustomEvent::Terminate(termination_mode)) => {
                 if let ApproveTerminateResult::Terminate =
                     self.terminate_app_requested(termination_mode)
+                {
+                    window_target.exit();
+                }
+            }
+            Event::UserEvent(CustomEvent::SessionEnded) => {
+                // Sent once per window, and the first one may already have ended the loop.
+                if window_target.exiting() {
+                    return;
+                }
+                // The same request a macOS logout makes: the app saves the session and never
+                // cancels a termination the OS started.
+                if let ApproveTerminateResult::Terminate =
+                    self.callbacks.should_terminate_app(TerminationRequestSource::System)
                 {
                     window_target.exit();
                 }
@@ -1515,7 +1531,8 @@ impl EventLoop {
         }
 
         // Winit doesn't tell us why termination was requested, so assume the
-        // user asked (system-initiated shutdown detection is macOS-only for now).
+        // user asked. On Windows the OS ending the session arrives separately,
+        // as `CustomEvent::SessionEnded`.
         let approve_terminate_result = self
             .callbacks
             .should_terminate_app(TerminationRequestSource::User);

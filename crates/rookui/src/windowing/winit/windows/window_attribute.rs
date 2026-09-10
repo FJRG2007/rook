@@ -62,7 +62,7 @@ pub fn set_window_attribute<T>(
     Ok(window_attribute_result?)
 }
 
-fn to_hwnd(window: &WinitWindow) -> Result<HWND, rwh::HandleError> {
+pub(super) fn to_hwnd(window: &WinitWindow) -> Result<HWND, rwh::HandleError> {
     window
         .window_handle()
         .and_then(|handle| match handle.as_raw() {

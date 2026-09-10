@@ -30,6 +30,10 @@ pub enum CustomEvent {
     RunTask(ManuallyDrop<async_task::Runnable>),
     /// Exit the event loop, terminating the application.
     Terminate(TerminationMode),
+    /// The OS is ending the session - a logout, a restart or a shutdown - and has told the
+    /// application it may quit. Winit does not report this; see `windows::session_end`.
+    #[cfg_attr(not(target_os = "windows"), allow(dead_code))]
+    SessionEnded,
     /// Close the specified window.
     CloseWindow {
         window_id: crate::WindowId,

@@ -1481,6 +1481,7 @@ fn create_window(
 
             window.set_visible(true);
             window.set_ime_allowed(true);
+            super::windows::subclass_for_session_end(window);
 
             // When launching a window from windows file explorer, it isn't given focus. We're considering
             // this a winit quirk and forcing it to be focused.

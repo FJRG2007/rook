@@ -1,3 +1,4 @@
+mod session;
 pub mod state;
 
 mod system;
@@ -5,6 +6,7 @@ mod system;
 use std::rc::Rc;
 
 use pathfinder_geometry::rect::RectF;
+pub use session::{is_os_session_ending, set_os_session_ending};
 pub use state::{State, StateEvent, WindowManager};
 pub use system::{CreateWindowingSystemError, System};
 
