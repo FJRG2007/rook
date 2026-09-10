@@ -38,7 +38,10 @@ download_appimage() {
   else
     APPIMAGE_RELEASE_URL="$REPO_URL/releases/download/$VERSION/$APPIMAGE_NAME"
     echo "⬇️ Downloading $APPIMAGE_RELEASE_URL..."
-    curl -fL "$APPIMAGE_RELEASE_URL" --output "$APPIMAGE_PATH"
+    # A reset connection from the release CDN ("Recv failure: Connection reset
+    # by peer", curl exit 35) failed a release build outright; retry it.
+    curl -fL --retry 5 --retry-all-errors --retry-delay 5 \
+      "$APPIMAGE_RELEASE_URL" --output "$APPIMAGE_PATH"
     chmod +x "$APPIMAGE_PATH"
   fi
 
