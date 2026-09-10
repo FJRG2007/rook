@@ -929,6 +929,23 @@ fn handle_terminal_view_event(
                     return;
                 }
 
+                // A shell that ended without being asked to keeps its pane too,
+                // under the banner it has already been given. What this is for
+                // is the OS ending the session: it kills every console process
+                // it can reach, well before it gets round to the window, and
+                // closing each tab as its shell died erased them from the saved
+                // session one at a time - a restart brought back only whichever
+                // tab happened to be left. Kept, they restore with a fresh shell
+                // in the same directory. Typing `exit` still closes the tab.
+                if group
+                    .terminal_view_from_pane_id(terminal_pane_id, ctx)
+                    .is_some_and(|terminal_view| {
+                        !terminal_view.as_ref(ctx).shell_exit_was_requested(ctx)
+                    })
+                {
+                    return;
+                }
+
                 group.close_pane(pane_id, ctx);
             }
             Event::CloseRequested => {
