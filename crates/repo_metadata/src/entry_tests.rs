@@ -433,6 +433,61 @@ fn should_watch_descends_dir_only_reinclude_negation() {
 }
 
 #[test]
+fn unknown_kind_is_settled_by_the_patterns_unless_they_need_it() {
+    let temp_dir = tempfile::tempdir().unwrap();
+    let root = dunce::canonicalize(temp_dir.path()).unwrap();
+    let gitignores = vec![gitignore_rooted(&root, "target/\n*.log\nbuild/\n")];
+    // Asking would stat the path on the main thread, once per watcher event.
+    let never = || -> bool { panic!("the answer here does not depend on the path's kind") };
+
+    // Inside an ignored directory, whether or not the file still exists.
+    assert!(super::matches_gitignores_of_unknown_kind(
+        &root.join("target/debug/deps/librook.rmeta"),
+        &gitignores,
+        true,
+        never,
+    ));
+    // A pattern that matches files and directories alike.
+    assert!(super::matches_gitignores_of_unknown_kind(
+        &root.join("server.log"),
+        &gitignores,
+        true,
+        never,
+    ));
+    // Nothing matches it either way.
+    assert!(!super::matches_gitignores_of_unknown_kind(
+        &root.join("src/main.rs"),
+        &gitignores,
+        true,
+        never,
+    ));
+
+    // `build/` ignores a directory called build, not a file: only here does
+    // the kind decide, and only here is it asked for.
+    let asked = std::cell::Cell::new(0);
+    let is_dir = |answer: bool| {
+        let asked = &asked;
+        move || {
+            asked.set(asked.get() + 1);
+            answer
+        }
+    };
+    assert!(super::matches_gitignores_of_unknown_kind(
+        &root.join("build"),
+        &gitignores,
+        true,
+        is_dir(true),
+    ));
+    assert!(!super::matches_gitignores_of_unknown_kind(
+        &root.join("build"),
+        &gitignores,
+        true,
+        is_dir(false),
+    ));
+    assert_eq!(asked.get(), 2);
+}
+
+#[test]
 fn should_watch_preserves_git_internal_allowlist() {
     // No gitignores / force-included paths needed: `.git` handling is
     // path-based, mirroring `should_watch_directory_in_git_path`.

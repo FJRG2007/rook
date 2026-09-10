@@ -791,6 +791,31 @@ pub fn matches_gitignores(
     })
 }
 
+/// [`matches_gitignores`] for a path whose kind is not known yet, asking `is_dir`
+/// only when the answer depends on it.
+///
+/// Parents are always matched as directories; the path's own kind matters only
+/// to a directory-only pattern (`node_modules/`) naming the path itself, which
+/// is what makes the two answers below differ. Everything else - a file deep
+/// inside `target/`, an unignored source file - is settled by the patterns
+/// alone, so `is_dir` is never called for it.
+pub fn matches_gitignores_of_unknown_kind(
+    path: &Path,
+    gitignores: &[Arc<Gitignore>],
+    check_ancestors: bool,
+    is_dir: impl FnOnce() -> bool,
+) -> bool {
+    let as_file = matches_gitignores(path, false, gitignores, check_ancestors);
+    let as_dir = matches_gitignores(path, true, gitignores, check_ancestors);
+    if as_file == as_dir {
+        as_file
+    } else if is_dir() {
+        as_dir
+    } else {
+        as_file
+    }
+}
+
 /// Returns the path components after `.git` in a git-internal path,
 /// skipping the worktree indirection (`.git/worktrees/<name>/…`) if present.
 /// Returns `None` if the path has no `.git` component or nothing follows it.

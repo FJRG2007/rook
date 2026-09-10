@@ -21,7 +21,7 @@ use crate::watcher::TaskQueue;
 use crate::{RepoMetadataError, RepositoryUpdate};
 #[cfg(feature = "local_fs")]
 use crate::{
-    entry::{matches_gitignores, should_ignore_git_path},
+    entry::{matches_gitignores_of_unknown_kind, should_ignore_git_path},
     gitignores_for_directory,
 };
 
@@ -557,6 +557,13 @@ impl Repository {
     }
 
     /// Checks if a path is gitignored within this repository.
+    ///
+    /// The watcher calls this on the main thread for every path in every
+    /// filesystem event. It used to stat each one to learn whether it was a
+    /// directory: a worktree being created, a checkout or a `cargo check`
+    /// delivers hundreds of thousands of paths at once, and that stalled the
+    /// window for minutes. The stat is now made only when a pattern's answer
+    /// depends on it.
     #[cfg(feature = "local_fs")]
     pub fn check_gitignore_status(&self, path: &Path) -> bool {
         // Check if path is a .git internal file
@@ -564,9 +571,7 @@ impl Repository {
             return true;
         }
 
-        // Check if path matches gitignore patterns
-        let is_dir = path.is_dir();
-        matches_gitignores(path, is_dir, &self.gitignores, true)
+        matches_gitignores_of_unknown_kind(path, &self.gitignores, true, || path.is_dir())
     }
 }
 

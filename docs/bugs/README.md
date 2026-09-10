@@ -12,6 +12,7 @@ Every entry records the measurement the diagnosis rests on, because the point of
 | [A pane retains every block it ever made](panes-retain-every-block.md) | Gets worse the longer it runs, worse still with more panes and more agent output | Fixed |
 | [The CLI-agent plugin makes everything slower](cli-agent-plugin-hooks-are-slow.md) | Every tool call, prompt and turn pauses once the Claude Code plugin is installed | Fixed |
 | [A finished block keeps its output in dense cell storage](finished-blocks-keep-dense-cell-storage.md) | Memory far above what the visible text accounts for, growing with everything ever printed | Fixed |
+| [The window stops responding while another program writes many files](main-thread-stalls-on-file-floods.md) | "Not responding" for 20 s to 3 min while a build, checkout or worktree fills a repository open in a tab: one stat per new file, on the UI thread | Fixed |
 
 ## Writing one of these
 
