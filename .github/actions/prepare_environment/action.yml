@@ -202,17 +202,36 @@ runs:
       id: install_protoc
       # Install protoc for generating rust bindings of protobuf APIs.
       uses: ConorMacBride/install-package@3e7ad059e07782ee54fa35f827df52aae0626f30 # v1
-      # Don't fail the job here so the Windows (winget) and macOS (brew) fallbacks
+      # Don't fail the job here so the Windows (release download) and macOS (brew) fallbacks
       # below have a chance to run.
       continue-on-error: true
       with:
         brew: protobuf
         choco: protoc
 
-    - name: Install protoc via winget (fallback for Windows)
-      if: ${{ inputs.target_os == 'windows' && steps.install_protoc.outcome == 'failure' }}
+    - name: Install protoc from the protobuf release (fallback for Windows)
+      # Chocolatey exits 0 when its feed times out - "installed 0/0 packages" -
+      # so the step above reads as a success with no protoc installed, and a 504
+      # from community.chocolatey.org failed every Windows job at the first
+      # build script that needs it. Check for the binary itself, and fetch the
+      # same version from the protobuf release, verified against its digest.
+      if: ${{ inputs.target_os == 'windows' }}
       shell: pwsh
-      run: winget install Google.Protobuf
+      env:
+        PROTOC_VERSION: "36.1"
+        PROTOC_SHA256: 390e515cb456e6a978553bdb57baf087b054885077fd6da7f7ff0160279c07d6
+      run: |
+        if (Get-Command protoc -ErrorAction SilentlyContinue) { exit 0 }
+        $zip = Join-Path $env:RUNNER_TEMP "protoc.zip"
+        $dir = Join-Path $env:RUNNER_TEMP "protoc"
+        $url = "https://github.com/protocolbuffers/protobuf/releases/download/v$env:PROTOC_VERSION/protoc-$env:PROTOC_VERSION-win64.zip"
+        Invoke-WebRequest -Uri $url -OutFile $zip
+        if ((Get-FileHash $zip -Algorithm SHA256).Hash -ne $env:PROTOC_SHA256) {
+          throw "protoc-$env:PROTOC_VERSION-win64.zip does not match its published digest"
+        }
+        Expand-Archive $zip -DestinationPath $dir -Force
+        Add-Content $env:GITHUB_PATH (Join-Path $dir "bin")
+        & (Join-Path $dir "bin\protoc.exe") --version
 
     - name: Install protoc via brew without index update (fallback for macOS)
       if: ${{ inputs.target_os == 'macos' && steps.install_protoc.outcome == 'failure' }}

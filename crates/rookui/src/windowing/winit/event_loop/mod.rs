@@ -652,8 +652,9 @@ impl EventLoop {
                 }
                 // The same request a macOS logout makes: the app saves the session and never
                 // cancels a termination the OS started.
-                if let ApproveTerminateResult::Terminate =
-                    self.callbacks.should_terminate_app(TerminationRequestSource::System)
+                if let ApproveTerminateResult::Terminate = self
+                    .callbacks
+                    .should_terminate_app(TerminationRequestSource::System)
                 {
                     window_target.exit();
                 }

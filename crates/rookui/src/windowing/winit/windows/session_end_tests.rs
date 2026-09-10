@@ -14,7 +14,11 @@ fn send(msg: u32, wparam: usize) -> LRESULT {
 fn session_end_is_flagged_until_a_shutdown_is_cancelled() {
     set_os_session_ending(false);
 
-    assert_eq!(send(WM_QUERYENDSESSION, 0), LRESULT(1), "never block the shutdown");
+    assert_eq!(
+        send(WM_QUERYENDSESSION, 0),
+        LRESULT(1),
+        "never block the shutdown"
+    );
     assert!(is_os_session_ending());
 
     // Another application refused: the session goes on, and so do exits.

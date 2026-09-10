@@ -94,7 +94,7 @@ unsafe extern "system" fn session_end_proc(
         WM_NCDESTROY => unsafe {
             let _ = RemoveWindowSubclass(hwnd, Some(session_end_proc), SUBCLASS_ID);
             DefSubclassProc(hwnd, msg, wparam, lparam)
-        }
+        },
         _ => unsafe { DefSubclassProc(hwnd, msg, wparam, lparam) },
     }
 }
