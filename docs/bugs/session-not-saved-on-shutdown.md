@@ -95,6 +95,45 @@ disk is whatever the teardown had reached. `save_app_state` deletes before it
 inserts, so a snapshot with no windows at all does not fail - it leaves
 nothing to restore.
 
+## Cause 4: the OS kills the shells first, and each dead shell closed its tab
+
+This is the one that survives every fix above, and the reason the symptom was
+"exactly one tab comes back" rather than "a few". Found on the build that
+already carried causes 1 to 3 fixed, after a Windows Update restart:
+
+```
+03:20:24Z Block finished with new state DoneWithNoExecution   (x5)
+03:20:24Z storing data for closed tab                         (x5)
+03:20:36Z dispatching global action for workspace:save_app    (every 15s)
+...
+03:21:59Z No windows left, terminating app
+```
+
+Five shells ended in the same second, at an idle prompt, with no key pressed.
+Ending a session, Windows kills the console processes it can reach - every
+shell inside a Rook tab - and gets to the window itself much later: 95
+seconds here. `terminal_pane.rs` closed a pane whenever its shell exited, so
+each tab was removed as its shell died. The autosave then did its job and
+wrote, every 15 seconds, a session with one tab in it.
+
+Nothing was lost in the write. The workspace had genuinely been reduced to
+one tab by the time anything was saved, which is why the cure was never
+going to be another save path.
+
+The exit reason does not tell the two apart - the local event loop reports
+`ShellProcessExited` whether the shell was killed or told to `exit` - and the
+exit code is not carried as far as the pane. What the pane can see is the
+command the shell was running when it went: an idle prompt, in every one of
+these. A pane now closes on a shell exit only when that exit was asked for -
+`exit` or `logout` at the prompt, or Rook shutting the pty down itself - and
+otherwise stays under the "process terminated" banner it was already shown,
+the same treatment a shell that dies before bootstrapping has always had.
+Kept, the tab is in the snapshot and restores with a fresh shell in its
+directory.
+
+`app/src/terminal/view.rs` (`shell_exit_was_requested`),
+`app/src/pane_group/pane/terminal_pane.rs`.
+
 ## Fix
 
 - The autosave dispatches `()` through the by-value method.
@@ -122,6 +161,12 @@ happen here rather than being hypothetical.
 ## What this does not cover
 
 Anything changed in the last 15 seconds before an abrupt stop is still lost.
+
+A shell that exits on its own for any other reason - it crashes, or a
+program ends it - now leaves its tab open with the banner rather than
+closing it. That is deliberate: there is no way to tell that apart from the
+OS killing it, and a tab left open is one keystroke to close, where a tab
+closed on a shutdown was gone.
 
 A text scan cannot tell the two dispatch methods apart, so there is no test
 for the argument shape; the `debug_assert!` in `add_global_action` is the
