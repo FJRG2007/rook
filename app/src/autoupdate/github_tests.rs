@@ -31,7 +31,10 @@ fn no_part_of_a_tag_is_rewritten() {
 #[test]
 fn every_release_is_announced_prominently() {
     let tag = "v0.2026.09.10.13.50.oss_00";
-    assert_eq!(version_from_tag(tag).last_prominent_update.as_deref(), Some(tag));
+    assert_eq!(
+        version_from_tag(tag).last_prominent_update.as_deref(),
+        Some(tag)
+    );
 }
 
 /// The regression the ordering exists for: an installed build ahead of the
