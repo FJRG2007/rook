@@ -967,6 +967,12 @@ fn test_force_refresh_correctly_resets_timestamp() {
                 })
             });
 
+        // The refresh can complete no earlier than this, so the next one is due
+        // no earlier than MIN minutes after it. Measured from the check below
+        // instead, a draw of exactly MIN minutes - one in 720 - is already
+        // short by however long the load took, and the test failed.
+        let before_refresh = Utc::now();
+
         // Initialize app with pending refresh = true!
         initialize_app(&mut app, Vec::new(), Arc::new(cloud_object_server_api_mock));
 
@@ -983,7 +989,7 @@ fn test_force_refresh_correctly_resets_timestamp() {
                     + chrono::Duration::minutes(MAX_MINUTES_UNTIL_NEXT_FORCE_REFRESH))
             );
             assert!(
-                time >= (Utc::now()
+                time >= (before_refresh
                     + chrono::Duration::minutes(MIN_MINUTES_UNTIL_NEXT_FORCE_REFRESH))
             );
         });
