@@ -25,6 +25,15 @@ fn no_part_of_a_tag_is_rewritten() {
     }
 }
 
+/// The tab bar shows the "Update Rook" pill only for an update at or before
+/// `last_prominent_update`; left empty, a downloaded update was reachable from
+/// the avatar menu alone.
+#[test]
+fn every_release_is_announced_prominently() {
+    let tag = "v0.2026.09.10.13.50.oss_00";
+    assert_eq!(version_from_tag(tag).last_prominent_update.as_deref(), Some(tag));
+}
+
 /// The regression the ordering exists for: an installed build ahead of the
 /// published release used to be offered that older release forever, because
 /// `ParsedVersion` cannot read a semver tag and the caller reads a parse failure

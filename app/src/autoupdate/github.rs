@@ -45,8 +45,17 @@ const FETCH_TIMEOUT: Duration = Duration::from_secs(10);
 /// build of that very tag, and the result was a permanent notice offering an
 /// update this fork does not install. Ordering the two when they differ is
 /// [`compare_release_tags`].
+///
+/// Every release is also its own `last_prominent_update`. Upstream's channel
+/// server sets that field on the releases it wants announced, and it is what
+/// shows the "Update Rook" pill in the tab bar; without it a downloaded update
+/// only earns a red dot on the avatar and an entry in its menu. GitHub has no
+/// such field, so nothing was ever prominent, and a ready update was easy to
+/// miss next to Warp showing the button for the same kind of release.
 fn version_from_tag(tag: &str) -> VersionInfo {
-    VersionInfo::new(tag.to_owned())
+    let mut version = VersionInfo::new(tag.to_owned());
+    version.last_prominent_update = Some(tag.to_owned());
+    version
 }
 
 /// Orders two release tags, or `None` if either is not a version this
