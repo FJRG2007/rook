@@ -186,19 +186,6 @@ jobs:
             -ARCH x64 `
             -RELEASE_TAG ${{ steps.tag.outputs.value }}
 
-      # The symbols of the exact binary in the installer. Every release built
-      # them and threw them away, so a stack captured from a hang on a user's
-      # machine came back as bare offsets into rook-oss.exe. Kept as a workflow
-      # artifact, not a release asset: nobody installing Rook needs them.
-      - name: Keep the Windows symbols
-        if: matrix.os == 'windows'
-        uses: actions/upload-artifact@v7
-        with:
-          name: rook-oss-pdb-${{ steps.tag.outputs.value }}
-          path: ${{ steps.bundle_windows.outputs.pdb_file_path }}
-          if-no-files-found: error
-          retention-days: 90
-
       - name: Build disk image (macOS)
         if: matrix.os == 'macos'
         shell: bash
@@ -252,3 +239,25 @@ jobs:
           files: ${{ steps.artifacts.outputs.path }}
           fail_on_unmatched_files: true
           generate_release_notes: true
+
+      # The symbols of the exact binary in the installer. Every release built
+      # them and threw them away, so a stack captured from a hang on a user's
+      # machine came back as bare offsets into rook-oss.exe. Kept as a workflow
+      # artifact, not a release asset: nobody installing Rook needs them.
+      #
+      # After the publish step and unable to fail the job, because the first
+      # version of this step ran before it with a wrong file name and kept the
+      # installer it had just built out of the release.
+      - name: Keep the Windows symbols
+        if: matrix.os == 'windows'
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
+        with:
+          name: rook-oss-pdb-${{ steps.tag.outputs.value }}
+          # The glob catches the PDB if bundle.ps1's idea of its name drifts
+          # from the linker's again.
+          path: |
+            ${{ steps.bundle_windows.outputs.pdb_file_path }}
+            target/x86_64-pc-windows-msvc/rlto/*.pdb
+          if-no-files-found: warn
+          retention-days: 90

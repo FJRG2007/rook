@@ -223,14 +223,12 @@ $BUNDLE_ID = "dev.rook.$APP_NAME"
 $INSTALLER_OUTPUT_DIR = "$WINDOWS_INSTALLER_DIR\Output"
 $INSTALLER_NAME = "$($APP_NAME)$($FILE_ENDING)"
 $INSTALLER_PATH = "$($INSTALLER_OUTPUT_DIR)\$($INSTALLER_NAME).exe"
-$PDB_BASENAME = if ($IS_TUI) {
-    # rustc normalizes hyphens to underscores in crate names, and MSVC uses
-    # that normalized crate name for the PDB even though Cargo exposes the
-    # executable under its original hyphenated target name.
-    $ROOK_BIN.Replace('-', '_')
-} else {
-    $ROOK_BIN
-}
+# rustc normalizes hyphens to underscores in crate names, and MSVC uses that
+# normalized crate name for the PDB even though Cargo exposes the executable
+# under its original hyphenated target name. That holds for the GUI binary as
+# much as the TUI one: the OSS channel builds `rook-oss.exe` with
+# `rook_oss.pdb`, and a path built from the hyphenated name pointed at nothing.
+$PDB_BASENAME = $ROOK_BIN.Replace('-', '_')
 $PDB_PATH = "$CARGO_TARGET_OUTPUT_DIR\$PDB_BASENAME.pdb"
 $CARGO_PACKAGE = if ($IS_TUI) { 'rook_tui' } else { 'rook' }
 $INSTALLER_SCRIPT = if ($IS_TUI) {
