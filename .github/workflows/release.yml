@@ -177,6 +177,7 @@ jobs:
       # and no Windows one. Both platforms warn on first run as a result, and
       # docs/INSTALL covers what to do about it.
       - name: Build installer (Windows)
+        id: bundle_windows
         if: matrix.os == 'windows'
         shell: pwsh
         run: |
@@ -184,6 +185,19 @@ jobs:
             -CHANNEL oss `
             -ARCH x64 `
             -RELEASE_TAG ${{ steps.tag.outputs.value }}
+
+      # The symbols of the exact binary in the installer. Every release built
+      # them and threw them away, so a stack captured from a hang on a user's
+      # machine came back as bare offsets into rook-oss.exe. Kept as a workflow
+      # artifact, not a release asset: nobody installing Rook needs them.
+      - name: Keep the Windows symbols
+        if: matrix.os == 'windows'
+        uses: actions/upload-artifact@v7
+        with:
+          name: rook-oss-pdb-${{ steps.tag.outputs.value }}
+          path: ${{ steps.bundle_windows.outputs.pdb_file_path }}
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Build disk image (macOS)
         if: matrix.os == 'macos'
