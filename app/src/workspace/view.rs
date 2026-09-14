@@ -22009,10 +22009,10 @@ impl Workspace {
         .with_width(TAB_BAR_PILL_WIDTH)
         .finish();
 
-        // Rook cannot install this one itself, and the overflow menu's update
-        // entries are there only on a channel that ships an updater, so opening
-        // it would put an empty menu under the pill. Go straight to the
-        // download that menu would have offered.
+        // Rook cannot install this one itself, so the only thing to do with it
+        // is fetch it. The overflow menu does offer that in this stage, but
+        // behind a second click on its one actionable entry; go straight to the
+        // release page that entry would have opened.
         let click_action = if matches!(
             autoupdate_stage,
             AutoupdateStage::UnableToUpdateToNewVersion { .. }
