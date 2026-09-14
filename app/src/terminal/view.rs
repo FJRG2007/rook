@@ -24061,11 +24061,21 @@ impl TerminalView {
     /// not reported one yet round-trips unchanged. This is the fallback
     /// `startup_path_for_new_session` already applies when a new tab inherits
     /// its directory from a session that is still bootstrapping.
+    ///
+    /// Bootstrapping is not the only state that reports no directory. A
+    /// session that is not local has none either, so a remote pane is
+    /// snapshotted with the local directory it was started in rather than with
+    /// nothing; it restores as a local shell there, which is where it began.
+    /// The startup path is filtered the way `pwd_if_local` filters the live
+    /// one: a directory deleted since the pane opened would otherwise be
+    /// written into a saved launch or tab config, both of which read the
+    /// persisted value without checking it exists.
     pub fn pwd_or_startup_path_if_local(&self, ctx: &AppContext) -> Option<String> {
         self.pwd_if_local(ctx).or_else(|| {
             self.model
                 .lock()
                 .session_startup_path()
+                .filter(|path| path.is_dir())
                 .map(|path| path.to_string_lossy().into_owned())
         })
     }
