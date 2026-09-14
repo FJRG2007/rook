@@ -577,7 +577,6 @@ lazy_static! {
     static ref JUMP_TO_BOTTOM_OF_BLOCK_CORNER_RADIUS_PX: Pixels = (4.).into_pixels();
     static ref JUMP_TO_BOTTOM_OF_BLOCK_TOOLTIP_OFFSET_Y_PX: Pixels = (-5.).into_pixels();
 
-
     static ref SUBSHELL_BANNER_DELAY_DURATION: Duration = if cfg!(feature = "integration_tests") {
         Duration::from_secs(0)
     } else {
@@ -24043,6 +24042,32 @@ impl TerminalView {
     pub fn pwd_if_local(&self, ctx: &AppContext) -> Option<String> {
         self.active_session_path_if_local(ctx)
             .map(|path| path.to_string_lossy().into_owned())
+    }
+
+    /// The working directory to persist for this session: the directory the
+    /// shell has reported, and otherwise the one the session was started in.
+    ///
+    /// A session reports no directory until its shell has bootstrapped, and a
+    /// restored pane spends the first second or two of every launch in that
+    /// state. A snapshot taken in that window - the autosave takes one every
+    /// 15 seconds, and so does a window move, a focus change, or an exit to
+    /// install an update - would persist no directory at all, and the next
+    /// launch, having none to start the pane in, falls back to the home
+    /// directory. One restart that short is enough to lose the directory for
+    /// good, since what it saves is what the launch after it restores.
+    ///
+    /// The startup path is the value the pane was created with, in the same
+    /// native form the current directory is persisted in, so a pane that has
+    /// not reported one yet round-trips unchanged. This is the fallback
+    /// `startup_path_for_new_session` already applies when a new tab inherits
+    /// its directory from a session that is still bootstrapping.
+    pub fn pwd_or_startup_path_if_local(&self, ctx: &AppContext) -> Option<String> {
+        self.pwd_if_local(ctx).or_else(|| {
+            self.model
+                .lock()
+                .session_startup_path()
+                .map(|path| path.to_string_lossy().into_owned())
+        })
     }
 
     /// Returns the active session's CWD as a `LocalOrRemotePath`.

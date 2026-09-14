@@ -537,7 +537,7 @@ impl PaneContent for TerminalPane {
 
             LeafContents::Terminal(TerminalPaneSnapshot {
                 uuid: self.uuid.clone(),
-                cwd: view.pwd_if_local(app),
+                cwd: view.pwd_or_startup_path_if_local(app),
                 is_active,
                 is_read_only: view.model.lock().is_read_only(),
                 shell_launch_data: view.shell_launch_data_if_local(app),
