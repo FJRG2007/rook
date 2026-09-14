@@ -14298,28 +14298,9 @@ impl Workspace {
 
     /// How to render the tab bar.
     fn tab_bar_mode(&self, app: &AppContext) -> ShowTabBar {
-        // Drag-preview windows always show the tab bar inline; the user
-        // is literally holding the tab they detached, so it must remain
-        // visible regardless of the user's hover/fullscreen settings.
-        if self.is_tab_drag_preview {
+        if !self.tab_bar_is_revealed_on_hover(app) {
             return ShowTabBar::Stacked;
         }
-
-        // Always show the tab bar during HoA onboarding so that callouts
-        // pointing at tabs/inbox render correctly even when the user has
-        // "show tab bar on hover" enabled.
-        if self.hoa_onboarding_flow.is_some() || self.should_show_session_config_tab_config_chip() {
-            return ShowTabBar::Stacked;
-        }
-
-        if !FeatureFlag::FullScreenZenMode.is_enabled() {
-            return ShowTabBar::default();
-        }
-
-        let is_fullscreen = app
-            .windows()
-            .platform_window(self.window_id)
-            .is_some_and(|window| window.fullscreen_state() == FullscreenState::Fullscreen);
 
         let is_hovered = self
             .tab_bar_hover_state
@@ -14344,23 +14325,50 @@ impl Workspace {
             .as_ref(app)
             .any_pane_being_dragged(app);
 
-        let workspace_decoration_visibility = TabSettings::as_ref(app)
-            .workspace_decoration_visibility
-            .value();
-
-        let hovered_visibility = if is_pane_being_dragged || is_hovered || is_tab_menu_open {
+        if is_pane_being_dragged || is_hovered || is_tab_menu_open {
             ShowTabBar::Stacked
         } else {
             ShowTabBar::Hidden
-        };
+        }
+    }
 
-        match workspace_decoration_visibility {
-            WorkspaceDecorationVisibility::OnHover => hovered_visibility,
+    /// Whether the tab bar is revealed by hovering rather than kept on screen.
+    ///
+    /// Anything that stands down in favour of something drawn in the tab bar
+    /// has to ask this first: a bar that is absent until the pointer reaches
+    /// the top edge takes that surface with it.
+    fn tab_bar_is_revealed_on_hover(&self, app: &AppContext) -> bool {
+        // Drag-preview windows always show the tab bar inline; the user
+        // is literally holding the tab they detached, so it must remain
+        // visible regardless of the user's hover/fullscreen settings.
+        if self.is_tab_drag_preview {
+            return false;
+        }
+
+        // Always show the tab bar during HoA onboarding so that callouts
+        // pointing at tabs/inbox render correctly even when the user has
+        // "show tab bar on hover" enabled.
+        if self.hoa_onboarding_flow.is_some() || self.should_show_session_config_tab_config_chip() {
+            return false;
+        }
+
+        if !FeatureFlag::FullScreenZenMode.is_enabled() {
+            return false;
+        }
+
+        match TabSettings::as_ref(app)
+            .workspace_decoration_visibility
+            .value()
+        {
+            WorkspaceDecorationVisibility::OnHover => true,
             // If the tab bar is hidden when fullscreen, show/hide on hover.
-            WorkspaceDecorationVisibility::HideFullscreen if is_fullscreen => hovered_visibility,
-            // If the user always wants a tab bar OR the window isn't fullscreen, make it
-            // persistently stacked above the content area.
-            _ => ShowTabBar::Stacked,
+            WorkspaceDecorationVisibility::HideFullscreen => app
+                .windows()
+                .platform_window(self.window_id)
+                .is_some_and(|window| window.fullscreen_state() == FullscreenState::Fullscreen),
+            // The user always wants a tab bar, so it stays persistently stacked
+            // above the content area.
+            WorkspaceDecorationVisibility::AlwaysShow => false,
         }
     }
 
@@ -21948,70 +21956,88 @@ impl Workspace {
         }
     }
 
-    fn render_tab_overflow_menu(
-        &self,
-        app: &AppContext,
-        appearance: &Appearance,
-    ) -> Option<Box<dyn Element>> {
-        if !ContextFlag::PromptForVersionUpdates.is_enabled() {
-            return None;
-        }
-
-        let autoupdate_stage = autoupdate::get_update_state(app);
-        // Render the prominent autoupdate pill if a new version is available and
-        // it is one worth announcing.
-        if autoupdate_stage.new_version_available()
+    /// Whether the tab-bar pill is announcing an available update.
+    ///
+    /// One predicate for both sides of the handoff: the pill is drawn from it,
+    /// and the autoupdate banner stands down only when it is true, so the
+    /// banner can never fall silent for a pill that is not being drawn. The
+    /// pill is part of the tab bar, which `PromptForVersionUpdates` removes
+    /// outright in the link-only web contexts.
+    fn tab_bar_pill_announces_update(&self, autoupdate_stage: &AutoupdateStage) -> bool {
+        ContextFlag::PromptForVersionUpdates.is_enabled()
+            && autoupdate_stage.new_version_available()
             && autoupdate_stage
                 .available_new_version()
                 .is_some_and(|version| {
                     update_is_announced_by_pill(version.last_prominent_update.as_deref())
                 })
-        {
-            let pill = ConstrainedBox::new(
-                Container::new(
-                    Flex::row()
-                        .with_child(
-                            Text::new_inline(
-                                UPDATE_READY_TEXT,
-                                appearance.ui_font_family(),
-                                PILL_FONT_SIZE,
-                            )
-                            .with_color(Fill::warn().into())
-                            .finish(),
-                        )
-                        .with_main_axis_size(MainAxisSize::Max)
-                        .with_main_axis_alignment(MainAxisAlignment::Center)
-                        .finish(),
-                )
-                .with_border(Border::all(1.).with_border_color(Fill::warn().into()))
-                .with_corner_radius(CornerRadius::with_all(Radius::Percentage(50.)))
-                .with_uniform_margin(4.)
-                .with_uniform_padding(4.)
-                .with_margin_right(5.)
-                .finish(),
-            )
-            .with_width(TAB_BAR_PILL_WIDTH)
-            .finish();
+    }
 
-            let button = if self.show_tab_bar_overflow_menu {
-                pill
-            } else {
-                // Only attach the event handler in the case where the menu isn't already showing
-                // Otherwise we have a race condition in the case that someone clicks on the button
-                // where the menu tries to dismiss itself onclick and the menu gets reshown on mouseup
-                Hoverable::new(self.mouse_states.overflow_button.clone(), |_state| pill)
-                    .on_click(move |ctx, _, _| {
-                        ctx.dispatch_typed_action(WorkspaceAction::ToggleTabBarOverflowMenu);
-                    })
-                    .with_reset_cursor_after_click()
-                    .with_cursor(Cursor::PointingHand)
-                    .finish()
-            };
-
-            Some(Align::new(SavePosition::new(button, "tab_bar_overflow_button").finish()).finish())
-        } else {
-            None
+    fn render_tab_overflow_menu(
+        &self,
+        app: &AppContext,
+        appearance: &Appearance,
+    ) -> Option<Box<dyn Element>> {
+        let autoupdate_stage = autoupdate::get_update_state(app);
+        if !self.tab_bar_pill_announces_update(&autoupdate_stage) {
+            return None;
         }
+
+        let pill = ConstrainedBox::new(
+            Container::new(
+                Flex::row()
+                    .with_child(
+                        Text::new_inline(
+                            UPDATE_READY_TEXT,
+                            appearance.ui_font_family(),
+                            PILL_FONT_SIZE,
+                        )
+                        .with_color(Fill::warn().into())
+                        .finish(),
+                    )
+                    .with_main_axis_size(MainAxisSize::Max)
+                    .with_main_axis_alignment(MainAxisAlignment::Center)
+                    .finish(),
+            )
+            .with_border(Border::all(1.).with_border_color(Fill::warn().into()))
+            .with_corner_radius(CornerRadius::with_all(Radius::Percentage(50.)))
+            .with_uniform_margin(4.)
+            .with_uniform_padding(4.)
+            .with_margin_right(5.)
+            .finish(),
+        )
+        .with_width(TAB_BAR_PILL_WIDTH)
+        .finish();
+
+        // Rook cannot install this one itself, and the overflow menu's update
+        // entries are there only on a channel that ships an updater, so opening
+        // it would put an empty menu under the pill. Go straight to the
+        // download that menu would have offered.
+        let click_action = if matches!(
+            autoupdate_stage,
+            AutoupdateStage::UnableToUpdateToNewVersion { .. }
+        ) {
+            WorkspaceAction::DownloadNewVersion
+        } else {
+            WorkspaceAction::ToggleTabBarOverflowMenu
+        };
+
+        let button = if self.show_tab_bar_overflow_menu {
+            pill
+        } else {
+            // Only attach the event handler in the case where the menu isn't already showing
+            // Otherwise we have a race condition in the case that someone clicks on the button
+            // where the menu tries to dismiss itself onclick and the menu gets reshown on mouseup
+            Hoverable::new(self.mouse_states.overflow_button.clone(), |_state| pill)
+                .on_click(move |ctx, _, _| {
+                    ctx.dispatch_typed_action(click_action.clone());
+                })
+                .with_reset_cursor_after_click()
+                .with_cursor(Cursor::PointingHand)
+                .finish()
+        };
+
+        Some(Align::new(SavePosition::new(button, "tab_bar_overflow_button").finish()).finish())
     }
 
     fn render_banner_and_active_tab(
@@ -22227,14 +22253,18 @@ impl Workspace {
                 {
                     let is_deprecated =
                         is_incoming_version_past_current(new_version.soft_cutoff.as_deref());
-                    let announced_by_pill =
-                        update_is_announced_by_pill(new_version.last_prominent_update.as_deref());
 
                     // The tab-bar pill announces this stage now, so a banner
-                    // would say the same thing a second time. Deprecation is not
-                    // a repeat - it says the installed build has aged out, which
-                    // no pill conveys - so that one still shows.
-                    if !is_deprecated && announced_by_pill {
+                    // would say the same thing a second time. It only stands
+                    // down for a pill that is on screen and stays there: a tab
+                    // bar revealed on hover leaves nothing to read until the
+                    // pointer reaches it. Deprecation is not a repeat - it says
+                    // the installed build has aged out, which no pill conveys -
+                    // so that one still shows.
+                    if !is_deprecated
+                        && self.tab_bar_pill_announces_update(&autoupdate::get_update_state(app))
+                        && !self.tab_bar_is_revealed_on_hover(app)
+                    {
                         return None;
                     }
 
