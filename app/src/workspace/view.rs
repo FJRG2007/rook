@@ -21958,15 +21958,14 @@ impl Workspace {
         }
 
         let autoupdate_stage = autoupdate::get_update_state(app);
-        // Render the prominent autoupdate pill if autoupdate is ready and the current version is behind a prominent update version.
-        if autoupdate_stage.ready_for_update()
-            && (!FeatureFlag::AutoupdateUIRevamp.is_enabled()
-                || autoupdate_stage
-                    .available_new_version()
-                    .map(|version| {
-                        is_incoming_version_past_current(version.last_prominent_update.as_deref())
-                    })
-                    .unwrap_or(false))
+        // Render the prominent autoupdate pill if a new version is available and
+        // it is one worth announcing.
+        if autoupdate_stage.new_version_available()
+            && autoupdate_stage
+                .available_new_version()
+                .is_some_and(|version| {
+                    update_is_announced_by_pill(version.last_prominent_update.as_deref())
+                })
         {
             let pill = ConstrainedBox::new(
                 Container::new(
@@ -22226,6 +22225,19 @@ impl Workspace {
                 AutoupdateStage::UnableToUpdateToNewVersion { new_version }
                     if !self.autoupdate_unable_to_update_banner_dismissed =>
                 {
+                    let is_deprecated =
+                        is_incoming_version_past_current(new_version.soft_cutoff.as_deref());
+                    let announced_by_pill =
+                        update_is_announced_by_pill(new_version.last_prominent_update.as_deref());
+
+                    // The tab-bar pill announces this stage now, so a banner
+                    // would say the same thing a second time. Deprecation is not
+                    // a repeat - it says the installed build has aged out, which
+                    // no pill conveys - so that one still shows.
+                    if !is_deprecated && announced_by_pill {
+                        return None;
+                    }
+
                     // On the open-source channel this stage is the ordinary
                     // outcome and not a failure: Rook publishes to GitHub
                     // releases and has no unattended installer, so it reports
@@ -22233,15 +22245,14 @@ impl Workspace {
                     // the person has to work around, is what made "there is a
                     // new version" read as "the update broke".
                     let is_oss = matches!(ChannelState::channel(), Channel::Oss);
-                    let description =
-                        if is_incoming_version_past_current(new_version.soft_cutoff.as_deref()) {
-                            VERSION_DEPRECATION_WITHOUT_PERMISSIONS_BANNER_TEXT.to_owned()
-                        } else if is_oss {
-                            format!("Rook {} is available on GitHub.", new_version.version)
-                        } else {
-                            "A new version is available but Rook is unable to perform the update."
-                                .to_owned()
-                        };
+                    let description = if is_deprecated {
+                        VERSION_DEPRECATION_WITHOUT_PERMISSIONS_BANNER_TEXT.to_owned()
+                    } else if is_oss {
+                        format!("Rook {} is available on GitHub.", new_version.version)
+                    } else {
+                        "A new version is available but Rook is unable to perform the update."
+                            .to_owned()
+                    };
 
                     Some(WorkspaceBannerFields {
                         banner_type: WorkspaceBanner::UnableToUpdateToNewVersion,
@@ -29317,6 +29328,18 @@ impl Workspace {
 
 fn should_reserve_traffic_light_space_in_tab_bar(side: TrafficLightSide) -> bool {
     side == TrafficLightSide::Right
+}
+
+/// Whether the tab-bar pill is the surface announcing this update.
+///
+/// The pill is drawn for an update at or before `last_prominent_update`, which
+/// upstream's channel server sets on the releases it wants announced and
+/// `github::version_from_tag` sets on every GitHub release. With the revamped
+/// UI off there is no quieter surface to fall back to, so the pill takes every
+/// update rather than none.
+fn update_is_announced_by_pill(last_prominent_update: Option<&str>) -> bool {
+    !FeatureFlag::AutoupdateUIRevamp.is_enabled()
+        || is_incoming_version_past_current(last_prominent_update)
 }
 
 /// Total width/height of the collage area in the group header.

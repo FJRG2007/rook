@@ -585,3 +585,46 @@ fn test_should_update() {
         });
     });
 }
+
+/// The pill in the tab bar is the only prominent "there is a new version"
+/// surface, and gating it on `ready_for_update` tied it to a finished download.
+/// Linux reaches `UnableToUpdateToNewVersion` whenever it cannot drive the
+/// install method, and macOS when it cannot write the bundle, so on both a
+/// published release produced no button at all.
+#[test]
+fn a_version_that_must_be_installed_by_hand_still_counts_as_available() {
+    let new_version = make_version_info("v0.2023.05.15.08.04.stable_02", false);
+
+    assert!(AutoupdateStage::UnableToUpdateToNewVersion { new_version }.new_version_available());
+}
+
+/// `new_version_available` widens `ready_for_update`; it must never narrow it,
+/// since the same predicate decides whether the pill is drawn at all.
+#[test]
+fn every_stage_ready_to_relaunch_is_also_an_available_version() {
+    let new_version = make_version_info("v0.2023.05.15.08.04.stable_02", false);
+
+    for stage in [
+        AutoupdateStage::UpdateReady {
+            new_version: new_version.clone(),
+            update_id: "update".to_string(),
+        },
+        AutoupdateStage::UpdatedPendingRestart { new_version },
+    ] {
+        assert!(stage.ready_for_update());
+        assert!(stage.new_version_available());
+    }
+}
+
+/// Nothing to announce before a version has been found, while one is being
+/// fetched, or once the app is current - the pill stays hidden in all three.
+#[test]
+fn a_stage_with_no_new_version_announces_nothing() {
+    for stage in [
+        AutoupdateStage::NoUpdateAvailable,
+        AutoupdateStage::CheckingForUpdate,
+        AutoupdateStage::DownloadingUpdate,
+    ] {
+        assert!(!stage.new_version_available());
+    }
+}

@@ -82,6 +82,21 @@ impl AutoupdateStage {
         )
     }
 
+    /// Returns `true` if a newer version exists, whether or not Rook is able to
+    /// install it itself.
+    ///
+    /// Wider than [`Self::ready_for_update`], which means "downloaded and
+    /// waiting for a relaunch". `UnableToUpdateToNewVersion` is an ordinary
+    /// outcome here rather than a failure: Linux reaches it whenever the install
+    /// method is not one it can drive, and macOS when it cannot write the
+    /// bundle. In it a new version is just as available, only installed by hand.
+    /// Announcing an update is the question this answers; relaunching into one
+    /// is still [`Self::ready_for_update`].
+    pub fn new_version_available(&self) -> bool {
+        self.ready_for_update()
+            || matches!(self, AutoupdateStage::UnableToUpdateToNewVersion { .. })
+    }
+
     /// Returns the new version's VersionInfo, if available in the current autoupdate stage.
     pub fn available_new_version(&self) -> Option<&VersionInfo> {
         match self {
