@@ -24058,9 +24058,16 @@ impl TerminalView {
     ///
     /// The startup path is the value the pane was created with, in the same
     /// native form the current directory is persisted in, so a pane that has
-    /// not reported one yet round-trips unchanged. This is the fallback
-    /// `startup_path_for_new_session` already applies when a new tab inherits
-    /// its directory from a session that is still bootstrapping.
+    /// not reported one yet round-trips unchanged. It is written only when the
+    /// model is constructed, and every caller supplies a native path: a
+    /// restored pane is given the persisted directory, a new tab or split is
+    /// given `startup_path_for_new_session`, and a remote pane is given none.
+    ///
+    /// `startup_path_for_new_session` reaches for the same value, but it also
+    /// converts a WSL session's startup path out of its unix form, which would
+    /// corrupt an already-native path here rather than repair it. Nothing
+    /// writes a unix path to this field, and the existence check below drops
+    /// one if anything ever does.
     ///
     /// Bootstrapping is not the only state that reports no directory. A
     /// session that is not local has none either, so a remote pane is
@@ -24131,6 +24138,35 @@ impl TerminalView {
         }
 
         session.launch_data().cloned()
+    }
+
+    /// The shell to persist for this session: the one the live session was
+    /// launched with, and otherwise the one the model resolved for it.
+    ///
+    /// The live session is read through the active block, which has none until
+    /// the shell has bootstrapped, so a snapshot taken in that window would
+    /// persist no shell at all. With the shell selector on, the next launch has
+    /// nothing to restore and falls back to the preferred shell, and the save
+    /// after that writes the fallback over the shell the pane actually had -
+    /// the same self-perpetuating loss `pwd_or_startup_path_if_local` exists to
+    /// prevent, on the field beside it.
+    ///
+    /// `active_shell_launch_data` is set from the shell starter before
+    /// bootstrapping begins and persists afterwards, so it covers that window
+    /// without overriding a live value: the fallback is only reached when there
+    /// is none. It is set only when a local shell is spawned, so a remote pane
+    /// is persisted with the local shell it started as, which is what it
+    /// restores as.
+    pub fn shell_launch_data_or_active_if_local(
+        &self,
+        ctx: &AppContext,
+    ) -> Option<ShellLaunchData> {
+        if !FeatureFlag::ShellSelector.is_enabled() {
+            return None;
+        }
+
+        self.shell_launch_data_if_local(ctx)
+            .or_else(|| self.model.lock().active_shell_launch_data().cloned())
     }
 
     fn spawning_command_for_subshell_sessions(

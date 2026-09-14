@@ -535,12 +535,17 @@ impl PaneContent for TerminalPane {
                         .active_conversation_id()
                 });
 
+            // Read through the model before the snapshot is built: a lock taken
+            // inside the struct literal is held until the whole literal has been
+            // evaluated, so the fields below could not take one of their own.
+            let is_read_only = view.model.lock().is_read_only();
+
             LeafContents::Terminal(TerminalPaneSnapshot {
                 uuid: self.uuid.clone(),
                 cwd: view.pwd_or_startup_path_if_local(app),
                 is_active,
-                is_read_only: view.model.lock().is_read_only(),
-                shell_launch_data: view.shell_launch_data_if_local(app),
+                is_read_only,
+                shell_launch_data: view.shell_launch_data_or_active_if_local(app),
                 input_config: Some(current_input_config),
                 llm_model_override,
                 active_profile_id,

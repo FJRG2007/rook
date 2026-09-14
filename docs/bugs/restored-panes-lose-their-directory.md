@@ -79,9 +79,24 @@ reported one. That value is what the pane was created with, in the same native
 form the current directory is persisted in, so a pane that has not bootstrapped
 round-trips its directory unchanged however many restarts it takes.
 
-The fallback is the one `startup_path_for_new_session` already applies when a
-new tab inherits its directory from a session that is still bootstrapping; this
-was the only place that reached for the live value without it.
+`startup_path_for_new_session` reaches for the same value when a new tab
+inherits its directory from a session that is still bootstrapping, but it also
+converts a WSL startup path out of its unix form. That conversion is not
+repeated here: the field is written only when the model is constructed and
+every caller passes a native path, so converting one again would corrupt it.
+
+`shell_launch_data` was read from the live session the same way and lost the
+same way - persisted as null during the window, restored as the preferred shell
+rather than the one the pane had, and then saved over the original. It now
+falls back to `active_shell_launch_data`, which the shell starter sets before
+bootstrapping begins and which persists afterwards. The fallback is reached
+only when the live session reports nothing, so it cannot override a live value.
+
+Both fallbacks take a lock on the model of their own, so `is_read_only` is now
+read before the snapshot rather than inside it. A lock taken inside a struct
+literal is not released until the whole literal has been evaluated, so the
+field that held one left every field after it unable to take its own. The
+directory was only safe there because it was read first.
 
 ## What it does not cover
 
@@ -90,12 +105,11 @@ was the only place that reached for the live value without it.
   the last directory. On Windows this is not the shutdown path - Rook saves on
   `WM_ENDSESSION` while the shells are still alive - so what it affects is a
   shell that crashes and a pane left behind it.
-- `shell_launch_data` is read the same way, from the live session, and is
-  persisted as null in the same window. With the shell selector on, a pane
-  restored from such a save falls back to the preferred shell instead of the
-  one it had. The model keeps `pending_shell_launch_data` while bootstrapping,
-  so the same fallback is available; it is not applied here because nothing has
-  been observed to lose a shell that way.
+- A WSL pane whose startup path was stored in its unix form rather than the
+  native one. Nothing writes the field that way - it is set only when the model
+  is constructed, and every caller passes a native path - and the existence
+  check drops such a value rather than persisting it, so the pane restores as
+  it did before this fix rather than in a converted directory.
 - No automated test covers the fix. The behavior only appears on a snapshot
   taken before a real shell bootstraps, which the mock terminal used by the
   pane-group unit tests never does, so the deterministic seam for it does not
