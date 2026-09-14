@@ -4,7 +4,9 @@
 
 use anyhow::Result;
 use rook_core::AppId;
-use rook_core::channel::{Channel, ChannelConfig, ChannelState, OzConfig, RookServerConfig};
+use rook_core::channel::{
+    AutoupdateConfig, Channel, ChannelConfig, ChannelState, OzConfig, RookServerConfig,
+};
 
 // Simple wrapper around rook::run() for Rook OSS builds.
 fn main() -> Result<()> {
@@ -17,7 +19,20 @@ fn main() -> Result<()> {
             oz_config: OzConfig::without_server(),
             telemetry_config: None,
             crash_reporting_config: None,
-            autoupdate_config: None,
+            // Rook updates from GitHub releases, so the autoupdate menus have
+            // something to offer. `show_autoupdate_menu_items` gates every one
+            // of them - the tab-bar pill's menu, the avatar entries and the
+            // resource centre's version line - and with it off the pill opened
+            // an empty menu and "Update and relaunch Rook" was never drawn, so
+            // a downloaded update could not be applied from the UI at all. The
+            // branches those menus already carry for `Channel::Oss` were dead
+            // code. No base URL: `release_assets_directory_url` hardcodes the
+            // GitHub one for this channel, and leaving it empty is what the
+            // build already did.
+            autoupdate_config: Some(AutoupdateConfig {
+                releases_base_url: "".into(),
+                show_autoupdate_menu_items: true,
+            }),
             mcp_static_config: None,
         },
     );
