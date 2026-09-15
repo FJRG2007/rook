@@ -162,24 +162,12 @@ impl Repository {
         }
     }
 
-    /// Walk ancestors of the given path to find the `.git` component and return
-    /// it as the shared git root. For example,
-    /// `/repo/.git/worktrees/foo` → `/repo/.git`.
-    fn derive_common_git_dir(external_git_dir: &std::path::Path) -> Option<std::path::PathBuf> {
-        for ancestor in external_git_dir.ancestors() {
-            if ancestor.file_name().and_then(|n| n.to_str()) == Some(".git") {
-                return Some(ancestor.to_path_buf());
-            }
-        }
-        None
-    }
-
     fn derive_common_git_directory(
         external_git_directory: &StandardizedPath,
     ) -> Option<StandardizedPath> {
         external_git_directory
             .to_local_path()
-            .and_then(|local| Self::derive_common_git_dir(&local))
+            .and_then(|local| crate::entry::common_git_dir(&local))
             .and_then(|path| StandardizedPath::try_from_local(&path).ok())
             // Only store when it differs from external_git_directory.
             .filter(|common| common != external_git_directory)

@@ -99,10 +99,12 @@ Each was measured against the main thread's CPU on the running build:
   receives a copy of the update. With the stat gone that is in-memory work, but
   it is proportional to the flood. Moving event classification off the main
   thread is the complete fix.
-- `.git/info/exclude` is not among the patterns `Repository` loads, only the
+- `.git/info/exclude` was not among the patterns `Repository` loads, only the
   root `.gitignore` and the global one. That is why the worktrees above counted
-  as not ignored. It no longer costs a stat per path, but they still reach
-  every subscriber as unignored changes.
+  as not ignored. It is loaded now - see
+  [git-info-exclude-is-never-loaded.md](git-info-exclude-is-never-loaded.md),
+  which also explains why that stops the work downstream of the tag but not,
+  on Windows, the events themselves.
 - Release builds did not keep their PDB until `74836d7`, and it was named wrong
   until `d21de84`. From the next release on, a stack like the ones above can be
   resolved to function names.

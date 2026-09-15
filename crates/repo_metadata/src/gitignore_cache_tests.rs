@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use super::get_or_parse;
+use super::{get_or_parse, get_or_parse_anchored};
 
 /// Reading the same unchanged `.gitignore` twice must return the exact same `Arc<Gitignore>`
 /// instance (not merely an equal one), since a distinct instance means a distinct compiled
@@ -120,6 +120,33 @@ fn does_not_cache_a_failed_parse() {
     assert!(
         Arc::ptr_eq(&fixed, &fixed_again),
         "once the error is fixed, the valid result should be cached normally"
+    );
+}
+
+/// One `.git/info/exclude` is shared by every linked worktree of a repository, and each
+/// worktree anchors it at its own root. Keyed by the file alone, the second worktree would be
+/// handed the matcher anchored at the first one's root and would mark the wrong paths ignored.
+#[test]
+fn anchored_entries_are_keyed_by_root() {
+    super::clear_for_test();
+    let temp_dir = tempfile::tempdir().unwrap();
+    let exclude_path = temp_dir.path().join("exclude");
+    std::fs::write(&exclude_path, ".claude/\n").unwrap();
+    let first_root = temp_dir.path().join("worktree_a");
+    let second_root = temp_dir.path().join("worktree_b");
+
+    let first = get_or_parse_anchored(&first_root, &exclude_path);
+    let second = get_or_parse_anchored(&second_root, &exclude_path);
+
+    assert_eq!(
+        first.path(),
+        first_root,
+        "each root must get a matcher anchored at itself"
+    );
+    assert_eq!(second.path(), second_root);
+    assert!(
+        Arc::ptr_eq(&first, &get_or_parse_anchored(&first_root, &exclude_path)),
+        "a repeat lookup for the same root should still reuse the cached instance"
     );
 }
 

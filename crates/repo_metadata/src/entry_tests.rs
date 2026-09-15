@@ -1075,6 +1075,171 @@ fn gitignore_affects_descend_predicate_but_not_emitted_events() {
     )));
 }
 
+/// `.git/info/exclude` holds the same patterns as a `.gitignore` at the repository root, and is
+/// where a tool that must not edit a tracked file records what to leave alone - an agent's
+/// worktrees, a local scratch directory. Loading only the root `.gitignore` counted every one of
+/// those subtrees as tracked.
+#[test]
+fn git_info_exclude_is_loaded_and_anchored_at_the_repository_root() {
+    use super::{
+        gitignores_for_directory, matches_gitignores_of_unknown_kind, should_watch_repo_directory,
+    };
+
+    let temp_dir = tempfile::tempdir().unwrap();
+    let root_path = dunce::canonicalize(temp_dir.path()).unwrap();
+    fs::create_dir_all(root_path.join(".git").join("info")).unwrap();
+    fs::write(
+        root_path.join(".git").join("info").join("exclude"),
+        ".claude/\n",
+    )
+    .unwrap();
+    fs::create_dir_all(root_path.join(".claude").join("worktrees").join("x")).unwrap();
+    fs::create_dir(root_path.join("src")).unwrap();
+
+    let gitignores = gitignores_for_directory(&root_path);
+
+    // Anchoring: `Gitignore::new` would root these patterns at `.git/info`, where `.claude/`
+    // can never match a repository path and the whole file is silently inert.
+    assert!(
+        gitignores
+            .iter()
+            .any(|gitignore| gitignore.path() == root_path),
+        "the exclude file's patterns must be anchored at the repository root"
+    );
+
+    // The question `Repository::check_gitignore_status` asks for every path in every watcher
+    // event, for a path whose kind it does not know.
+    assert!(matches_gitignores_of_unknown_kind(
+        &root_path
+            .join(".claude")
+            .join("worktrees")
+            .join("x")
+            .join("y.rs"),
+        &gitignores,
+        true, /* check_ancestors */
+        || false,
+    ));
+    assert!(!matches_gitignores_of_unknown_kind(
+        &root_path.join("src").join("main.rs"),
+        &gitignores,
+        true, /* check_ancestors */
+        || false,
+    ));
+
+    // Descend predicate: the excluded subtree is pruned from recursive watch registration.
+    assert!(!should_watch_repo_directory(
+        &root_path.join(".claude"),
+        &root_path,
+        &gitignores,
+        &[]
+    ));
+    assert!(should_watch_repo_directory(
+        &root_path.join("src"),
+        &root_path,
+        &gitignores,
+        &[]
+    ));
+}
+
+/// The two files are independent sources; honoring one must not replace the other.
+#[test]
+fn root_gitignore_and_git_info_exclude_are_both_honored() {
+    use super::{gitignores_for_directory, matches_gitignores_of_unknown_kind};
+
+    let temp_dir = tempfile::tempdir().unwrap();
+    let root_path = dunce::canonicalize(temp_dir.path()).unwrap();
+    fs::write(root_path.join(".gitignore"), "target/\n").unwrap();
+    fs::create_dir_all(root_path.join(".git").join("info")).unwrap();
+    fs::write(
+        root_path.join(".git").join("info").join("exclude"),
+        ".claude/\n",
+    )
+    .unwrap();
+
+    let gitignores = gitignores_for_directory(&root_path);
+
+    for ignored in [
+        root_path.join("target").join("debug").join("rook.exe"),
+        root_path.join(".claude").join("worktrees").join("x"),
+    ] {
+        assert!(
+            matches_gitignores_of_unknown_kind(&ignored, &gitignores, true, || false),
+            "{} should be ignored",
+            ignored.display()
+        );
+    }
+}
+
+/// A malformed glob in `info/exclude` makes the parse partial. That must cost only the patterns
+/// in that file - never the root `.gitignore`, which is parsed independently.
+#[test]
+fn a_malformed_git_info_exclude_keeps_the_root_gitignore() {
+    use super::{gitignores_for_directory, matches_gitignores_of_unknown_kind};
+
+    let temp_dir = tempfile::tempdir().unwrap();
+    let root_path = dunce::canonicalize(temp_dir.path()).unwrap();
+    fs::write(root_path.join(".gitignore"), "target/\n").unwrap();
+    fs::create_dir_all(root_path.join(".git").join("info")).unwrap();
+    // `[z-a]` is an invalid character range.
+    fs::write(
+        root_path.join(".git").join("info").join("exclude"),
+        "[z-a]\n",
+    )
+    .unwrap();
+
+    let gitignores = gitignores_for_directory(&root_path);
+
+    assert!(matches_gitignores_of_unknown_kind(
+        &root_path.join("target").join("debug").join("rook.exe"),
+        &gitignores,
+        true,
+        || false,
+    ));
+}
+
+/// In a linked worktree `<root>/.git` is a file pointing at that worktree's own gitdir, while
+/// git reads `info/exclude` from the shared git directory. Following the pointer to the
+/// per-worktree gitdir would find no exclude file at all.
+#[test]
+fn git_info_exclude_is_read_from_the_common_git_dir_of_a_linked_worktree() {
+    use super::{gitignores_for_directory, matches_gitignores_of_unknown_kind};
+
+    let temp_dir = tempfile::tempdir().unwrap();
+    let base_path = dunce::canonicalize(temp_dir.path()).unwrap();
+    let main_path = base_path.join("main");
+    let worktree_path = base_path.join("worktree");
+    let worktree_git_dir = main_path.join(".git").join("worktrees").join("worktree");
+
+    fs::create_dir_all(&worktree_git_dir).unwrap();
+    fs::create_dir_all(main_path.join(".git").join("info")).unwrap();
+    fs::write(
+        main_path.join(".git").join("info").join("exclude"),
+        ".claude/\n",
+    )
+    .unwrap();
+    fs::create_dir_all(worktree_path.join(".claude")).unwrap();
+    fs::write(
+        worktree_path.join(".git"),
+        format!("gitdir: {}\n", worktree_git_dir.display()),
+    )
+    .unwrap();
+
+    let gitignores = gitignores_for_directory(&worktree_path);
+
+    assert!(
+        gitignores
+            .iter()
+            .any(|gitignore| gitignore.path() == worktree_path),
+        "the shared exclude file must be anchored at this worktree's own root"
+    );
+    assert!(matches_gitignores_of_unknown_kind(
+        &worktree_path.join(".claude").join("settings.json"),
+        &gitignores,
+        true,
+        || false,
+    ));
+}
+
 #[test]
 fn test_is_shared_git_ref() {
     use std::path::Path;

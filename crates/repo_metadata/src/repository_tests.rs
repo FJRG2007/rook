@@ -82,6 +82,52 @@ fn tracked_remote_ref_validates_full_ref_names() {
     assert!(TrackedRemoteRef::from_full_ref_name("refs/remotes/origin/../main").is_none());
 }
 
+/// The watcher asks this for every path in every filesystem event. A subtree excluded only in
+/// `.git/info/exclude` - which is where an agent records its worktrees, since it must not edit a
+/// tracked file - used to come back as not ignored, so every file under it reached each
+/// subscriber as a tracked change.
+#[test]
+fn check_gitignore_status_honors_git_info_exclude() {
+    VirtualFS::test(
+        "check_gitignore_status_honors_git_info_exclude",
+        |dirs, mut vfs| {
+            stub_git_repository(&mut vfs, "repo");
+            vfs.mkdir("repo/.git/info");
+            vfs.with_files(vec![Stub::FileWithContent(
+                "repo/.git/info/exclude",
+                ".claude/\n",
+            )]);
+
+            let repo_path = dirs.tests().join("repo");
+
+            App::test((), |mut app| async move {
+                let watcher_handle = app.add_model(DirectoryWatcher::new_for_testing);
+                let repo_handle = watcher_handle
+                    .update(&mut app, |watcher, ctx| {
+                        watcher.add_directory(
+                            StandardizedPath::from_local_canonicalized(&repo_path).unwrap(),
+                            ctx,
+                        )
+                    })
+                    .unwrap();
+
+                repo_handle.update(&mut app, |repo, _| {
+                    assert!(
+                        repo.check_gitignore_status(
+                            &repo_path
+                                .join(".claude")
+                                .join("worktrees")
+                                .join("x")
+                                .join("y.rs")
+                        )
+                    );
+                    assert!(!repo.check_gitignore_status(&repo_path.join("src").join("main.rs")));
+                });
+            });
+        },
+    );
+}
+
 #[test]
 fn tracked_remote_ref_path_uses_common_git_dir() {
     VirtualFS::test(

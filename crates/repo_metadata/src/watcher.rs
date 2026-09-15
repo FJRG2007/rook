@@ -359,10 +359,11 @@ impl DirectoryWatcher {
         let local_path = directory_path.to_local_path();
         let registration_future = if let Some(ref watcher) = self.watcher {
             if let Some(local_path) = local_path.clone() {
-                // `gitignores` are the repo's cached root + global gitignores,
-                // threaded in from `Repository::start_watching` so we neither
-                // re-read `.gitignore` from disk nor re-enter the (already
-                // borrowed) `Repository` model here.
+                // `gitignores` are the repo's cached root, `.git/info/exclude`
+                // and global gitignores, threaded in from
+                // `Repository::start_watching` so we neither re-read them from
+                // disk nor re-enter the (already borrowed) `Repository` model
+                // here.
                 let force_included_paths = self.force_included_paths.clone();
                 watcher.update(ctx, |watcher, _ctx| {
                     use notify_debouncer_full::notify::RecursiveMode;

@@ -947,10 +947,10 @@ impl LocalRepoMetadataModel {
             );
             if let Some(ref watcher) = self.watcher {
                 let watch_path = local_path.clone();
-                // Build the gitignore set (root + global) and force-included
-                // path list so the descend filter prunes gitignored subtrees
-                // while still watching registered force-included paths (e.g.
-                // skills).
+                // Build the gitignore set (root, `.git/info/exclude`, global)
+                // and force-included path list so the descend filter prunes
+                // gitignored subtrees while still watching registered
+                // force-included paths (e.g. skills).
                 let gitignores = crate::gitignores_for_directory(&watch_path);
                 let force_included_paths = self.force_included_paths.clone();
                 let had_previous = previous.is_some();

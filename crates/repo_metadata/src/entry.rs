@@ -860,6 +860,15 @@ pub(crate) fn extract_worktree_git_dir(path: &Path) -> Option<PathBuf> {
     }
 }
 
+/// Walks the ancestors of a git directory up to the `.git` component and returns it as the
+/// shared git root. For example, `/repo/.git/worktrees/foo` -> `/repo/.git`.
+pub(crate) fn common_git_dir(git_dir: &Path) -> Option<PathBuf> {
+    git_dir
+        .ancestors()
+        .find(|ancestor| ancestor.file_name().and_then(|name| name.to_str()) == Some(".git"))
+        .map(Path::to_path_buf)
+}
+
 /// Returns `true` for shared ref paths that live directly in the common
 /// `.git` directory and should be broadcast to all repos sharing it.
 /// Currently this means `.git/refs/heads/*` (not under `.git/worktrees/`).
@@ -1095,8 +1104,8 @@ fn is_within_symlink(path: &Path, repo_root: &Path) -> bool {
 /// force-included paths) so the recursive walk does not register watches on
 /// gitignored subtrees.
 ///
-/// `gitignores` should be the repo's root + global gitignores (as produced by
-/// [`gitignores_for_directory`]), matching `Repository::check_gitignore_status`
+/// `gitignores` should be the repo's root, `.git/info/exclude` and global gitignores (as
+/// produced by [`gitignores_for_directory`]), matching `Repository::check_gitignore_status`
 /// so descend decisions and the downstream `is_ignored` tagging stay
 /// consistent. Nested per-directory `.gitignore` files are not consulted here
 /// (same limitation as the existing tagging), which can only cause us to
@@ -1122,11 +1131,52 @@ pub fn is_file_parsable(path: &Path) -> Result<bool, io::Error> {
     std::fs::metadata(path).map(|metadata| (metadata.len() as usize) < MAX_FILE_SIZE)
 }
 
+/// Path to the `info/exclude` git applies to a working tree rooted at `directory_path`, or
+/// `None` when the directory is not a working tree.
+///
+/// In a linked worktree `<root>/.git` is a file pointing at that worktree's own gitdir
+/// (`<repo>/.git/worktrees/<name>`), and git reads `info/exclude` from the shared git directory
+/// rather than from the per-worktree one, so the pointer is resolved and walked back up to the
+/// `.git` component.
+fn git_info_exclude_path(directory_path: &Path) -> Option<PathBuf> {
+    let dot_git = directory_path.join(".git");
+    if std::fs::metadata(&dot_git).ok()?.is_dir() {
+        return Some(dot_git.join("info").join("exclude"));
+    }
+
+    // Gitfile format: `gitdir: <path>`, either absolute or relative to the working tree.
+    let gitfile = std::fs::read_to_string(&dot_git).ok()?;
+    let gitdir = PathBuf::from(gitfile.trim().strip_prefix("gitdir:")?.trim());
+    let gitdir = if gitdir.is_absolute() {
+        gitdir
+    } else {
+        directory_path.join(gitdir)
+    };
+    Some(common_git_dir(&gitdir)?.join("info").join("exclude"))
+}
+
+/// Returns the gitignore matchers that apply at `directory_path`: its own `.gitignore`, the
+/// repository's `.git/info/exclude`, and the user's global gitignore.
+///
+/// `.git/info/exclude` carries the same semantics as a `.gitignore` at the repository root and
+/// is the only one of the three a tool can add patterns to without touching a tracked file, so
+/// leaving it out silently treats whole excluded subtrees (agent worktrees, local scratch
+/// directories) as tracked.
 pub fn gitignores_for_directory(directory_path: &Path) -> Vec<Arc<Gitignore>> {
     let mut gitignores = Vec::new();
     let gitignore_path = directory_path.join(".gitignore");
     if gitignore_path.exists() {
         gitignores.push(gitignore_cache::get_or_parse(&gitignore_path));
+    }
+    if let Some(exclude_path) = git_info_exclude_path(directory_path)
+        && exclude_path.exists()
+    {
+        // Anchored at the working tree, not at the file's own parent: git applies these
+        // patterns from the repository root even though the file sits in `.git/info`.
+        gitignores.push(gitignore_cache::get_or_parse_anchored(
+            directory_path,
+            &exclude_path,
+        ));
     }
     let (global_gitignore, _) = Gitignore::global();
     if !global_gitignore.is_empty() {
