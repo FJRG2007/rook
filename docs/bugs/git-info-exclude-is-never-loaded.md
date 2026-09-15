@@ -43,10 +43,16 @@ Two details decide whether the patch works at all:
   through `GitignoreBuilder::new(<repo>)` instead, so it is anchored at the
   working tree.
 - **Worktrees.** In a linked worktree `<root>/.git` is a file pointing at that
-  worktree's gitdir, and git reads `info/exclude` from the *shared* git
-  directory. The pointer is resolved and walked back up to the `.git` component,
-  so a worktree opened in its own tab gets the same patterns the main working
-  tree does.
+  worktree's gitdir, and git reads `info/exclude` from the *common* git
+  directory. The pointer is resolved and the common directory is then found the
+  way git finds it: a `commondir` file inside the gitdir names it, and without
+  that file the gitdir is itself the common one. So a worktree opened in its own
+  tab gets the same patterns the main working tree does. Looking for an ancestor
+  named `.git` instead would answer for the usual layout only - a worktree of a
+  bare `<name>.git` repository, which is the layout agent worktrees use, has no
+  such ancestor and would load nothing at all, and a submodule (`.git` ->
+  `<super>/.git/modules/<name>`) would be handed the superproject's file, its
+  patterns anchored at the submodule root, while its own was never read.
 
 The parse goes through `gitignore_cache`, whose entries are now keyed by
 `(anchor root, file)` rather than by file alone: one exclude file is shared by

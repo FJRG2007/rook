@@ -167,7 +167,7 @@ impl Repository {
     ) -> Option<StandardizedPath> {
         external_git_directory
             .to_local_path()
-            .and_then(|local| crate::entry::common_git_dir(&local))
+            .map(|local| crate::entry::common_git_dir(&local))
             .and_then(|path| StandardizedPath::try_from_local(&path).ok())
             // Only store when it differs from external_git_directory.
             .filter(|common| common != external_git_directory)

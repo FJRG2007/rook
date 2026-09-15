@@ -1217,6 +1217,8 @@ fn git_info_exclude_is_read_from_the_common_git_dir_of_a_linked_worktree() {
         ".claude/\n",
     )
     .unwrap();
+    // What `git worktree add` writes: the common git directory, relative to this gitdir.
+    fs::write(worktree_git_dir.join("commondir"), "../..\n").unwrap();
     fs::create_dir_all(worktree_path.join(".claude")).unwrap();
     fs::write(
         worktree_path.join(".git"),
@@ -1238,6 +1240,96 @@ fn git_info_exclude_is_read_from_the_common_git_dir_of_a_linked_worktree() {
         true,
         || false,
     ));
+}
+
+/// A worktree of a *bare* repository has its gitdir under `<name>.git/worktrees/<id>`, where no
+/// ancestor is named `.git` - the layout agent worktrees use. Resolving the common git directory
+/// by looking for that component finds nothing there and loads no exclude file at all.
+#[test]
+fn git_info_exclude_is_read_from_the_common_git_dir_of_a_bare_repositorys_worktree() {
+    use super::{gitignores_for_directory, matches_gitignores_of_unknown_kind};
+
+    let temp_dir = tempfile::tempdir().unwrap();
+    let base_path = dunce::canonicalize(temp_dir.path()).unwrap();
+    let bare_path = base_path.join("repo.git");
+    let worktree_path = base_path.join("worktree");
+    let worktree_git_dir = bare_path.join("worktrees").join("wt");
+
+    fs::create_dir_all(&worktree_git_dir).unwrap();
+    fs::create_dir_all(bare_path.join("info")).unwrap();
+    fs::write(bare_path.join("info").join("exclude"), ".claude/\n").unwrap();
+    fs::write(worktree_git_dir.join("commondir"), "../..\n").unwrap();
+    fs::create_dir_all(worktree_path.join(".claude")).unwrap();
+    fs::write(
+        worktree_path.join(".git"),
+        format!("gitdir: {}\n", worktree_git_dir.display()),
+    )
+    .unwrap();
+
+    let gitignores = gitignores_for_directory(&worktree_path);
+
+    assert!(
+        gitignores
+            .iter()
+            .any(|gitignore| gitignore.path() == worktree_path),
+        "the bare repository's exclude file must be anchored at this worktree's own root"
+    );
+    assert!(matches_gitignores_of_unknown_kind(
+        &worktree_path.join(".claude").join("settings.json"),
+        &gitignores,
+        true,
+        || false,
+    ));
+}
+
+/// A submodule's `.git` points at `<super>/.git/modules/<name>`, which is a common git directory
+/// in its own right - it has no `commondir`. Walking up to the nearest `.git` component instead
+/// lands on the superproject's, so its patterns get applied, anchored at the submodule root,
+/// while the submodule's own exclude file is never read.
+#[test]
+fn git_info_exclude_of_a_submodule_is_read_from_its_own_git_dir() {
+    use super::{gitignores_for_directory, matches_gitignores_of_unknown_kind};
+
+    let temp_dir = tempfile::tempdir().unwrap();
+    let base_path = dunce::canonicalize(temp_dir.path()).unwrap();
+    let submodule_path = base_path.join("sub");
+    let submodule_git_dir = base_path.join(".git").join("modules").join("sub");
+
+    fs::create_dir_all(submodule_git_dir.join("info")).unwrap();
+    fs::write(submodule_git_dir.join("info").join("exclude"), "local/\n").unwrap();
+    fs::create_dir_all(base_path.join(".git").join("info")).unwrap();
+    fs::write(
+        base_path.join(".git").join("info").join("exclude"),
+        "vendored/\n",
+    )
+    .unwrap();
+    fs::create_dir_all(submodule_path.join("local")).unwrap();
+    fs::write(
+        submodule_path.join(".git"),
+        format!("gitdir: {}\n", submodule_git_dir.display()),
+    )
+    .unwrap();
+
+    let gitignores = gitignores_for_directory(&submodule_path);
+
+    assert!(
+        matches_gitignores_of_unknown_kind(
+            &submodule_path.join("local").join("notes.txt"),
+            &gitignores,
+            true,
+            || false,
+        ),
+        "the submodule's own exclude file must be the one loaded"
+    );
+    assert!(
+        !matches_gitignores_of_unknown_kind(
+            &submodule_path.join("vendored").join("lib.rs"),
+            &gitignores,
+            true,
+            || false,
+        ),
+        "the superproject's exclude file must not be applied at the submodule root"
+    );
 }
 
 #[test]

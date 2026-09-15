@@ -860,13 +860,50 @@ pub(crate) fn extract_worktree_git_dir(path: &Path) -> Option<PathBuf> {
     }
 }
 
-/// Walks the ancestors of a git directory up to the `.git` component and returns it as the
-/// shared git root. For example, `/repo/.git/worktrees/foo` -> `/repo/.git`.
-pub(crate) fn common_git_dir(git_dir: &Path) -> Option<PathBuf> {
-    git_dir
-        .ancestors()
-        .find(|ancestor| ancestor.file_name().and_then(|name| name.to_str()) == Some(".git"))
-        .map(Path::to_path_buf)
+/// The shared ("common") git directory for `git_dir` - where git keeps the state every worktree
+/// of a repository has in common: `info/exclude`, `config`, and the shared refs.
+///
+/// Resolved by git's own rule rather than by searching the path for a `.git` component: the
+/// `commondir` file inside the git directory names the common one. That pointer is the only
+/// thing that gets the answer right for a worktree of a *bare* repository
+/// (`<name>.git/worktrees/<id>`, the layout agent worktrees use), where no ancestor is named
+/// `.git` at all.
+///
+/// Without the pointer the git directory is itself the common one, which is the right answer for
+/// a main repository and for a submodule - whose gitdir at `<super>/.git/modules/<name>` is a
+/// common directory in its own right, not a worktree of the superproject, so walking up to the
+/// superproject's `.git` would hand it another repository's state. The one exception is a gitdir
+/// still sitting in the linked-worktree layout, `<common>/worktrees/<name>`, where the
+/// grandparent is the common directory by construction; git always writes the pointer there, so
+/// this only catches a worktree gitdir missing it.
+pub(crate) fn common_git_dir(git_dir: &Path) -> PathBuf {
+    read_commondir(git_dir)
+        .or_else(|| linked_worktree_common_dir(git_dir))
+        .unwrap_or_else(|| git_dir.to_path_buf())
+}
+
+/// The path named by `<git_dir>/commondir`, resolved against `git_dir` when it is relative.
+fn read_commondir(git_dir: &Path) -> Option<PathBuf> {
+    let contents = std::fs::read_to_string(git_dir.join("commondir")).ok()?;
+    let commondir = Path::new(contents.trim());
+    if commondir.as_os_str().is_empty() {
+        return None;
+    }
+    Some(if commondir.is_absolute() {
+        commondir.to_path_buf()
+    } else {
+        git_dir.join(commondir)
+    })
+}
+
+/// The common directory implied by the `<common>/worktrees/<name>` layout, for a linked worktree
+/// gitdir with no `commondir` pointer to read.
+fn linked_worktree_common_dir(git_dir: &Path) -> Option<PathBuf> {
+    let worktrees = git_dir.parent()?;
+    if worktrees.file_name()? != "worktrees" {
+        return None;
+    }
+    worktrees.parent().map(Path::to_path_buf)
 }
 
 /// Returns `true` for shared ref paths that live directly in the common
@@ -1134,25 +1171,25 @@ pub fn is_file_parsable(path: &Path) -> Result<bool, io::Error> {
 /// Path to the `info/exclude` git applies to a working tree rooted at `directory_path`, or
 /// `None` when the directory is not a working tree.
 ///
-/// In a linked worktree `<root>/.git` is a file pointing at that worktree's own gitdir
-/// (`<repo>/.git/worktrees/<name>`), and git reads `info/exclude` from the shared git directory
-/// rather than from the per-worktree one, so the pointer is resolved and walked back up to the
-/// `.git` component.
+/// `<root>/.git` is a directory in a main working tree and a file pointing at that worktree's
+/// own gitdir (`<repo>/.git/worktrees/<name>`) in a linked one. Either way git reads
+/// `info/exclude` from the *common* git directory rather than from the per-worktree one, so the
+/// resolved gitdir goes through [`common_git_dir`].
 fn git_info_exclude_path(directory_path: &Path) -> Option<PathBuf> {
     let dot_git = directory_path.join(".git");
-    if std::fs::metadata(&dot_git).ok()?.is_dir() {
-        return Some(dot_git.join("info").join("exclude"));
-    }
-
-    // Gitfile format: `gitdir: <path>`, either absolute or relative to the working tree.
-    let gitfile = std::fs::read_to_string(&dot_git).ok()?;
-    let gitdir = PathBuf::from(gitfile.trim().strip_prefix("gitdir:")?.trim());
-    let gitdir = if gitdir.is_absolute() {
-        gitdir
+    let git_dir = if std::fs::metadata(&dot_git).ok()?.is_dir() {
+        dot_git
     } else {
-        directory_path.join(gitdir)
+        // Gitfile format: `gitdir: <path>`, either absolute or relative to the working tree.
+        let gitfile = std::fs::read_to_string(&dot_git).ok()?;
+        let gitdir = PathBuf::from(gitfile.trim().strip_prefix("gitdir:")?.trim());
+        if gitdir.is_absolute() {
+            gitdir
+        } else {
+            directory_path.join(gitdir)
+        }
     };
-    Some(common_git_dir(&gitdir)?.join("info").join("exclude"))
+    Some(common_git_dir(&git_dir).join("info").join("exclude"))
 }
 
 /// Returns the gitignore matchers that apply at `directory_path`: its own `.gitignore`, the
