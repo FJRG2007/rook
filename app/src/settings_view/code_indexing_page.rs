@@ -36,6 +36,7 @@ use rookui::{
     ViewHandle, WindowId, id,
 };
 
+use super::search::SearchQuery;
 use super::settings_page::{
     MatchData, PageType, SettingsPageMeta, SettingsPageViewHandle, SettingsWidget,
     TOGGLE_BUTTON_RIGHT_PADDING, render_body_item, render_separator,
@@ -2295,7 +2296,7 @@ impl SettingsPageMeta for CodeIndexingPageView {
         SettingsSection::CodeIndexing
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

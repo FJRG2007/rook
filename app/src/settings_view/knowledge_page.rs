@@ -17,6 +17,7 @@ use rookui::{
 };
 
 use super::ai_shared::{render_ai_setting_description, render_ai_setting_toggle, styles};
+use super::search::SearchQuery;
 use super::settings_page::{
     CONTENT_FONT_SIZE, MatchData, PageTitle, PageType, SettingsPageMeta, SettingsPageViewHandle,
     SettingsWidget, render_full_pane_width_ai_button,
@@ -133,7 +134,7 @@ impl SettingsPageMeta for KnowledgePageView {
         FeatureFlag::AgentMode.is_enabled()
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

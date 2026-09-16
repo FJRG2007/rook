@@ -7,6 +7,7 @@ use rookui::ui_components::components::UiComponent;
 use rookui::{AppContext, Entity, View, ViewContext, ViewHandle};
 
 use super::SettingsSection;
+use super::search::SearchQuery;
 use super::settings_page::{
     MatchData, PageType, SettingsPageEvent, SettingsPageMeta, SettingsPageViewHandle,
     SettingsWidget,
@@ -135,7 +136,7 @@ impl SettingsPageMeta for AboutPageView {
         true
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

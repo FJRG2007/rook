@@ -20,6 +20,7 @@ use rookui::{
 use settings::{Setting, ToggleableSetting};
 use strum::IntoEnumIterator;
 
+use super::search::SearchQuery;
 use super::settings_page::{
     Category, CategoryHeader, HEADER_FONT_SIZE, HEADER_PADDING, LocalOnlyIconState, MatchData,
     PageType, SettingsPageEvent, SettingsPageMeta, SettingsPageViewHandle, SettingsWidget,
@@ -462,7 +463,7 @@ impl SettingsPageMeta for RookifyPageView {
         true
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 
@@ -612,7 +613,7 @@ impl SettingsWidget for SSHWidget {
     type View = RookifyPageView;
 
     fn search_terms(&self) -> &str {
-        "rookify ssh"
+        "rookify ssh sessions install extension reuse controlmaster"
     }
 
     fn render(

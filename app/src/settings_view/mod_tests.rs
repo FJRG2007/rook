@@ -4,9 +4,10 @@ use rookui::platform::WindowStyle;
 use rookui::{
     App, AppContext, Element, Entity, Presenter, TypedActionView, View, WindowInvalidation,
 };
+use search::{MatchMode, SearchQuery};
 use settings_page::{
     Category, CategoryHeader, FilteredPageType, MatchData, PageTitle, PageType, SettingsWidget,
-    categories_with_visible_content, search_terms_match,
+    categories_with_visible_content,
 };
 
 use super::*;
@@ -359,6 +360,23 @@ fn realistic_nav_items() -> Vec<SettingsNavItem> {
         )),
         SettingsNavItem::Page(SettingsSection::Teams),
     ]
+}
+
+#[test]
+fn sidebar_labels_name_the_page_and_its_umbrella() {
+    let nav_items = realistic_nav_items();
+    assert_eq!(
+        sidebar_labels(&nav_items, SettingsSection::Account),
+        "Account"
+    );
+    assert_eq!(
+        sidebar_labels(&nav_items, SettingsSection::Knowledge),
+        "Knowledge Agents"
+    );
+    assert_eq!(
+        sidebar_labels(&nav_items, SettingsSection::CodeIndexing),
+        "Indexing and projects Code"
+    );
 }
 
 /// Mutably flips an umbrella's `expanded` flag at `nav_index`.
@@ -754,7 +772,7 @@ fn arrow_down_collapsed_umbrella_respects_search_filter() {
 // active query has to be reapplied for only matching widgets to render. No page
 // rebuilds itself on navigation any more (each subpage owns its own view), but
 // these tests still pin the underlying PageType::Uncategorized filter lifecycle
-// and the real search_terms_match predicate that the invariant rests on.
+// and the real SearchQuery matching that the invariant rests on.
 
 /// Minimal View so PageType<V> can be instantiated in a unit test without the
 /// full SettingsView/ViewContext a real settings page requires.
@@ -823,32 +841,9 @@ fn visible_widget_count<V: View>(page: &PageType<V>) -> usize {
     widgets.len()
 }
 
-#[test]
-fn search_terms_match_direct_unit_checks() {
-    // Empty query matches everything (mirrors PageType::update_filter's guard).
-    assert!(search_terms_match("rook agent global ai toggle", ""));
-    // All-words, case-insensitive, non-contiguous.
-    assert!(search_terms_match(
-        "active ai autosuggestions prompt",
-        "autosuggestions"
-    ));
-    assert!(search_terms_match(
-        "active ai autosuggestions prompt",
-        "ACTIVE AI"
-    ));
-    assert!(search_terms_match(
-        "file search fuzzy opener",
-        "file search"
-    ));
-    // Every word must appear.
-    assert!(!search_terms_match(
-        "rook agent global ai toggle",
-        "file search"
-    ));
-    assert!(!search_terms_match(
-        "active ai autosuggestions prompt",
-        "autosuggestions key"
-    ));
+/// An exact-mode query, the mode the settings search tries first.
+fn exact(query: &str) -> SearchQuery {
+    SearchQuery::new(query, MatchMode::Exact)
 }
 
 #[test]
@@ -860,7 +855,7 @@ fn rebuild_resets_filter_to_all_widgets() {
     App::test((), |mut app| async move {
         app.update(|ctx| {
             let mut page = stub_widgets_page();
-            let md = page.update_filter("file search", ctx);
+            let md = page.update_filter(&exact("file search"), ctx);
             assert!(md.is_truthy());
             assert_eq!(visible_widget_count(&page), 1);
 
@@ -881,11 +876,11 @@ fn rebuild_with_reapply_keeps_only_matching_widgets() {
     App::test((), |mut app| async move {
         app.update(|ctx| {
             let mut page = stub_widgets_page();
-            page.update_filter("file search", ctx);
+            page.update_filter(&exact("file search"), ctx);
             assert_eq!(visible_widget_count(&page), 1);
 
             let mut rebuilt = stub_widgets_page();
-            rebuilt.update_filter("file search", ctx);
+            rebuilt.update_filter(&exact("file search"), ctx);
             assert_eq!(
                 visible_widget_count(&rebuilt),
                 1,
@@ -901,11 +896,11 @@ fn reapply_handles_multi_word_and_case() {
     App::test((), |mut app| async move {
         app.update(|ctx| {
             let mut page = stub_widgets_page();
-            page.update_filter("AI INPUT", ctx);
+            page.update_filter(&exact("AI INPUT"), ctx);
             assert_eq!(visible_widget_count(&page), 1);
 
             let mut rebuilt = stub_widgets_page();
-            rebuilt.update_filter("AI INPUT", ctx);
+            rebuilt.update_filter(&exact("AI INPUT"), ctx);
             assert_eq!(visible_widget_count(&rebuilt), 1);
         });
     });
@@ -917,11 +912,11 @@ fn empty_query_after_reapply_shows_all_widgets() {
     App::test((), |mut app| async move {
         app.update(|ctx| {
             let mut page = stub_widgets_page();
-            page.update_filter("agent", ctx);
+            page.update_filter(&exact("agent"), ctx);
             assert_eq!(visible_widget_count(&page), 1);
 
             let mut rebuilt = stub_widgets_page();
-            rebuilt.update_filter("", ctx);
+            rebuilt.update_filter(&exact(""), ctx);
             assert_eq!(
                 visible_widget_count(&rebuilt),
                 5,
@@ -988,7 +983,7 @@ fn category_whose_sole_widget_cannot_render_has_no_visible_content_after_an_empt
                 })];
             let mut page =
                 PageType::new_categorized(vec![Category::new("Cloud Handoff", children)], None);
-            page.update_filter("", ctx);
+            page.update_filter(&exact(""), ctx);
 
             let FilteredPageType::Categorized { categories, .. } = page.get_filtered() else {
                 panic!("expected Categorized page");
@@ -1025,7 +1020,7 @@ fn title_trailing_element_is_present_regardless_of_widget_filter() {
     App::test((), |mut app| async move {
         app.update(|ctx| {
             let mut page = uncategorized_page_with_title_trailing_element();
-            let match_data = page.update_filter("totally unrelated query", ctx);
+            let match_data = page.update_filter(&exact("totally unrelated query"), ctx);
             assert!(!match_data.is_truthy());
 
             let FilteredPageType::Uncategorized { widgets, title, .. } = page.get_filtered() else {
@@ -1071,7 +1066,7 @@ fn category_trailing_element_renders_alongside_a_matching_child() {
     App::test((), |mut app| async move {
         app.update(|ctx| {
             let mut page = categorized_page_with_trailing();
-            let match_data = page.update_filter("child one", ctx);
+            let match_data = page.update_filter(&exact("child one"), ctx);
             assert!(match_data.is_truthy());
             assert_eq!(
                 categorized_widget_and_trailing_state(&page),
@@ -1088,7 +1083,7 @@ fn category_and_its_trailing_element_are_dropped_when_no_child_matches() {
     App::test((), |mut app| async move {
         app.update(|ctx| {
             let mut page = categorized_page_with_trailing();
-            let match_data = page.update_filter("totally unrelated query", ctx);
+            let match_data = page.update_filter(&exact("totally unrelated query"), ctx);
             assert!(!match_data.is_truthy());
             assert_eq!(categorized_widget_and_trailing_state(&page), vec![]);
         });
@@ -1100,12 +1095,30 @@ fn category_with_trailing_element_shows_everything_on_empty_query() {
     App::test((), |mut app| async move {
         app.update(|ctx| {
             let mut page = categorized_page_with_trailing();
-            let match_data = page.update_filter("", ctx);
+            let match_data = page.update_filter(&exact(""), ctx);
             assert!(match_data.is_truthy());
             assert_eq!(
                 categorized_widget_and_trailing_state(&page),
                 vec![(2, true)]
             );
+        });
+    });
+}
+
+#[test]
+fn category_title_counts_as_a_search_term() {
+    App::test((), |mut app| async move {
+        app.update(|ctx| {
+            let mut page = categorized_page_with_trailing();
+            let match_data = page.update_filter(&exact("master"), ctx);
+            assert!(matches!(match_data, MatchData::Countable(2)));
+            assert_eq!(
+                categorized_widget_and_trailing_state(&page),
+                vec![(2, true)]
+            );
+
+            let match_data = page.update_filter(&exact("master two"), ctx);
+            assert!(matches!(match_data, MatchData::Countable(1)));
         });
     });
 }

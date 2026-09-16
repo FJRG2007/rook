@@ -57,6 +57,7 @@ use super::custom_inference_modal::{
 use super::remove_custom_endpoint_confirmation_dialog::{
     RemoveCustomEndpointConfirmationDialog, RemoveCustomEndpointConfirmationDialogEvent,
 };
+use super::search::SearchQuery;
 use super::set_default_model_modal::{SetDefaultModelModalBody, SetDefaultModelModalBodyEvent};
 use super::settings_page::{
     CONTENT_FONT_SIZE, Category, CategoryHeader, HEADER_PADDING, LocalOnlyIconState, MatchData,
@@ -2958,7 +2959,7 @@ impl SettingsPageMeta for RookAgentPageView {
         FeatureFlag::AgentMode.is_enabled()
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 
@@ -3605,7 +3606,7 @@ impl SettingsWidget for AutoApproveBypassesCommandDenylistWidget {
     type View = RookAgentPageView;
 
     fn search_terms(&self) -> &str {
-        "oz agent ai auto-approve fast forward bypass denylist permissions"
+        "oz agent ai auto-approve fast forward bypass denylist permissions command"
     }
 
     fn render(

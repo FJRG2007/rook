@@ -36,6 +36,7 @@ use serde::{Deserialize, Serialize};
 
 use super::SettingsSection;
 use super::admin_actions::AdminActions;
+use super::search::SearchQuery;
 use super::settings_page::{
     MatchData, PageType, SettingsPageMeta, SettingsPageViewHandle, SettingsWidget, render_banner,
     render_cta_banner, render_customer_type_badge, render_separator, render_sub_header,
@@ -1999,7 +2000,7 @@ impl SettingsPageMeta for TeamsPageView {
         self.focus_on_next_input(ctx);
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

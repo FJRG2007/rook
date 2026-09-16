@@ -2,7 +2,6 @@ use core::fmt::{self, Display};
 use std::borrow::Cow;
 use std::collections::HashMap;
 
-use itertools::Itertools as _;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
@@ -48,6 +47,7 @@ use super::rook_agent_page::RookAgentPageView;
 use super::rook_drive_page::RookDriveSettingsPageView;
 use super::rookify_page::RookifyPageView;
 use super::scripting_page::ScriptingSettingsPageView;
+use super::search::SearchQuery;
 use super::show_blocks_view::ShowBlocksView;
 use super::teams_page::TeamsPageView;
 use crate::appearance::Appearance;
@@ -97,7 +97,7 @@ pub trait SettingsPageMeta {
 
     fn on_tab_pressed(&mut self, _ctx: &mut ViewContext<Self>) {}
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData;
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData;
 
     fn scroll_to_widget(&mut self, widget_id: &'static str);
 
@@ -1482,19 +1482,6 @@ impl From<usize> for MatchData {
     }
 }
 
-/// Returns true if every whitespace-delimited word in `query` appears somewhere
-/// in `terms` (case-insensitive). An empty query matches everything.
-pub(super) fn search_terms_match(terms: &str, query: &str) -> bool {
-    if query.is_empty() {
-        return true;
-    }
-    let terms_lower = terms.to_lowercase();
-    query
-        .to_lowercase()
-        .split_whitespace()
-        .all(|word| terms_lower.contains(word))
-}
-
 /// Combines `header` with `trailing_element`, in a space-between row, when the accessory is
 /// present. Otherwise returns `header` unchanged.
 fn render_header_with_trailing_element<V: rookui::View>(
@@ -1534,6 +1521,20 @@ fn render_page_title_with_trailing<V: rookui::View>(
     Container::new(title_row)
         .with_margin_bottom(PAGE_TITLE_MARGIN_BOTTOM)
         .finish()
+}
+
+/// The indices of the `widgets` that can render and match `query`.
+fn matching_widget_indices<V: rookui::View>(
+    widgets: &[Box<dyn SettingsWidget<View = V>>],
+    query: &SearchQuery,
+    app: &AppContext,
+) -> Vec<usize> {
+    widgets
+        .iter()
+        .enumerate()
+        .filter(|(_, widget)| widget.should_render(app) && query.matches(widget.search_terms()))
+        .map(|(i, _)| i)
+        .collect()
 }
 
 impl<V: rookui::View> PageType<V> {
@@ -1607,27 +1608,18 @@ impl<V: rookui::View> PageType<V> {
     }
 
     /// Apply the search query by matching against all the widgets and storing the results.
-    /// Uses all-words matching: every word in the query must appear somewhere in the
-    /// widget's search terms (but not necessarily contiguously).
-    pub(super) fn update_filter(&mut self, query: &str, app: &AppContext) -> MatchData {
+    /// Every word of the query must match a widget's search terms or the title of its
+    /// category (see [`SearchQuery`]).
+    pub(super) fn update_filter(&mut self, query: &SearchQuery, app: &AppContext) -> MatchData {
         match self {
             Self::Monolith { widget, filter, .. } => {
-                *filter =
-                    widget.should_render(app) && search_terms_match(widget.search_terms(), query);
+                *filter = widget.should_render(app) && query.matches(widget.search_terms());
                 (*filter).into()
             }
             Self::Uncategorized {
                 widgets, filter, ..
             } => {
-                *filter = widgets
-                    .iter()
-                    .enumerate()
-                    .filter_map(|(i, widget)| {
-                        (widget.should_render(app)
-                            && search_terms_match(widget.search_terms(), query))
-                        .then_some(i)
-                    })
-                    .collect();
+                *filter = matching_widget_indices(widgets, query, app);
                 if query.is_empty() {
                     MatchData::Uncounted(true)
                 } else {
@@ -1640,16 +1632,9 @@ impl<V: rookui::View> PageType<V> {
                 *filter = categories
                     .iter()
                     .map(|category| {
-                        category
-                            .widgets
-                            .iter()
-                            .enumerate()
-                            .filter_map(|(i, widget)| {
-                                (widget.should_render(app)
-                                    && search_terms_match(widget.search_terms(), query))
-                                .then_some(i)
-                            })
-                            .collect_vec()
+                        let title = category.header.as_ref().map_or("", |header| header.title);
+                        let query = query.without_words_matching(title);
+                        matching_widget_indices(&category.widgets, &query, app)
                     })
                     .collect();
                 if query.is_empty() {

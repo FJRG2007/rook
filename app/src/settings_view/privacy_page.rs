@@ -31,6 +31,7 @@ use rookui::{
 use settings::Setting as _;
 
 use super::privacy::{AddRegexModal, AddRegexModalEvent};
+use super::search::SearchQuery;
 use super::settings_page::{
     HEADER_PADDING, LocalOnlyIconState, MatchData, PageTitle, PageType, SettingsPageMeta,
     SettingsPageViewHandle, SettingsWidget, TOGGLE_BUTTON_RIGHT_PADDING, ToggleState,
@@ -621,7 +622,7 @@ impl SettingsPageMeta for PrivacyPageView {
         true
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 
@@ -1152,7 +1153,7 @@ impl SettingsWidget for SecretRedactionWidget {
     type View = PrivacyPageView;
 
     fn search_terms(&self) -> &str {
-        "secret redaction safe mode hide"
+        "secret redaction safe mode hide visual regex"
     }
 
     fn render(

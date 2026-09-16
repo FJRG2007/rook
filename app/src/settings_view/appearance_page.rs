@@ -33,6 +33,7 @@ use rookui::{
 };
 
 use super::directory_color_add_picker::{DirectoryColorAddPicker, DirectoryColorAddPickerEvent};
+use super::search::SearchQuery;
 use super::settings_page::{
     AdditionalInfo, CONTENT_FONT_SIZE, Category, HEADER_PADDING, LocalOnlyIconState, MatchData,
     PageType, SettingsPageEvent, SettingsPageMeta, SettingsPageViewHandle, SettingsWidget,
@@ -3567,7 +3568,7 @@ impl SettingsWidget for ToolsPanelStateScopeWidget {
     type View = AppearanceSettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "left tools panel open closed across tabs file tree project explorer global search rook drive conversation list"
+        "left tools panel open closed across tabs file tree project explorer global search rook drive conversation list visibility"
     }
 
     fn render(
@@ -4245,7 +4246,7 @@ impl SettingsWidget for AIFontWidget {
     type View = AppearanceSettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "text agent ai font family font size monospace"
+        "text agent ai font family font size monospace match terminal"
     }
 
     fn render(
@@ -4406,7 +4407,7 @@ impl SettingsWidget for TerminalFontWidget {
     type View = AppearanceSettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "text terminal font family font size line height monospace"
+        "text terminal font family font size line height monospace weight system fonts"
     }
 
     fn render(
@@ -4572,7 +4573,7 @@ impl SettingsWidget for NotebookFontSizeWidget {
     type View = AppearanceSettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "text notebook font size"
+        "text notebook font size match terminal"
     }
 
     fn render(
@@ -4697,7 +4698,7 @@ impl SettingsWidget for MinimumContrastWidget {
     type View = AppearanceSettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "text minimum contrast high"
+        "text minimum contrast high enforce"
     }
 
     fn render(
@@ -4770,7 +4771,7 @@ impl SettingsWidget for LigaturesWidget {
     type View = AppearanceSettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "text font ligatures"
+        "text font ligatures terminal performance"
     }
 
     fn render(
@@ -5118,7 +5119,7 @@ impl SettingsWidget for ShowVerticalTabPanelInRestoredWindowsWidget {
     type View = AppearanceSettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "vertical tabs panel restore window session snapshot"
+        "vertical tabs panel restore window session snapshot restored"
     }
 
     fn render(
@@ -5168,7 +5169,7 @@ impl SettingsWidget for HideTitleBarSearchBarInVerticalTabsWidget {
     type View = AppearanceSettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "hide title bar search bar vertical tabs chrome minimal"
+        "hide title bar search bar vertical tabs chrome minimal layout"
     }
 
     fn render(
@@ -5560,7 +5561,7 @@ impl SettingsWidget for AltScreenPaddingWidget {
     type View = AppearanceSettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "alt screen padding border space vim"
+        "alt screen padding border space vim custom uniform"
     }
 
     fn render(
@@ -5719,7 +5720,7 @@ impl SettingsPageMeta for AppearanceSettingsPageView {
         ctx.notify();
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

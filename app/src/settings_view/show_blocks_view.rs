@@ -21,6 +21,7 @@ use rookui::{
 };
 
 use super::SettingsSection;
+use super::search::SearchQuery;
 use super::settings_page::{
     HEADER_FONT_SIZE, MatchData, PAGE_PADDING, PageType, SettingsPageMeta, SettingsPageViewHandle,
     SettingsWidget, render_page_title,
@@ -620,7 +621,7 @@ impl SettingsPageMeta for ShowBlocksView {
         self.load_blocks(ctx);
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

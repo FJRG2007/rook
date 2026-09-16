@@ -22,6 +22,7 @@ use super::platform::{
     CreateApiKeyModal, CreateApiKeyModalEvent, CreateApiKeyModalViewState, ExpireApiKeyButton,
     ExpireApiKeyButtonEvent,
 };
+use super::search::SearchQuery;
 use super::settings_page::{
     CONTENT_FONT_SIZE, MatchData, PageType, SUBHEADER_FONT_SIZE, SettingsPageMeta,
     SettingsPageViewHandle, SettingsWidget,
@@ -924,7 +925,7 @@ impl SettingsPageMeta for PlatformPageView {
         self.fetch_api_keys(ctx);
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

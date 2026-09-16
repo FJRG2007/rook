@@ -29,6 +29,7 @@ use crate::settings_view::mcp_servers::list_page::{
     MCPServersListPageView, MCPServersListPageViewEvent,
 };
 use crate::settings_view::mcp_servers::{ServerCardItemId, style};
+use crate::settings_view::search::SearchQuery;
 use crate::settings_view::settings_page::{MatchData, PageType, SettingsPageMeta, SettingsWidget};
 use crate::view_components::DismissibleToast;
 use crate::workspace::ToastStack;
@@ -546,7 +547,7 @@ impl SettingsPageMeta for MCPServersSettingsPageView {
         true
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

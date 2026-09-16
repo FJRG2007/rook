@@ -29,6 +29,7 @@ use super::agent_assisted_environment_modal::{
 use super::delete_environment_confirmation_dialog::{
     DeleteEnvironmentConfirmationDialog, DeleteEnvironmentConfirmationDialogEvent,
 };
+use super::search::SearchQuery;
 use super::settings_page::{
     CONTENT_FONT_SIZE, MatchData, PageType, SettingsPageEvent, SettingsPageMeta,
     SettingsPageViewHandle, SettingsWidget,
@@ -2027,7 +2028,7 @@ impl SettingsPageMeta for EnvironmentsPageView {
         true
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

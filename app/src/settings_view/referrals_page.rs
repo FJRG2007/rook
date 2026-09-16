@@ -23,6 +23,7 @@ use thiserror::Error;
 use validator::ValidateEmail;
 
 use super::SettingsSection;
+use super::search::SearchQuery;
 use super::settings_page::{
     MatchData, PAGE_PADDING, PageType, SettingsPageMeta, SettingsPageViewHandle, SettingsWidget,
 };
@@ -412,7 +413,7 @@ impl SettingsPageMeta for ReferralsPageView {
         self.fetch_referral_status(ctx);
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

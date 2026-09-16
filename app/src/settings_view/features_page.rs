@@ -35,6 +35,7 @@ use {
 };
 
 use super::keybindings::KeyBindingModifyingState;
+use super::search::SearchQuery;
 #[cfg(feature = "local_tty")]
 use super::settings_page::render_sub_sub_header;
 use super::settings_page::{
@@ -4466,7 +4467,7 @@ impl SettingsPageMeta for FeaturesPageView {
         self.refresh_preferred_graphics_backend_dropdown(ctx);
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 
@@ -4584,7 +4585,7 @@ impl SettingsWidget for NativeRedirectWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "link open desktop native redirect url intent deep link deeplink"
+        "link open desktop native redirect url intent deep link deeplink app"
     }
 
     fn render(
@@ -4838,7 +4839,7 @@ impl SettingsWidget for QuitWarningModalWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "warning popup modal dialog quit logout log out close"
+        "warning popup modal dialog quit logout log out close quitting logging"
     }
 
     fn render(
@@ -4983,7 +4984,7 @@ impl SettingsWidget for ShowChangelogWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "changelog updates"
+        "changelog updates toast"
     }
 
     fn render(
@@ -5161,7 +5162,7 @@ impl SettingsWidget for BlockLimitWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "max block size lines maximum limit memory"
+        "max block size lines maximum limit memory rows scrollback"
     }
 
     fn render(
@@ -5222,7 +5223,7 @@ impl SettingsWidget for DesktopNotificationsWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "desktop notifications"
+        "desktop notifications notify agent task completes command attention sounds"
     }
 
     fn render(
@@ -5407,7 +5408,7 @@ impl SettingsWidget for StartupShellWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "startup shell session"
+        "startup shell session default bash zsh fish powershell pwsh wsl msys2"
     }
 
     fn render(
@@ -5505,7 +5506,7 @@ impl SettingsWidget for ConfirmCloseSharedSessionWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "warning popup modal dialog shared session close"
+        "warning popup modal dialog shared session close confirm closing"
     }
 
     fn render(
@@ -5820,7 +5821,7 @@ impl SettingsWidget for ErrorUnderliningWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "error underline editor"
+        "error underline editor underlining commands"
     }
 
     fn render(
@@ -5866,7 +5867,7 @@ impl SettingsWidget for SyntaxHighlightingWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "syntax highlighting editor"
+        "syntax highlighting editor commands"
     }
 
     fn render(
@@ -6104,7 +6105,7 @@ impl SettingsWidget for CommandCorrectionsWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "suggest command corrections"
+        "suggest command corrections corrected"
     }
 
     fn render(
@@ -6293,7 +6294,7 @@ impl SettingsWidget for VimModeWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "vim mode keybindings"
+        "vim mode keybindings unnamed register system clipboard status bar"
     }
 
     fn render(
@@ -6843,7 +6844,7 @@ impl SettingsWidget for TabKeyBehaviorWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "completions autosuggestions tab keybinding arrow accept"
+        "completions autosuggestions tab keybinding arrow accept behavior"
     }
 
     fn render(
@@ -7212,7 +7213,7 @@ impl SettingsWidget for SmartSelectWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "word smart select semantic separator"
+        "word smart select semantic separator double click selection"
     }
 
     fn render(
@@ -7285,7 +7286,7 @@ impl SettingsWidget for ShowTerminalZeroStateBlockWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "zero state new conversation terminal block welcome output first"
+        "zero state new conversation terminal block welcome output first help sessions"
     }
 
     fn should_render(&self, app: &AppContext) -> bool {
@@ -7502,7 +7503,7 @@ impl SettingsWidget for WorkflowsInCommandSearch {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "global workflows command search"
+        "global workflows command search ctrl-r"
     }
 
     fn render(
@@ -7612,7 +7613,7 @@ impl SettingsWidget for GPUWidget {
     type View = FeaturesPageView;
 
     fn search_terms(&self) -> &str {
-        "render integrated discrete gpu graphics"
+        "render integrated discrete gpu graphics prefer low power"
     }
 
     fn render(

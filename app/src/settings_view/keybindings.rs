@@ -19,6 +19,7 @@ use rookui::{
 };
 
 use super::SettingsSection;
+use super::search::SearchQuery;
 use super::settings_page::{
     LocalOnlyIconState, MatchData, PageType, SettingsPageMeta, SettingsPageViewHandle,
     SettingsWidget, render_sub_header,
@@ -815,7 +816,7 @@ impl SettingsPageMeta for KeybindingsView {
         ctx.focus(&self.search_editor);
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

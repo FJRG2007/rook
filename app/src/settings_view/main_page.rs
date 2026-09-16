@@ -28,6 +28,7 @@ use rookui::{
     ViewHandle, WeakViewHandle, id,
 };
 
+use super::search::SearchQuery;
 use super::settings_page::{
     AdditionalInfo, HEADER_PADDING, LocalOnlyIconState, MatchData, PageTitle, PageType,
     SettingsPageMeta, SettingsPageViewHandle, SettingsWidget, ToggleState, render_body_item,
@@ -1255,7 +1256,7 @@ impl SettingsPageMeta for MainSettingsPageView {
         );
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

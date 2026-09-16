@@ -13,6 +13,7 @@ use rookui::ui_components::components::UiComponent;
 use rookui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
 use settings::Setting as _;
 
+use super::search::SearchQuery;
 use super::settings_page::{
     LocalOnlyIconState, MatchData, PageTitle, PageType, SettingsPageMeta, SettingsPageViewHandle,
     SettingsWidget, render_body_item,
@@ -189,7 +190,7 @@ impl SettingsPageMeta for ScriptingSettingsPageView {
         cfg!(not(target_family = "wasm")) && FeatureFlag::RookControlCli.is_enabled()
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

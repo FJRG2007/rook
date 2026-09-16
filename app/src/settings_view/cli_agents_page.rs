@@ -29,6 +29,7 @@ use super::ai_shared::{
     render_ai_feature_switch, render_ai_setting_toggle, render_toolbar_layout_editor, styles,
     update_editor_interaction_state,
 };
+use super::search::SearchQuery;
 use super::settings_page::{
     AdditionalInfo, CONTENT_FONT_SIZE, LocalOnlyIconState, MatchData, PageTitle, PageType,
     SettingsPageMeta, SettingsPageViewHandle, SettingsWidget, ToggleState, build_toggle_element,
@@ -325,7 +326,7 @@ impl SettingsPageMeta for CLIAgentsPageView {
         FeatureFlag::AgentMode.is_enabled()
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

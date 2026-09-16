@@ -9,6 +9,7 @@ use rookui::{AppContext, Element, Entity, SingletonEntity, View, ViewContext, Vi
 use super::SettingsSection;
 use super::billing_and_usage_page::{BillingAndUsagePageEvent, BillingAndUsagePageView};
 use super::billing_and_usage_page_v2::BillingAndUsagePageV2View;
+use super::search::SearchQuery;
 use super::settings_page::{
     MatchData, PageType, SettingsPageMeta, SettingsPageViewHandle, SettingsWidget,
 };
@@ -120,7 +121,7 @@ impl SettingsPageMeta for BillingAndUsageDispatchView {
         }
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 

@@ -36,6 +36,7 @@ use super::ai_shared::{
     should_show_mcp_servers, styles, update_editor_interaction_state,
 };
 use super::execution_profile_view::{ExecutionProfileView, ExecutionProfileViewEvent};
+use super::search::SearchQuery;
 use super::settings_page::{
     CONTENT_FONT_SIZE, HEADER_PADDING, InputListItem, LocalOnlyIconState, MatchData, PageType,
     SettingsPageMeta, SettingsPageViewHandle, SettingsWidget, ToggleState, build_sub_header,
@@ -1818,7 +1819,7 @@ impl SettingsPageMeta for AgentProfilesPageView {
         });
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 
@@ -2058,7 +2059,7 @@ impl SettingsWidget for UsageWidget {
     type View = AgentProfilesPageView;
 
     fn search_terms(&self) -> &str {
-        "a.i. ai usage limit plan"
+        "a.i. ai usage limit plan compare plans support"
     }
 
     fn render(

@@ -31,8 +31,10 @@ Each widget implements `SettingsWidget` (`settings_page.rs`):
 - `widget_id()` / `static_widget_id()` — default to `std::any::type_name::<Self>()`, used for scroll-to and deeplinks.
 
 **How search filters.** `PageType::update_filter` keeps a widget when
-`widget.should_render(app) && search_terms_match(widget.search_terms(), query)`.
-`search_terms_match` requires **every whitespace-delimited word** of the query to appear (case-insensitively, as a substring) somewhere in the widget's terms; an empty query matches everything. So filtering happens **per widget** — a widget is the smallest unit that can survive or disappear.
+`widget.should_render(app) && query.matches(widget.search_terms())`, where `query` is a `SearchQuery` (`app/src/settings_view/search.rs`).
+**Every whitespace-delimited word** of the query has to match: as a case-insensitive substring of the terms, or as a plural whose singular starts one of their words. `SettingsView::apply_search_filter` runs that exact pass first and, only when no page matches, a fuzzy pass that also accepts typos and abbreviations. Words matched by the sidebar labels a page sits under (its own name, its umbrella's) or by a widget's category title are dropped before the widget is checked, so those names never need repeating in `search_terms`. An empty query matches everything. So filtering happens **per widget** — a widget is the smallest unit that can survive or disappear.
+
+Write `search_terms` from the words on the widget's own labels, plus what a user would type for it that the label does not say. The fuzzy pass rescues a misspelling, not a word that is missing.
 
 **Whether the page title survives a search depends on the variant.** `PageType::render_page` treats the title differently for widget-list pages than for a monolith, and that difference is the easiest thing here to get wrong.
 
@@ -200,7 +202,7 @@ Useful to read, not to copy:
 
 Verification is cheap here; do both.
 
-1. **Unit-test the filter.** `app/src/settings_view/mod_tests.rs` has the harness — `StubWidget`, `stub_widgets_page`, and `visible_widget_count` (which reads `PageType::get_filtered`). Assert that a term unique to one widget yields exactly one visible widget, and that clearing the query restores all of them. Follow the `${filename}_tests.rs` convention from AGENTS.md; run with `cargo nextest run -p rook settings_view`.
+1. **Unit-test the filter.** Word matching itself is covered in `app/src/settings_view/search_tests.rs`. `app/src/settings_view/mod_tests.rs` has the page harness — `StubWidget`, `stub_widgets_page`, and `visible_widget_count` (which reads `PageType::get_filtered`), and `exact` to build the query. Assert that a term unique to one widget yields exactly one visible widget, and that clearing the query restores all of them. Follow the `${filename}_tests.rs` convention from AGENTS.md; run with `cargo nextest run -p rook settings_view`.
 2. **Exercise the real search.** Open Settings, go to the page, and check three things:
    - a term matching exactly one row leaves **only** that row,
    - the **page title is still visible** while that filter is active — expect this on an `Uncategorized` / `Categorized` page; a monolith correctly disappears whole instead,

@@ -42,6 +42,7 @@ use rookui::{
     UpdateView as _, View, ViewContext, ViewHandle, id,
 };
 use scripting_page::ScriptingSettingsPageView;
+use search::{MatchMode, SearchQuery};
 use settings_file_footer::{SettingsFooterKind, SettingsFooterMouseStates, render_footer};
 use settings_page::{
     HEADER_PADDING, MatchData, SettingsPage, SettingsPageEvent, SettingsPageMeta,
@@ -114,6 +115,7 @@ mod rook_agent_page;
 mod rook_drive_page;
 mod rookify_page;
 mod scripting_page;
+pub(crate) mod search;
 mod set_default_model_modal;
 mod settings_file_footer;
 pub(crate) mod settings_page;
@@ -1047,6 +1049,19 @@ enum NavStop {
     },
 }
 
+/// The sidebar labels `section` is listed under: its own and its umbrella's. Search treats them
+/// as part of every widget on the page.
+fn sidebar_labels(nav_items: &[SettingsNavItem], section: SettingsSection) -> String {
+    for item in nav_items {
+        if let SettingsNavItem::Umbrella(umbrella) = item
+            && umbrella.contains(section)
+        {
+            return format!("{section} {}", umbrella.label);
+        }
+    }
+    section.to_string()
+}
+
 /// Builds the ordered list of arrow-key nav stops from `nav_items`.
 ///
 /// `is_visible` decides which sections are currently shown in the sidebar;
@@ -1565,19 +1580,7 @@ impl SettingsView {
                     }
                 }
 
-                // Every page owns its whole widget list, so one filter pass
-                // covers all of them, subpages included.
-                for (i, page) in self.settings_pages.iter().enumerate() {
-                    self.pages_filter[i] = update_page!(
-                        &page.view_handle,
-                        |view, ctx| {
-                            let match_data = view.update_filter(&search_query, ctx);
-                            ctx.notify();
-                            match_data
-                        },
-                        ctx
-                    );
-                }
+                self.apply_search_filter(&search_query, ctx);
 
                 // Auto-expand umbrellas that have matching subpages during
                 // search. Collected first so the read of the page filter does
@@ -2216,6 +2219,35 @@ impl SettingsView {
 
     fn key_down(&mut self, ctx: &mut ViewContext<Self>) {
         self.cycle_pages(CycleDirection::Down, ctx)
+    }
+
+    /// Filters every page by `text`. Exact matches come first: typo-tolerant matching runs only
+    /// when nothing matches exactly, so it never adds near misses to a query that already finds
+    /// something.
+    fn apply_search_filter(&mut self, text: &str, ctx: &mut ViewContext<Self>) {
+        let query = SearchQuery::new(text, MatchMode::Exact);
+        self.filter_pages(&query, ctx);
+        if !query.is_empty() && self.filtered_pages(ctx).next().is_none() {
+            self.filter_pages(&query.fuzzy(), ctx);
+        }
+    }
+
+    /// Runs `query` over every page. Every page owns its whole widget list, so one pass covers
+    /// all of them, subpages included.
+    fn filter_pages(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) {
+        for (i, page) in self.settings_pages.iter().enumerate() {
+            let labels = sidebar_labels(&self.nav_items, page.section);
+            let page_query = query.without_words_matching(&labels);
+            self.pages_filter[i] = update_page!(
+                &page.view_handle,
+                |view, ctx| {
+                    let match_data = view.update_filter(&page_query, ctx);
+                    ctx.notify();
+                    match_data
+                },
+                ctx
+            );
+        }
     }
 
     /// Predicate for whether `section` is currently visible in the sidebar

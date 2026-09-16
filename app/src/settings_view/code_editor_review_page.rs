@@ -14,6 +14,7 @@ use rookui::{
 
 #[cfg(feature = "local_fs")]
 use super::features::external_editor::ExternalEditorView;
+use super::search::SearchQuery;
 use super::settings_page::{
     MatchData, PageTitle, PageType, SettingsPageMeta, SettingsPageViewHandle, SettingsWidget,
     render_body_item, render_dropdown_item,
@@ -256,7 +257,7 @@ impl SettingsPageMeta for EditorAndCodeReviewPageView {
         SettingsSection::EditorAndCodeReview
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 
@@ -414,7 +415,7 @@ impl SettingsWidget for CodeReviewPanelToggleWidget {
     type View = EditorAndCodeReviewPageView;
 
     fn search_terms(&self) -> &str {
-        "code review panel right side diff git"
+        "code review panel right side diff git button"
     }
 
     fn render(
@@ -457,7 +458,7 @@ impl SettingsWidget for CodeReviewDiffStatsToggleWidget {
     type View = EditorAndCodeReviewPageView;
 
     fn search_terms(&self) -> &str {
-        "code review diff stats lines added removed counts"
+        "code review diff stats lines added removed counts button"
     }
 
     fn render(

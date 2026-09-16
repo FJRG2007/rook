@@ -11892,6 +11892,7 @@ dependencies = [
  "smol_str",
  "static_assertions",
  "string-offset",
+ "strsim 0.11.1",
  "strum 0.27.1",
  "strum_macros 0.27.1",
  "sum_tree",

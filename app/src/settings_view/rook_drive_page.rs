@@ -13,6 +13,7 @@ use rookui::{
     Action, AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, id,
 };
 
+use super::search::SearchQuery;
 use super::settings_page::{
     AdditionalInfo, MatchData, PageType, SettingsPageMeta, SettingsPageViewHandle, SettingsWidget,
     render_body_item,
@@ -125,7 +126,7 @@ impl SettingsPageMeta for RookDriveSettingsPageView {
         true
     }
 
-    fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
+    fn update_filter(&mut self, query: &SearchQuery, ctx: &mut ViewContext<Self>) -> MatchData {
         self.page.update_filter(query, ctx)
     }
 
