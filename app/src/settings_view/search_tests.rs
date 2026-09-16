@@ -137,7 +137,10 @@ fn a_label_consumes_only_words_that_start_one_of_its_words() {
     for word in ["count", "age", "board", "cut"] {
         let query = exact(word);
         assert_eq!(
-            remaining(query.clone(), "Account Billing and usage Keyboard shortcuts"),
+            remaining(
+                query.clone(),
+                "Account Billing and usage Keyboard shortcuts"
+            ),
             query
         );
     }

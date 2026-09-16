@@ -150,9 +150,11 @@ impl SearchText {
 /// "es" is only stripped after a sibilant ("aliases", "boxes", "patches"); elsewhere it belongs to
 /// the singular, and "files" searched as "fil" would find "filter".
 fn singulars(word: &str) -> impl Iterator<Item = &str> {
-    let without_es = word
-        .strip_suffix("es")
-        .filter(|stem| ["s", "x", "z", "ch", "sh"].iter().any(|end| stem.ends_with(end)));
+    let without_es = word.strip_suffix("es").filter(|stem| {
+        ["s", "x", "z", "ch", "sh"]
+            .iter()
+            .any(|end| stem.ends_with(end))
+    });
     let without_s = word.strip_suffix('s');
     [without_es, without_s]
         .into_iter()
