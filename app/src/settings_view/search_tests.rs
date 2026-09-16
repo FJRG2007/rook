@@ -48,6 +48,16 @@ fn exact_finds_the_singular_of_a_plural_word() {
     assert!(!exact("tabs").matches("crash reports stability"));
     // Too short to strip: "bus" is not searched as "bu".
     assert!(!exact("bus").matches("build button"));
+    assert!(exact("buses").matches("event bus"));
+    assert!(exact("patches").matches("apply patch"));
+}
+
+#[test]
+fn exact_strips_es_only_after_a_sibilant() {
+    assert!(exact("files").matches("file search"));
+    assert!(!exact("files").matches("filter output"));
+    assert!(!exact("notes").matches("desktop notifications"));
+    assert!(!exact("lines").matches("open links"));
 }
 
 #[test]
@@ -114,6 +124,31 @@ fn a_label_consumes_the_words_it_matches() {
 
     let query = exact("opacity");
     assert_eq!(remaining(query.clone(), ""), query);
+}
+
+#[test]
+fn a_label_consumes_only_words_that_start_one_of_its_words() {
+    let query = exact("appear opacity");
+    assert_eq!(remaining(query, "Appearance"), exact("opacity"));
+
+    let query = exact("keyboard shortcuts");
+    assert!(remaining(query, "Keyboard shortcuts").is_empty());
+
+    for word in ["count", "age", "board", "cut"] {
+        let query = exact(word);
+        assert_eq!(
+            remaining(query.clone(), "Account Billing and usage Keyboard shortcuts"),
+            query
+        );
+    }
+
+    let query = exact("pro");
+    assert!(remaining(query, "Profiles").is_empty());
+}
+
+#[test]
+fn a_widget_still_matches_mid_word() {
+    assert!(exact("count").matches("account"));
 }
 
 #[test]

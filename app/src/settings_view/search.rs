@@ -4,7 +4,8 @@
 //! labels it sits under (page, sidebar group, category). A word matches in one of two modes:
 //!
 //! - [`MatchMode::Exact`]: the word is a case-insensitive substring of the text, or its singular
-//!   form starts one of the text's words ("aliases" finds "alias").
+//!   form starts one of the text's words ("aliases" finds "alias"). Labels are stricter: the word
+//!   itself has to start one of their words too.
 //! - [`MatchMode::Fuzzy`]: additionally tolerates typos ("opacty") and abbreviations ("ntf").
 //!
 //! The settings view searches in exact mode first and retries in fuzzy mode only when nothing
@@ -24,6 +25,13 @@ const TWO_TYPO_LEN: usize = 8;
 
 /// The shortest singular form tried for a plural, so "bus" is not searched as "bu".
 const MIN_STEM_LEN: usize = 3;
+
+/// Where in the text a word may be found.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Anchor {
+    Anywhere,
+    WordStart,
+}
 
 /// How forgiving a [`SearchQuery`] is.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -63,13 +71,15 @@ impl SearchQuery {
     /// Drops the words that `label` already matches. Used for the page, sidebar group and
     /// category names a widget sits under: a word naming the page holds for every widget on it,
     /// so "appearance opacity" finds the opacity setting on the Appearance page, and
-    /// "appearance" alone shows that whole page.
+    /// "appearance" alone shows that whole page. Since a consumed word reveals every widget
+    /// under the label, it has to start one of the label's words: "count" does not show all of
+    /// Account.
     pub(crate) fn without_words_matching(&self, label: &str) -> Self {
         let text = SearchText::new(label);
         let words = self
             .words
             .iter()
-            .filter(|word| !self.word_matches(word, &text))
+            .filter(|word| !self.word_matches(word, &text, Anchor::WordStart))
             .cloned()
             .collect();
         Self {
@@ -81,11 +91,13 @@ impl SearchQuery {
     /// Whether every word of the query matches `terms`. An empty query matches everything.
     pub(crate) fn matches(&self, terms: &str) -> bool {
         let text = SearchText::new(terms);
-        self.words.iter().all(|w| self.word_matches(w, &text))
+        self.words
+            .iter()
+            .all(|w| self.word_matches(w, &text, Anchor::Anywhere))
     }
 
-    fn word_matches(&self, word: &str, text: &SearchText) -> bool {
-        if text.contains_exact(word) {
+    fn word_matches(&self, word: &str, text: &SearchText, anchor: Anchor) -> bool {
+        if text.contains_exact(word, anchor) {
             return true;
         }
         self.mode == MatchMode::Fuzzy && text.tokens().any(|token| is_near_miss(word, token))
@@ -112,23 +124,40 @@ impl SearchText {
             .filter(|token| !token.is_empty())
     }
 
-    fn contains_exact(&self, word: &str) -> bool {
-        if self.text.contains(word) {
-            return true;
-        }
+    fn contains_exact(&self, word: &str, anchor: Anchor) -> bool {
+        let found = match anchor {
+            Anchor::Anywhere => self.text.contains(word),
+            Anchor::WordStart => self.has_word_starting_with(word),
+        };
         // A plural finds its singular, but only at the start of a word: a shortened stem found
         // mid-word ("tab" in "stability") is noise.
-        ["es", "s"]
-            .into_iter()
-            .filter_map(|suffix| singular(word, suffix))
-            .any(|stem| self.tokens().any(|token| token.starts_with(stem)))
+        found || singulars(word).any(|s| self.has_word_starting_with(s))
+    }
+
+    /// Whether `prefix` occurs where a word of the text starts, i.e. not right after a letter or
+    /// digit.
+    fn has_word_starting_with(&self, prefix: &str) -> bool {
+        let mut previous: Option<char> = None;
+        self.text.char_indices().any(|(i, c)| {
+            let at_word_start = !previous.is_some_and(char::is_alphanumeric);
+            previous = Some(c);
+            at_word_start && self.text[i..].starts_with(prefix)
+        })
     }
 }
 
-/// `word` without the plural `suffix`, when it has it and enough is left to search for.
-fn singular<'a>(word: &'a str, suffix: &str) -> Option<&'a str> {
-    let stem = word.strip_suffix(suffix)?;
-    (stem.chars().count() >= MIN_STEM_LEN).then_some(stem)
+/// The singular forms `word` may have if it is a plural, long enough to be worth searching for.
+/// "es" is only stripped after a sibilant ("aliases", "boxes", "patches"); elsewhere it belongs to
+/// the singular, and "files" searched as "fil" would find "filter".
+fn singulars(word: &str) -> impl Iterator<Item = &str> {
+    let without_es = word
+        .strip_suffix("es")
+        .filter(|stem| ["s", "x", "z", "ch", "sh"].iter().any(|end| stem.ends_with(end)));
+    let without_s = word.strip_suffix('s');
+    [without_es, without_s]
+        .into_iter()
+        .flatten()
+        .filter(|stem| stem.chars().count() >= MIN_STEM_LEN)
 }
 
 /// Whether `word` is a misspelling or an abbreviation of `token`.
