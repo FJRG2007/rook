@@ -53,6 +53,31 @@ runs:
           echo "is-workspace-root=false" >> $GITHUB_OUTPUT
         fi
 
+    # Git LFS downloads are billed against the account's monthly LFS bandwidth,
+    # and every job used to pull the full ~130 MB set: nine jobs per nightly run
+    # alone. The objects only change when a pointer does, so they are cached
+    # under a key derived from every pointer's oid, and `git lfs pull` below only
+    # downloads what the restored cache is missing.
+    - name: Compute Git LFS cache key
+      id: lfs-cache-key
+      if: ${{ inputs.is_self_hosted != 'true' && !startsWith(runner.name, 'nsc-runner') }}
+      shell: bash
+      run: |
+        cd "${{ steps.repo-root.outputs.path }}"
+        media_dir=$(git lfs env | sed -n 's/^LocalMediaDir=//p')
+        # actions/cache needs a native path; on Windows `git lfs env` may print
+        # either separator style, and cygpath normalizes both.
+        if command -v cygpath > /dev/null; then media_dir=$(cygpath -m "$media_dir"); fi
+        echo "media-dir=$media_dir" >> "$GITHUB_OUTPUT"
+        echo "key=git-lfs-$(git lfs ls-files --long | cut -d' ' -f1 | sort | git hash-object --stdin)" >> "$GITHUB_OUTPUT"
+
+    - name: Restore Git LFS cache
+      if: ${{ steps.lfs-cache-key.outputs.key != '' }}
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.lfs-cache-key.outputs.media-dir }}
+        key: ${{ steps.lfs-cache-key.outputs.key }}
+
     # Materialize Git LFS objects
     - name: Fetch Git LFS objects
       shell: bash
