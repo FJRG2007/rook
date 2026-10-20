@@ -95,8 +95,8 @@ fn reconcile(
     }
 
     if app_added_as_login_item {
-        // Already registered. Don't re-register - the user may have removed it
-        // through Task Scheduler or Task Manager, and re-adding it on every
+        // Already registered. Don't re-register - the user may have removed the
+        // task through Task Scheduler, and re-adding it on every
         // launch would override that. The one thing still to do is move an
         // earlier build's Run value to a task, unless the user turned that
         // value off in Task Manager.
@@ -237,19 +237,48 @@ fn register_task(app_name: &str, exe: &Path) -> std::io::Result<()> {
 
 /// Removes the current user's sign-in task. It is not an error for it to be
 /// absent already.
+///
+/// Goes through the Task Scheduler API rather than schtasks, which reports a
+/// missing task with the same exit code as any other failure and tells them
+/// apart only through a localized message.
 fn unregister_task(app_name: &str) -> std::io::Result<()> {
-    let task_name = task_name(app_name, &current_user_sid()?);
-    // schtasks reports a missing task only through a localized message, so ask
-    // whether it exists before deleting it.
-    if run_schtasks(&["/Query".as_ref(), "/TN".as_ref(), task_name.as_ref()]).is_err() {
-        return Ok(());
+    use windows::Win32::Foundation::{ERROR_FILE_NOT_FOUND, RPC_E_CHANGED_MODE};
+    use windows::Win32::System::Com::{
+        CLSCTX_INPROC_SERVER, COINIT_APARTMENTTHREADED, CoCreateInstance, CoInitializeEx,
+        CoUninitialize,
+    };
+    use windows::Win32::System::TaskScheduler::{ITaskService, TaskScheduler};
+    use windows::Win32::System::Variant::VARIANT;
+    use windows::core::{BSTR, HRESULT};
+
+    struct ComGuard;
+    impl Drop for ComGuard {
+        fn drop(&mut self) {
+            unsafe { CoUninitialize() };
+        }
     }
-    run_schtasks(&[
-        "/Delete".as_ref(),
-        "/TN".as_ref(),
-        task_name.as_ref(),
-        "/F".as_ref(),
-    ])
+
+    let task_name = task_name(app_name, &current_user_sid()?);
+    unsafe {
+        let hr = CoInitializeEx(None, COINIT_APARTMENTTHREADED);
+        // A thread already in the multithreaded apartment can use COM as it is.
+        let _guard = if hr.is_ok() {
+            Some(ComGuard)
+        } else if hr == RPC_E_CHANGED_MODE {
+            None
+        } else {
+            return Err(windows::core::Error::from(hr).into());
+        };
+
+        let service: ITaskService = CoCreateInstance(&TaskScheduler, None, CLSCTX_INPROC_SERVER)?;
+        let none = VARIANT::default();
+        service.Connect(&none, &none, &none, &none)?;
+        let folder = service.GetFolder(&BSTR::from("\\"))?;
+        match folder.DeleteTask(&BSTR::from(task_name), 0) {
+            Err(err) if err.code() == HRESULT::from_win32(ERROR_FILE_NOT_FOUND.0) => Ok(()),
+            result => result.map_err(Into::into),
+        }
+    }
 }
 
 fn run_schtasks(args: &[&std::ffi::OsStr]) -> std::io::Result<()> {
