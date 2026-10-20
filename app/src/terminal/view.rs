@@ -11407,13 +11407,6 @@ impl TerminalView {
         )
     }
 
-    /// Returns true if the block is considered remote.
-    ///
-    /// Note that we don't know for sure if a block is remote, because we can only detect
-    /// rookified remote blocks.
-    ///
-    /// For some organizations, we accept a regex list that we run against commands to
-    /// further make the determination.
     /// The user command still running in this pane, as a block that ended now, and whether it
     /// is local. Blocks are otherwise saved only when they finish, so without this a command
     /// left running when Rook quits - a shutdown with an agent open, say - is missing from the
@@ -11440,6 +11433,13 @@ impl TerminalView {
         Some((block, is_local))
     }
 
+    /// Returns true if the block is considered remote.
+    ///
+    /// Note that we don't know for sure if a block is remote, because we can only detect
+    /// rookified remote blocks.
+    ///
+    /// For some organizations, we accept a regex list that we run against commands to
+    /// further make the determination.
     fn is_block_considered_remote(
         &self,
         session_id: Option<SessionId>,
