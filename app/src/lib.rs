@@ -1083,11 +1083,31 @@ fn run_internal(mut launch_mode: LaunchMode) -> Result<()> {
     )]
     let mut pre_sentry_errors: Vec<anyhow::Error> = Vec::new();
 
+    // The crash-recovery child starts while its parent holds the single-instance
+    // lock, so it would take the parent for an existing instance, send it a
+    // `new_window` and exit - opening a stray window and leaving the parent
+    // unwatched.
+    #[cfg(all(
+        feature = "release_bundle",
+        any(windows, target_os = "linux", target_os = "freebsd")
+    ))]
+    let is_crash_recovery_process = {
+        cfg_if::cfg_if! {
+            if #[cfg(enable_crash_recovery)] {
+                crash_recovery::is_crash_recovery_process(launch_mode.args().as_ref())
+            } else {
+                false
+            }
+        }
+    };
+
     #[cfg(all(
         feature = "release_bundle",
         any(target_os = "linux", target_os = "freebsd")
     ))]
-    if let LaunchMode::App { .. } = launch_mode {
+    if let LaunchMode::App { .. } = launch_mode
+        && !is_crash_recovery_process
+    {
         match app_services::linux::pass_startup_args_to_existing_instance(
             launch_mode.args().as_ref(),
         ) {
@@ -1110,7 +1130,9 @@ fn run_internal(mut launch_mode: LaunchMode) -> Result<()> {
     }
 
     #[cfg(all(feature = "release_bundle", windows))]
-    if let LaunchMode::App { .. } = launch_mode {
+    if let LaunchMode::App { .. } = launch_mode
+        && !is_crash_recovery_process
+    {
         match app_services::windows::pass_startup_args_to_existing_instance(
             launch_mode.args().as_ref(),
         ) {
