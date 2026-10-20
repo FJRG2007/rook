@@ -291,7 +291,19 @@ begin
 end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+var
+  ResultCode: Integer;
 begin
+  if CurUninstallStep = usUninstall then
+  begin
+    { Launch at sign-in: the task every account registered, named as in
+      `task_name` in app/src/login_item/windows.rs, and the Run value earlier
+      builds wrote. Either would otherwise keep pointing at a deleted exe. }
+    Exec('powershell.exe',
+      '-NoProfile -NoLogo -NonInteractive -Command "Get-ScheduledTask -TaskPath ''\'' -TaskName ''{#MyAppName} Startup Task-*'' -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$false"',
+      '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    RegDeleteValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', '{#MyAppName}');
+  end;
   if CurUninstallStep = usPostUninstall then
     EnvRemovePath(ExpandConstant('{app}\bin'));
 end;

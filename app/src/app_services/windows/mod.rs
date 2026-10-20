@@ -39,6 +39,12 @@ pub fn pass_startup_args_to_existing_instance(
     if SingleInstanceManager::is_sole_running_instance()? {
         return Err(StartupArgsForwardingError::NoExistingInstance);
     }
+    if args.autostart {
+        // Rook was opened by hand before sign-in got round to starting it: the
+        // user already has the window they wanted.
+        log::info!("Rook is already running; dropping the launch at sign-in");
+        return Ok(());
+    }
 
     rookui::r#async::block_on(async {
         if args.urls.is_empty() {

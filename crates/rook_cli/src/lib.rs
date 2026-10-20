@@ -52,6 +52,8 @@ pub const ROOK_HARNESS_ENV: &str = "ROOK_HARNESS";
 pub const SERVER_ROOT_URL_OVERRIDE_ENV: &str = "ROOK_SERVER_ROOT_URL";
 pub const WS_SERVER_URL_OVERRIDE_ENV: &str = "ROOK_WS_SERVER_URL";
 pub const SESSION_SHARING_SERVER_URL_OVERRIDE_ENV: &str = "ROOK_SESSION_SHARING_SERVER_URL";
+/// The flag, without its leading dashes, that the OS launches Rook with at sign-in.
+pub const AUTOSTART_ARG: &str = "autostart";
 
 /// Options related to the parent process that spawned this Rook instance.
 #[derive(Debug, Default, Clone, clap::Args)]
@@ -185,6 +187,11 @@ pub struct AppArgs {
     /// True if this instance of Rook was launched at the end of the auto-update process.
     #[arg(long = "finish-update", hide = true)]
     pub finish_update: bool,
+
+    /// True if the OS started this instance at sign-in. Such a launch steps aside when Rook is
+    /// already running, instead of opening another window in it.
+    #[arg(long = AUTOSTART_ARG, hide = true)]
+    pub autostart: bool,
 
     /// Crash recovery mechanism to use if we detect the parent process terminated.
     #[cfg(enable_crash_recovery)]
