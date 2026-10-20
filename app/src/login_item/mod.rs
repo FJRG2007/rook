@@ -21,8 +21,10 @@ use rookui::AppContext;
 ///
 /// Respects the existing `app_added_as_login_item` bookkeeping so a user who
 /// removed Rook from their OS's startup UI isn't silently re-added — the
-/// platform backends only run the registration flow when the setting was
-/// explicitly re-toggled.
+/// platform backends don't re-register once that bookkeeping is set, unless
+/// the setting is explicitly re-toggled. The one exception is Windows, which
+/// still checks on every launch whether an earlier build's Run-key value
+/// should move to a Task Scheduler logon task.
 ///
 /// Skipped entirely when the `ROOK_INTEGRATION` env var is set, so integration
 /// tests never touch the user's real login items / registry. Also skipped for
