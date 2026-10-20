@@ -2833,6 +2833,7 @@ pub(crate) fn app_callbacks(
             // an OS shutdown arrives here with the workspace still whole, and
             // everything past this point is teardown.
             ctx.dispatch_global_action("workspace:save_app", &());
+            workspace::save_running_blocks(ctx);
 
             // Never interrupt a system-initiated termination (logout / restart /
             // scheduled OS update): both cancel paths below return

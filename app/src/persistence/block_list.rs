@@ -266,6 +266,16 @@ pub(super) fn save_block(
 ) -> Result<(), Error> {
     use schema::blocks::dsl::*;
     conn.transaction::<_, Error, _>(|conn| {
+        // A block can be saved twice: as interrupted when the app starts to quit
+        // with it running, then for real if the quit is cancelled and it finishes.
+        // The later save replaces the earlier one.
+        diesel::delete(
+            schema::blocks::dsl::blocks
+                .filter(pane_leaf_uuid.eq(pane_id.clone()))
+                .filter(block_id.eq(block.id.as_str())),
+        )
+        .execute(conn)?;
+
         let saved_blocks_count: i64 = schema::blocks::dsl::blocks
             .filter(pane_leaf_uuid.eq(pane_id.clone()))
             .filter(id.is_not_null())

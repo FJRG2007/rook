@@ -103,7 +103,7 @@ use crate::pane_group::pane::get_started_pane::GetStartedPane;
 use crate::pane_group::pane::terminal_pane::{
     host_terminal_shared_session_source_type, inherit_share_for_local_child,
 };
-use crate::persistence::ModelEvent;
+use crate::persistence::{BlockCompleted, ModelEvent};
 use crate::quit_warning::UnsavedStateSummary;
 use crate::resource_center::{
     Tip, TipAction, TipsCompleted, mark_feature_used_and_write_to_user_defaults,
@@ -2281,6 +2281,25 @@ impl PaneGroup {
         self.pane_contents
             .values()
             .filter_map(|contents| contents.as_any().downcast_ref::<T>())
+    }
+
+    /// The commands still running in this group's terminals, as blocks ready to save. See
+    /// [`TerminalView::interrupted_running_block`].
+    pub fn interrupted_running_blocks(&self, ctx: &AppContext) -> Vec<BlockCompleted> {
+        self.panes_of::<TerminalPane>()
+            .filter(|pane| !self.is_pane_hidden_for_close(pane.terminal_pane_id().into()))
+            .filter_map(|pane| {
+                let (block, is_local) = pane
+                    .terminal_view(ctx)
+                    .as_ref(ctx)
+                    .interrupted_running_block(ctx)?;
+                Some(BlockCompleted {
+                    pane_id: pane.session_uuid(),
+                    is_local,
+                    block: Arc::new(block),
+                })
+            })
+            .collect()
     }
 
     /// Checks if any TerminalView within this pane group matches the given ID.

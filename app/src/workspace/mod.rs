@@ -59,6 +59,7 @@ pub fn panel_header_corner_radius() -> rookui::elements::CornerRadius {
     rookui::elements::CornerRadius::with_top(rookui::elements::Radius::Pixels(8.))
 }
 
+pub use global_actions::save_running_blocks;
 pub use one_time_modal_model::OneTimeModalModel;
 pub use registry::WorkspaceRegistry;
 pub use toast_stack::{ToastStack, ToastStackEvent};

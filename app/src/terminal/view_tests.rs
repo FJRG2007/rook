@@ -10220,3 +10220,35 @@ fn back_button_label_resolves_token_only_parent_linkage() {
         });
     });
 }
+
+#[test]
+fn interrupted_running_block_records_the_running_command() {
+    App::test((), |mut app| async move {
+        initialize_app_for_terminal_view(&mut app);
+        let terminal = add_window_with_terminal(&mut app, None);
+
+        terminal.update(&mut app, |view, ctx| {
+            // Nothing is running before bootstrap.
+            assert!(view.interrupted_running_block(ctx).is_none());
+
+            bootstrap_with_long_running_block(view);
+            let (block, is_local) = view
+                .interrupted_running_block(ctx)
+                .expect("the running command should be saved");
+            // The command is stored with the escape codes that style each character.
+            let command = String::from_utf8_lossy(&block.stylized_command)
+                .replace("\u{1b}[1m", "")
+                .replace("\u{1b}[0m", "");
+            assert_eq!(command.trim_end(), "long-command");
+            assert!(String::from_utf8_lossy(&block.stylized_output).contains("output"));
+            assert_eq!(block.exit_code.value(), 130);
+            assert!(block.did_execute);
+            assert!(block.completed_ts.is_some());
+            assert!(is_local);
+
+            // Once it finishes, it is saved the normal way instead.
+            view.model.lock().finish_block();
+            assert!(view.interrupted_running_block(ctx).is_none());
+        });
+    })
+}

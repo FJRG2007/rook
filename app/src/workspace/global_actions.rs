@@ -20,7 +20,7 @@ use crate::terminal::alt_screen_reporting::AltScreenReporting;
 use crate::terminal::general_settings::GeneralSettings;
 use crate::undo_close::UndoCloseStack;
 use crate::workspace::cross_window_tab_drag::CrossWindowTabDrag;
-use crate::workspace::{Workspace, WorkspaceAction};
+use crate::workspace::{Workspace, WorkspaceAction, WorkspaceRegistry};
 use crate::{GlobalResourceHandlesProvider, auth};
 
 /// Specifies where a forked conversation should be opened.
@@ -195,6 +195,41 @@ fn save_app(_: &(), ctx: &mut AppContext) {
 
     if let Err(err) = model_event_sender.send(event) {
         report_error!(anyhow::Error::new(err).context("Error trying to send model event"));
+    }
+}
+
+/// Saves every command still running, as an interrupted block, so the next launch shows it.
+/// Call where the app is about to quit with its workspaces still whole.
+///
+/// The quit can still be cancelled after this. That is harmless: `save_block` replaces a row
+/// with the same block id, so the command finishing later overwrites the interrupted copy.
+pub fn save_running_blocks(ctx: &AppContext) {
+    if !AppExecutionMode::as_ref(ctx).can_save_session()
+        || !*GeneralSettings::as_ref(ctx).restore_session
+    {
+        return;
+    }
+    let Some(model_event_sender) = GlobalResourceHandlesProvider::as_ref(ctx)
+        .get()
+        .model_event_sender
+        .clone()
+    else {
+        return;
+    };
+
+    for window_id in ctx.window_ids() {
+        let Some(workspace) = WorkspaceRegistry::as_ref(ctx).get(window_id, ctx) else {
+            continue;
+        };
+        for pane_group in workspace.as_ref(ctx).tab_views() {
+            for block in pane_group.as_ref(ctx).interrupted_running_blocks(ctx) {
+                if let Err(err) = model_event_sender.send(ModelEvent::SaveBlock(block)) {
+                    report_error!(
+                        anyhow::Error::new(err).context("Error saving a running block on quit")
+                    );
+                }
+            }
+        }
     }
 }
 

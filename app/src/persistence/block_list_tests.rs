@@ -1,7 +1,8 @@
-//! Unit tests for the `ai_queries` persistence layer in [`super`].
+//! Unit tests for the `blocks` and `ai_queries` persistence layer in [`super`].
 //!
-//! Covers the FIFO eviction cap added to [`super::upsert_ai_query`] and the empty-input filter
-//! that drives the persistence skip in `handle_ai_history_event`.
+//! Covers the FIFO eviction cap added to [`super::upsert_ai_query`], the empty-input filter
+//! that drives the persistence skip in `handle_ai_history_event`, and [`super::save_block`]
+//! replacing a block saved earlier under the same id.
 
 use std::sync::Arc;
 
@@ -12,12 +13,14 @@ use diesel_migrations::MigrationHarness;
 
 use super::{
     process_ai_queries_for_nld_history_match, process_ai_queries_for_uparrow_prompt,
-    read_recent_ai_queries, upsert_ai_query_with_limit,
+    read_recent_ai_queries, save_block, upsert_ai_query_with_limit,
 };
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::{AIAgentExchangeId, AIAgentInput, UserQueryMode};
 use crate::ai::blocklist::{AIQueryHistoryOutputStatus, PersistedAIInput, PersistedAIInputType};
 use crate::ai::llms::LLMId;
+use crate::persistence::schema;
+use crate::terminal::model::block::SerializedBlock;
 
 /// Builds an in-memory SQLite database with all migrations applied.
 fn test_connection() -> SqliteConnection {
@@ -273,4 +276,39 @@ fn empty_input_skip_filters_out_non_query_inputs() {
         .filter_map(|input| PersistedAIInputType::try_from(input).ok())
         .collect();
     assert_eq!(persisted.len(), 1);
+}
+
+fn saved_blocks(conn: &mut SqliteConnection, pane: &[u8]) -> Vec<(String, Vec<u8>, i32)> {
+    use schema::blocks::dsl;
+    dsl::blocks
+        .filter(dsl::pane_leaf_uuid.eq(pane))
+        .order(dsl::id.asc())
+        .select((dsl::block_id, dsl::stylized_output, dsl::exit_code))
+        .load(conn)
+        .expect("blocks should load")
+}
+
+#[test]
+fn save_block_replaces_an_interrupted_copy_of_the_same_block() {
+    let mut conn = test_connection();
+    let pane = b"pane".to_vec();
+
+    let mut interrupted = SerializedBlock::new_for_test(b"claude".to_vec(), b"partial".to_vec());
+    interrupted.exit_code = 130.into();
+    let mut finished = interrupted.clone();
+    finished.stylized_output = b"partial and the rest".to_vec();
+    finished.exit_code = 0.into();
+    let other = SerializedBlock::new_for_test(b"ls".to_vec(), b"a b".to_vec());
+
+    save_block(&mut conn, pane.clone(), &other, true).unwrap();
+    save_block(&mut conn, pane.clone(), &interrupted, true).unwrap();
+    save_block(&mut conn, pane.clone(), &finished, true).unwrap();
+
+    assert_eq!(
+        saved_blocks(&mut conn, &pane),
+        vec![
+            (other.id.to_string(), b"a b".to_vec(), 0),
+            (finished.id.to_string(), b"partial and the rest".to_vec(), 0),
+        ]
+    );
 }

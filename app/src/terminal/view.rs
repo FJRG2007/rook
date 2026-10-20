@@ -516,6 +516,7 @@ use crate::terminal::{
     // find::{Event as FindEvent, Find, FindDirection},
     input::{Event as InputEvent, INPUT_A11Y_HELPER, INPUT_A11Y_LABEL, Input},
     model::block::SerializedBlock,
+    model::bootstrap::BootstrapStage,
     shell::ShellType,
     terminal_size_element::TerminalSizeElement,
 };
@@ -11413,6 +11414,32 @@ impl TerminalView {
     ///
     /// For some organizations, we accept a regex list that we run against commands to
     /// further make the determination.
+    /// The user command still running in this pane, as a block that ended now, and whether it
+    /// is local. Blocks are otherwise saved only when they finish, so without this a command
+    /// left running when Rook quits - a shutdown with an agent open, say - is missing from the
+    /// restored session.
+    ///
+    /// Recorded with exit code 130, which the block list shows as interrupted rather than
+    /// failed, as for Ctrl-C.
+    pub fn interrupted_running_block(&self, ctx: &AppContext) -> Option<(SerializedBlock, bool)> {
+        let (mut block, command) = {
+            let model = self.model.lock();
+            let active = model.block_list().active_block();
+            if !active.is_executing()
+                || active.is_background()
+                || active.is_in_band_command_block()
+                || active.bootstrap_stage() != BootstrapStage::PostBootstrapPrecmd
+            {
+                return None;
+            }
+            (SerializedBlock::from(active), active.command_to_string())
+        };
+        block.completed_ts = Some(Local::now());
+        block.exit_code = ExitCode::from(130);
+        let is_local = !self.is_block_considered_remote(block.session_id, Some(&command), ctx);
+        Some((block, is_local))
+    }
+
     fn is_block_considered_remote(
         &self,
         session_id: Option<SessionId>,
