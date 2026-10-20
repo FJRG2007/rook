@@ -22,7 +22,8 @@ was.
 after the session snapshot, so a logout, a restart, and the Windows shutdown
 path it already reaches before the shells are ended all cover it the same way.
 
-For each visible terminal pane in every window, `TerminalView::interrupted_running_block`
+For each terminal pane in every tab and window, apart from one already being
+closed, `TerminalView::interrupted_running_block`
 builds a block from the one actually executing - skipping a background block,
 an in-band command block, and one whose shell has not finished bootstrapping
 to its first prompt - stamped with `completed_ts: Local::now()` and exit code
