@@ -60,7 +60,10 @@ The second one is what catches errors in tests, and it needs libclang for `bindg
 
 The first line matters: bundling generates `THIRD_PARTY_LICENSES.txt` with `cargo about`, and without it the Windows bundle fails on `no such command: about` - after the twenty minutes it spent linking the binary, not before. `release.yml` passes `install_release_deps: true` and so provisions it itself; a local machine does not.
 
-Releases are tagged `v0.YYYY.MM.DD.HH.MM.oss_NN`, in UTC, and `script/release_tag`
+Releases are cut automatically: `auto-release.yml` tags main and starts
+Release whenever a push to main passes CI with changes outside documentation
+since the last tag. Tagging by hand still works, for a release off the usual
+path. Tags are `v0.YYYY.MM.DD.HH.MM.oss_NN`, in UTC, and `script/release_tag`
 prints the next one:
 
 ```bash
