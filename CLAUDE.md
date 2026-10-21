@@ -62,7 +62,7 @@ The first line matters: bundling generates `THIRD_PARTY_LICENSES.txt` with `carg
 
 Releases are cut automatically: `auto-release.yml` tags main and starts
 Release whenever a push to main passes CI with changes outside documentation
-since the last tag. Tagging by hand still works, for a release off the usual
+and `.github/` since the last tag. Tagging by hand still works, for a release off the usual
 path. Tags are `v0.YYYY.MM.DD.HH.MM.oss_NN`, in UTC, and `script/release_tag`
 prints the next one:
 

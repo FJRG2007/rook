@@ -64,13 +64,13 @@ jobs:
             exit 0
           fi
 
-          # The same paths CI treats as unable to affect the build: a release
-          # with nothing but documentation in it would be a new version of the
-          # same binary.
+          # The paths CI treats as unable to affect the build, plus .github: a
+          # release of nothing but documentation or workflow changes would be a
+          # new version of the same binary.
           last="$(git describe --tags --abbrev=0 --match 'v*' "$head")"
-          documentation='^(docs/.+|[^/]+[.]md|LICENSE[^/]*|[.]github/ISSUE_TEMPLATE/.+)$'
-          if ! git diff --name-only "$last" "$head" | grep -qvE "$documentation"; then
-            echo "nothing but documentation since $last"
+          unshipped='^(docs/.+|[^/]+[.]md|LICENSE[^/]*|[.]github/.+)$'
+          if ! git diff --name-only "$last" "$head" | grep -qvE "$unshipped"; then
+            echo "nothing that ships in the app since $last"
             exit 0
           fi
 
