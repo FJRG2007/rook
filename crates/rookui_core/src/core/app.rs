@@ -1660,11 +1660,17 @@ impl AppContext {
         action: &dyn Action,
         log_level: log::Level,
     ) -> bool {
-        log::log!(
-            log_level,
-            "dispatching typed action: {}::{action:?}",
-            action.type_name()
-        );
+        // Trace is reserved for input-rate events (typing, drags, mouse moves), whose payload
+        // can be whatever the user typed, passwords included: name the action only.
+        if log_level == log::Level::Trace {
+            log::trace!("dispatching typed action: {}", action.type_name());
+        } else {
+            log::log!(
+                log_level,
+                "dispatching typed action: {}::{action:?}",
+                action.type_name()
+            );
+        }
 
         let action_type: ActionType = action.into();
         // If there are no handlers registered for the given action, then we can return early
@@ -3861,6 +3867,15 @@ impl AppContext {
             // dispatch it at the `trace` log level so it doesn't clutter the
             // logs by default.
             Event::MouseMoved { .. } | Event::ScrollWheel { .. } => log::Level::Trace,
+            // Drags and typing arrive at input rate and are logged synchronously on the main
+            // thread. At trace level the action's payload is left out, so what was typed never
+            // reaches the log file.
+            Event::LeftMouseDragged { .. }
+            | Event::KeyDown { .. }
+            | Event::TypedCharacters { .. } => {
+                App::record_last_active_timestamp();
+                log::Level::Trace
+            }
             _ => {
                 // Update last user action timestamp for non-hover events
                 App::record_last_active_timestamp();
