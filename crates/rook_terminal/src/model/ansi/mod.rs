@@ -69,6 +69,9 @@ lazy_static! {
     static ref SYNC_OUTPUT_MAX_BUFFER_SIZE: Byte = Byte::from_u64_with_unit(2, ByteUnit::MiB).expect("Can create byte size for sync output max buffer size");
 }
 
+/// How many bytes a synchronized update reserves when it starts.
+const SYNC_OUTPUT_INITIAL_BUFFER_SIZE: usize = 64 * 1024;
+
 const ROOK_COMPLETIONS_OSC_MARKER: &[u8] = b"9280";
 const ROOK_COMPLETIONS_START_BYTE: &[u8] = b"A";
 const ROOK_COMPLETIONS_END_BYTE: &[u8] = b"B";
@@ -280,7 +283,10 @@ impl SyncOutputState {
         match self {
             Self::Inactive => {
                 *self = Self::Active {
-                    buffer: Vec::with_capacity(SYNC_OUTPUT_MAX_BUFFER_SIZE.as_u64() as usize),
+                    // Grows as needed up to the maximum. Reserving the whole maximum up front
+                    // allocated 2 MiB for every frame, which a full-screen program redrawing at
+                    // 60 frames a second turned into 120 MiB/s of allocator churn.
+                    buffer: Vec::with_capacity(SYNC_OUTPUT_INITIAL_BUFFER_SIZE),
                     last_activated_at: Instant::now(),
                 }
             }

@@ -1597,3 +1597,15 @@ fn osc_completions_replacement_span_forwards_out_of_range_pair() {
 
     assert_eq!(handler.replacement_spans, vec![(usize::MAX, 1)]);
 }
+
+#[test]
+fn decrqm_reports_synchronized_output_as_supported() {
+    // Full-screen programs probe `CSI ? 2026 $ p` before wrapping frames in mode 2026.
+    let mut parser = Processor::new();
+    let mut handler = MockHandler::default();
+    let mut response = Vec::new();
+
+    parser.parse_bytes(&mut handler, b"\x1b[?2026$p", &mut response);
+
+    assert_eq!(response, b"\x1b[?2026;2$y");
+}

@@ -2599,6 +2599,13 @@ impl BlockList {
         &mut self,
         updated_heights: &HashMap<EntityId, BlockHeight>,
     ) {
+        // Layout calls this on every pass, almost always with nothing to update, and the rebuild
+        // walks every block from the start: with a few hundred blocks it was about a third of
+        // layout time (upstream warpdotdev/warp#15262). Block heights are kept current by their
+        // own update paths, so an empty map has nothing left to change.
+        if updated_heights.is_empty() {
+            return;
+        }
         self.update_blocks_and_sumtree(None, Some(updated_heights), |_| {}, |_| {});
     }
 

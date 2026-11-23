@@ -446,7 +446,7 @@ use crate::terminal::model::escape_sequences::{
 };
 use crate::terminal::model::grid::grid_handler::{FragmentBoundary, TermMode};
 use crate::terminal::model::index::{Point, Side};
-use crate::terminal::model::mouse::MouseState;
+use crate::terminal::model::mouse::{MouseButton, MouseState};
 use crate::terminal::model::selection::{SelectAction, SelectionDirection};
 use crate::terminal::model::session::active_session::ActiveSession;
 use crate::terminal::model::session::{
@@ -2561,6 +2561,10 @@ pub struct TerminalView {
     /// Whether there is an active text selection.
     is_selecting: bool,
 
+    /// The cell of the last drag or hover reported to the program on the alternate screen, so
+    /// that movement within one cell is not reported again.
+    last_reported_alt_mouse_motion: Option<Point>,
+
     context_menu: ViewHandle<Menu<TerminalAction>>,
 
     /// None iff there is no context menu open currently.
@@ -4389,6 +4393,7 @@ impl TerminalView {
             alt_screen_scroll_top: Lines::zero(),
             horizontal_clipped_scroll_state: Default::default(),
             is_selecting: false,
+            last_reported_alt_mouse_motion: None,
             context_menu_state: None,
             context_menu,
             hovered_secret: None,
@@ -18391,6 +18396,22 @@ impl TerminalView {
     }
 
     fn alt_mouse_action(&mut self, mouse_state: &MouseState, ctx: &mut ViewContext<Self>) {
+        // Like xterm, report motion only when the pointer reaches another cell. A high polling
+        // rate mouse delivers hundreds of moves a second within one cell, and a full-screen
+        // program redraws for every report it gets: dragging a selection in Claude Code froze it.
+        if matches!(
+            mouse_state.button(),
+            MouseButton::LeftDrag | MouseButton::Move
+        ) {
+            let point = mouse_state.maybe_point();
+            if point.is_some() && point == self.last_reported_alt_mouse_motion {
+                return;
+            }
+            self.last_reported_alt_mouse_motion = point;
+        } else {
+            self.last_reported_alt_mouse_motion = None;
+        }
+
         let escape_sequences = mouse_state
             .to_escape_sequence(self.model.lock().deref())
             .unwrap();
