@@ -463,6 +463,21 @@ impl DirectShellStarter {
         }
     }
 
+    #[cfg(all(test, windows))]
+    pub(super) fn standard_for_test(shell_type: ShellType, shell_path: PathBuf) -> Self {
+        let session_id = generate_session_id();
+        Self {
+            shell_type,
+            args: arguments_for_session_spawning_command(
+                &shell_path.to_string_lossy(),
+                shell_type,
+                session_id,
+            ),
+            shell_path,
+            session_id,
+        }
+    }
+
     pub fn shell_path(&self) -> &Path {
         &self.shell_path
     }

@@ -9,8 +9,9 @@
 //! the shell had just started.
 //!
 //! The spare is started in the home directory and without the pane's own variables (its session
-//! UUID and focus URL). A claim queues an assignment of those, and of the requested directory into
-//! the variable the bootstrap already reads it from, ahead of the bootstrap itself. The spare's
+//! UUID and focus URL). A claim writes an assignment of those, and of the requested directory into
+//! the variable the bootstrap already reads it from, to a script it sources ahead of the bootstrap
+//! itself, which also moves the process working directory there as a cold start would. The spare's
 //! environment is compared with a freshly built one at claim time, so a change to the user's or the
 //! machine's variables (a tool installed, PATH edited) or to a setting passed through the
 //! environment discards the spare instead of handing out a stale shell.
@@ -120,7 +121,34 @@ pub(super) fn claim(options: &PtyOptions) -> Option<WarmShell> {
 
 /// Returns the input that gives a claimed spare what it was started without: the pane's own
 /// variables and the directory the session should start in.
-pub(super) fn claim_input(options: &PtyOptions) -> Option<Vec<u8>> {
+///
+/// They are written to a script the input only dot-sources, the way the bootstrap itself is
+/// loaded, because characters typed into a PowerShell pseudoconsole can be dropped and a long
+/// line of assignments would then silently start the session with wrong values.
+pub(super) fn claim_input(options: &PtyOptions, session_id: SessionId) -> Option<Vec<u8>> {
+    let statements = claim_statements(options);
+    if statements.is_empty() {
+        return None;
+    }
+    let file_name = format!("rook-claim-{}.ps1", session_id.as_u64());
+    let path = std::env::temp_dir().join(file_name);
+    let line = match write_claim_script(&path, &statements) {
+        Ok(()) => format!(
+            ". {}",
+            shell_quote_arg(&path.to_string_lossy(), ShellType::PowerShell)
+        ),
+        Err(err) => {
+            log::warn!("Could not write the script for a pre-started shell: {err:#}");
+            statements.join("; ")
+        }
+    };
+    // The leading space matches how the bootstrap itself is sourced.
+    Some(format!(" {line}\r").into_bytes())
+}
+
+/// The PowerShell statements that give a claimed spare the pane's own variables and move it to
+/// the directory the session should start in.
+fn claim_statements(options: &PtyOptions) -> Vec<String> {
     let mut assignments: Vec<(String, String)> = options
         .env_vars
         .iter()
@@ -133,24 +161,56 @@ pub(super) fn claim_input(options: &PtyOptions) -> Option<Vec<u8>> {
         })
         .collect();
     assignments.sort();
-    if let Some(start_dir) = options.start_dir.as_ref().filter(|dir| dir.is_dir()) {
-        assignments.push((
-            INITIAL_WORKING_DIR_NAME.to_owned(),
-            start_dir.to_string_lossy().into_owned(),
-        ));
+    let start_dir = options
+        .start_dir
+        .as_ref()
+        .filter(|dir| dir.is_dir())
+        .map(|dir| dir.to_string_lossy().into_owned());
+    if let Some(start_dir) = &start_dir {
+        assignments.push((INITIAL_WORKING_DIR_NAME.to_owned(), start_dir.clone()));
     }
-    if assignments.is_empty() {
-        return None;
-    }
-    let statements = assignments
+    let mut statements: Vec<String> = assignments
         .iter()
         .map(|(name, value)| {
             format!("$env:{name} = {}", shell_quote_arg(value, ShellType::PowerShell))
         })
-        .collect::<Vec<_>>()
-        .join("; ");
-    // The leading space matches how the bootstrap itself is sourced.
-    Some(format!(" {statements}\r").into_bytes())
+        .collect();
+    // A shell started cold has the directory as its process working directory too, which .NET
+    // resolves relative paths against; the bootstrap only moves PowerShell's own location.
+    if let Some(start_dir) = &start_dir {
+        statements.push(format!(
+            "try {{ [Environment]::CurrentDirectory = {} }} catch {{}}",
+            shell_quote_arg(start_dir, ShellType::PowerShell)
+        ));
+    }
+    statements
+}
+
+/// Writes `statements` to a new script at `path` that deletes itself once it has run.
+fn write_claim_script(path: &Path, statements: &[String]) -> std::io::Result<()> {
+    use std::io::Write as _;
+
+    let quoted_path = shell_quote_arg(&path.to_string_lossy(), ShellType::PowerShell);
+    // The byte order mark makes Windows PowerShell read the script as UTF-8 rather than in the
+    // system code page, which would mangle any non-ASCII path or value.
+    let mut script = String::from("\u{FEFF}");
+    for statement in statements {
+        script.push_str(statement);
+        script.push_str("\r\n");
+    }
+    script.push_str(&format!(
+        "Remove-Item -LiteralPath {quoted_path} -Force -ErrorAction Ignore\r\n"
+    ));
+    let mut file = std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(path)?;
+    let written = file.write_all(script.as_bytes());
+    drop(file);
+    if written.is_err() {
+        let _ = std::fs::remove_file(path);
+    }
+    written
 }
 
 /// Starts a spare for the shell `options` describes in the background, unless one is already

@@ -174,10 +174,10 @@ pub(super) fn spawn(
             // The spare was started in the home directory without the pane's own variables.
             // Queued ahead of everything else, their assignment runs before the bootstrap is
             // sourced, and the bootstrap moves to the directory it finds in its variable.
-            if let Some(input) = warm_shell::claim_input(&options) {
+            let session_id = warm.session_id();
+            if let Some(input) = warm_shell::claim_input(&options, session_id) {
                 let _ = event_loop_tx.send(writeable_pty::Message::Input(input.into()));
             }
-            let session_id = warm.session_id();
             (warm.into_process(), Some(session_id))
         }
         None => {
