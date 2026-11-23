@@ -1,3 +1,6 @@
+#[cfg(unix)]
+use tempfile::tempdir;
+
 use super::*;
 
 #[test]

@@ -77,15 +77,13 @@ fn capture_reads_literal_windows_claude_layout() {
     fs::create_dir_all(&subagents).unwrap();
     write_file(&subagents, "agent-test.jsonl", "{\"type\":\"assistant\"}\n");
 
-    let (envelope, diagnostics) =
-        read_envelope_with_diagnostics(session, cwd, config.path(), true).unwrap();
+    let envelope = read_envelope(session, cwd, config.path(), true).unwrap();
     assert_eq!(envelope.entries, vec![serde_json::json!({"type": "user"})]);
     assert_eq!(
         envelope.subagents["agent-test"],
         vec![serde_json::json!({"type": "assistant"})],
     );
     assert_eq!(envelope.cwd, cwd);
-    assert_eq!(diagnostics.root.status, JsonlReadStatus::Readable);
 }
 
 #[test]
@@ -114,19 +112,16 @@ fn write_envelope_uses_literal_windows_claude_layout() {
         .join("projects")
         .join("C--Users-runneradmin-workspace");
     assert_eq!(
-        read_jsonl_capture(&project.join(format!("{session}.jsonl")))
-            .unwrap()
-            .entries,
+        read_jsonl(&project.join(format!("{session}.jsonl"))).unwrap(),
         envelope.entries,
     );
     assert_eq!(
-        read_jsonl_capture(
+        read_jsonl(
             &project
                 .join(session.to_string())
                 .join("subagents/agent-test.jsonl")
         )
-        .unwrap()
-        .entries,
+        .unwrap(),
         envelope.subagents["agent-test"],
     );
     assert_eq!(envelope.cwd, cwd);
@@ -155,10 +150,7 @@ fn local_continuation_places_windows_files_without_rewriting_cwd() {
         .join("projects")
         .join("C--Users-runneradmin-local-project")
         .join(format!("{session}.jsonl"));
-    assert_eq!(
-        read_jsonl_capture(&session_file).unwrap().entries,
-        envelope.entries
-    );
+    assert_eq!(read_jsonl(&session_file).unwrap(), envelope.entries);
     assert_eq!(envelope.cwd, cloud_cwd);
 }
 
@@ -372,10 +364,7 @@ fn rehydrate_claude_transcript_succeeds_when_cwd_matches() {
         .join(format!("{uuid}.jsonl"));
     assert!(session_file.exists(), "session JSONL missing");
     assert_eq!(envelope.cwd, cwd);
-    assert_eq!(
-        read_jsonl_capture(&session_file).unwrap().entries,
-        envelope.entries
-    );
+    assert_eq!(read_jsonl(&session_file).unwrap(), envelope.entries);
 
     let index: serde_json::Value =
         serde_json::from_slice(&fs::read(config_dir.path().join(SESSIONS_INDEX_FILENAME)).unwrap())

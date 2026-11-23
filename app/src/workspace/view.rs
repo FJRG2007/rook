@@ -12142,6 +12142,7 @@ impl Workspace {
         } else {
             let matching = self.vertical_tabs_panel.matching_tab_indices(
                 &self.tabs,
+                &self.tab_groups,
                 self.active_tab_index,
                 ctx,
             );
@@ -12191,7 +12192,6 @@ impl Workspace {
     /// pane back to the original tab instead of closing it. Returns true if
     /// handled.
     fn try_re_adopt_split_off_child_agent_tab(
-                &self.tab_groups,
         &mut self,
         index: usize,
         ctx: &mut ViewContext<Self>,

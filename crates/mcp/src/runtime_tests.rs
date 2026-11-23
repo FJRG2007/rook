@@ -464,7 +464,6 @@ async fn start_http_server(
             "test-server".to_string(),
             None,
             uuid::Uuid::new_v4(),
-            None,
             TransportType::ServerSentEvents(ServerSentEvents { url, headers }),
             logger,
             None,

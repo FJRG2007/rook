@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use rook_multi_agent_api as api;
 use rookui::integration::TestStep;
 use rookui::{SingletonEntity, TypedActionView, async_assert_eq};
+use warp_multi_agent_api as api;
 
 use crate::ai::agent::conversation::{AIConversation, AIConversationId};
 use crate::ai::blocklist::BlocklistAIHistoryModel;

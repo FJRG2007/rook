@@ -23,7 +23,10 @@ fn branch_status_shows_equivalent_commits_when_otherwise_even() {
 
 #[test]
 fn branch_status_caps_large_counts() {
-    assert_eq!(format_branch_status("main", "1000\t999\t0\n"), "main • ↑999+ ↓999");
+    assert_eq!(
+        format_branch_status("main", "1000\t999\t0\n"),
+        "main • ↑999+ ↓999"
+    );
 }
 
 #[test]
@@ -35,7 +38,10 @@ fn branch_status_falls_back_to_the_branch_on_unexpected_counts() {
 
 #[test]
 fn branch_status_without_equivalent_count_treats_it_as_zero() {
-    assert_eq!(format_branch_status("feature/x", "1 2"), "feature/x • ↑1 ↓2");
+    assert_eq!(
+        format_branch_status("feature/x", "1 2"),
+        "feature/x • ↑1 ↓2"
+    );
 }
 
 #[test]

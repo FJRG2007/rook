@@ -137,7 +137,10 @@ fn test_node_version() {
 
 #[test]
 fn test_git_generators_carry_their_local_git_query() {
-    assert_eq!(super::shell_git_branch().local_git_query(), Some(LocalGitQuery::Branch));
+    assert_eq!(
+        super::shell_git_branch().local_git_query(),
+        Some(LocalGitQuery::Branch)
+    );
     assert_eq!(
         super::shell_git_branch_status().local_git_query(),
         Some(LocalGitQuery::BranchStatus)
@@ -146,7 +149,10 @@ fn test_git_generators_carry_their_local_git_query() {
         super::shell_other_git_branches().local_git_query(),
         Some(LocalGitQuery::OtherBranches)
     );
-    assert_eq!(super::shell_git_line_changes().local_git_query(), Some(LocalGitQuery::LineChanges));
+    assert_eq!(
+        super::shell_git_line_changes().local_git_query(),
+        Some(LocalGitQuery::LineChanges)
+    );
 }
 
 #[test]

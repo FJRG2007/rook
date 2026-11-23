@@ -61,10 +61,7 @@ fn standard_powershell_with_only_per_session_vars_is_eligible() {
 fn any_other_variable_makes_a_request_ineligible() {
     let options = options_for(
         standard_powershell(),
-        &[
-            (TERMINAL_SESSION_UUID_ENV, "0123"),
-            ("ROOK_AGENT", "1"),
-        ],
+        &[(TERMINAL_SESSION_UUID_ENV, "0123"), ("ROOK_AGENT", "1")],
         None,
     );
     assert!(eligible_starter(&options).is_none());
@@ -124,7 +121,11 @@ fn claim_statements_quote_every_single_quote_powershell_accepts() {
 #[test]
 fn claim_statements_skip_a_start_dir_that_does_not_exist() {
     let root = tempfile::tempdir().unwrap();
-    let options = options_for(standard_powershell(), &[], Some(root.path().join("missing")));
+    let options = options_for(
+        standard_powershell(),
+        &[],
+        Some(root.path().join("missing")),
+    );
     assert!(claim_statements(&options).is_empty());
     assert!(claim_input(&options, SessionId::from(1)).is_none());
 }

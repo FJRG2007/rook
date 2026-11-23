@@ -183,7 +183,9 @@ fn subscribe_to_execute_command_events(
             let TerminalViewEvent::ExecuteCommand(event) = event else {
                 return;
             };
-            events_for_subscription.borrow_mut().push(event.command.clone());
+            events_for_subscription
+                .borrow_mut()
+                .push(event.command.clone());
         });
     });
     events

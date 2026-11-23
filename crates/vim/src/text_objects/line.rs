@@ -1,7 +1,7 @@
 use std::ops::Range;
 
-use string_offset::CharOffset;
 use rookui_core::text::TextBuffer;
+use string_offset::CharOffset;
 
 /// Neovim's "inner line" text object, excluding leading and trailing spaces and tabs.
 pub fn vim_inner_line<T, C>(buffer: &T, offset: C) -> Option<Range<CharOffset>>

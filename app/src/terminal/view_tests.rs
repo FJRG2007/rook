@@ -8404,7 +8404,7 @@ fn submit_cli_agent_rich_input_muse_uses_bracketed_paste() {
         expected_paste.extend_from_slice(b"hello");
         expected_paste.extend_from_slice(BRACKETED_PASTE_END);
         assert_eq!(writes[0], expected_paste);
-        assert_eq!(writes[1], b"");
+        assert_eq!(writes[1], b"\r");
     })
 }
 

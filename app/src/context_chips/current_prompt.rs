@@ -882,10 +882,9 @@ impl CurrentPrompt {
                         // refresh: remember the directory so the periodic refresh stops there.
                         if is_git_query && let Some(state) = me.states.get_mut(&chip_kind) {
                             if failed && value.is_some() {
-                                state.failed_git_directory.record(
-                                    exec_ctx.current_dir_path.as_deref(),
-                                    Instant::now(),
-                                );
+                                state
+                                    .failed_git_directory
+                                    .record(exec_ctx.current_dir_path.as_deref(), Instant::now());
                             } else {
                                 state.failed_git_directory.clear();
                             }

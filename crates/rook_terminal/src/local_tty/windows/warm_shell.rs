@@ -176,7 +176,10 @@ fn claim_statements(options: &PtyOptions) -> Vec<String> {
     let mut statements: Vec<String> = assignments
         .iter()
         .map(|(name, value)| {
-            format!("$env:{name} = {}", shell_quote_arg(value, ShellType::PowerShell))
+            format!(
+                "$env:{name} = {}",
+                shell_quote_arg(value, ShellType::PowerShell)
+            )
         })
         .collect();
     // A shell started cold has the directory as its process working directory too, which .NET
