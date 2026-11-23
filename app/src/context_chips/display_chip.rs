@@ -1,7 +1,9 @@
 use std::borrow::Cow;
 use std::path::PathBuf;
 use std::sync::Arc;
+use std::time::Duration;
 
+use instant::Instant;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::{Vector2F, vec2f};
 use rook_core::features::FeatureFlag;
@@ -343,6 +345,29 @@ pub enum DisplayChipAction {
     ToggleCodeReview,
     OpenBranchSelector,
     OpenGithubPullRequest(String),
+    /// Looks up the web page of the current branch on its remote, so the branch chip can offer it.
+    ResolveBranchWebUrl,
+    /// Opens the current branch on its remote in the browser.
+    OpenBranchOnRemote,
+}
+
+/// The web page of the current branch on its remote, as last looked up for one directory and
+/// branch. `url` is `None` when the branch has no counterpart on a remote.
+struct BranchWebUrl {
+    key: String,
+    url: Option<String>,
+    looked_up_at: Instant,
+}
+
+/// How long a lookup that found no page on the remote is trusted. The branch may be pushed in
+/// the meantime, and a lookup costs a few git calls.
+const BRANCH_WEB_URL_MISS_TTL: Duration = Duration::from_secs(30);
+
+impl BranchWebUrl {
+    fn is_current(&self, key: &str) -> bool {
+        self.key == key
+            && (self.url.is_some() || self.looked_up_at.elapsed() < BRANCH_WEB_URL_MISS_TTL)
+    }
 }
 
 pub struct DisplayChip {
@@ -366,6 +391,11 @@ pub struct DisplayChip {
     code_review_keybinding: Option<String>,
     /// The terminal view this chip belongs to, used to check CLI agent session state.
     terminal_view_id: EntityId,
+    /// The branch chip's link to the branch on its remote, once looked up.
+    branch_web_url: Option<BranchWebUrl>,
+    /// The directory and branch whose link is being looked up, so hovering repeatedly does not
+    /// start another lookup.
+    branch_web_url_pending: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -1178,7 +1208,67 @@ impl DisplayChip {
             ambient_agent_view_model: config.ambient_agent_view_model,
             code_review_keybinding,
             terminal_view_id: config.terminal_view_id,
+            branch_web_url: None,
+            branch_web_url_pending: None,
         }
+    }
+
+    /// Identifies the directory and branch a branch link belongs to; `None` outside a local
+    /// session, where git cannot be asked.
+    fn branch_web_url_key(&self) -> Option<String> {
+        let pwd = self.local_working_directory()?;
+        Some(format!("{pwd}\0{}", self.text))
+    }
+
+    /// The current branch's page on its remote, if it has been looked up and exists.
+    fn branch_web_url(&self) -> Option<&str> {
+        let key = self.branch_web_url_key()?;
+        self.branch_web_url
+            .as_ref()
+            .filter(|lookup| lookup.key == key)
+            .and_then(|lookup| lookup.url.as_deref())
+    }
+
+    /// Looks up the current branch's page on its remote in the background, and opens it once
+    /// found if `open` is set. A lookup already made for this directory and branch is reused.
+    fn resolve_branch_web_url(&mut self, open: bool, ctx: &mut ViewContext<Self>) {
+        let Some(key) = self.branch_web_url_key() else {
+            return;
+        };
+        if let Some(lookup) = self
+            .branch_web_url
+            .as_ref()
+            .filter(|lookup| lookup.is_current(&key))
+        {
+            if open && let Some(url) = lookup.url.clone() {
+                ctx.open_url(&url);
+            }
+            return;
+        }
+        if !open && self.branch_web_url_pending.as_deref() == Some(key.as_str()) {
+            return;
+        }
+        let Some(pwd) = self.local_working_directory().map(PathBuf::from) else {
+            return;
+        };
+        self.branch_web_url_pending = Some(key.clone());
+        ctx.spawn(
+            async move { super::branch_web_url::resolve(&pwd).await },
+            move |me, url, ctx| {
+                if open && let Some(url) = &url {
+                    ctx.open_url(url);
+                }
+                if me.branch_web_url_pending.as_deref() == Some(key.as_str()) {
+                    me.branch_web_url_pending = None;
+                }
+                me.branch_web_url = Some(BranchWebUrl {
+                    key,
+                    url,
+                    looked_up_at: Instant::now(),
+                });
+                ctx.notify();
+            },
+        );
     }
 
     /// Returns `true` when a CLI agent session is active for this chip's terminal,
@@ -1405,10 +1495,20 @@ impl DisplayChip {
 
         let is_interactive =
             !self.is_shared_session_viewer && !self.is_cli_agent_session_active(app);
+        // The branch can be opened on its remote even where it cannot be switched, such as
+        // while a CLI agent runs in the terminal.
+        let can_open_on_remote =
+            !self.is_shared_session_viewer && self.branch_web_url_key().is_some();
+        let remote_host = self.branch_web_url().and_then(|url| {
+            url.strip_prefix("https://")
+                .and_then(|rest| rest.split('/').next())
+                .map(str::to_owned)
+        });
+        let has_remote_page = remote_host.is_some();
         let is_in_agent_view = self.is_in_agent_view;
         let chip_text = self.text.clone();
         let hover = Hoverable::new(self.mouse_state.clone(), move |state| {
-            let hovered = state.is_hovered() && is_interactive;
+            let hovered = state.is_hovered() && (is_interactive || remote_host.is_some());
             let mut config =
                 UdiChipConfig::new_with_icon(Icon::GitBranch, font_color, chip_text.clone())
                     .with_hovered(hovered);
@@ -1418,10 +1518,22 @@ impl DisplayChip {
             let chip_element = render_udi_chip(config, appearance);
 
             let mut stack = Stack::new().with_child(chip_element);
-            if state.is_hovered() && is_interactive && !menu_open {
+            let tool_tip_text = match (is_interactive, remote_host.as_deref()) {
+                (true, Some(host)) => Some(format!(
+                    "Change git branch ({} to open on {host})",
+                    open_on_remote_click_label()
+                )),
+                (true, None) => Some("Change git branch".to_owned()),
+                (false, Some(host)) => Some(format!("Open on {host}")),
+                (false, None) => None,
+            };
+            if let Some(tool_tip_text) = tool_tip_text
+                && state.is_hovered()
+                && !menu_open
+            {
                 let tool_tip = appearance
                     .ui_builder()
-                    .tool_tip("Change git branch".to_string())
+                    .tool_tip(tool_tip_text)
                     .build()
                     .finish();
                 stack.add_positioned_overlay_child(tool_tip, udi_tooltip_positioning());
@@ -1429,15 +1541,32 @@ impl DisplayChip {
             stack.finish()
         });
 
-        let hover = if !is_interactive {
+        let hover = if !is_interactive && !can_open_on_remote {
             hover.finish()
         } else {
-            hover
-                .on_click(|ctx, _app, _position| {
-                    ctx.dispatch_typed_action(DisplayChipAction::OpenBranchSelector);
+            let hover = hover
+                .on_hover(move |is_hovered, ctx, _app, _position| {
+                    if is_hovered && can_open_on_remote {
+                        ctx.dispatch_typed_action(DisplayChipAction::ResolveBranchWebUrl);
+                    }
                 })
-                .with_cursor(Cursor::PointingHand)
-                .finish()
+                .on_click_with_modifiers(move |ctx, _app, _position, modifiers| {
+                    let open_on_remote_modifier = if cfg!(target_os = "macos") {
+                        modifiers.cmd
+                    } else {
+                        modifiers.ctrl
+                    };
+                    if can_open_on_remote && (open_on_remote_modifier || !is_interactive) {
+                        ctx.dispatch_typed_action(DisplayChipAction::OpenBranchOnRemote);
+                    } else if is_interactive {
+                        ctx.dispatch_typed_action(DisplayChipAction::OpenBranchSelector);
+                    }
+                });
+            if is_interactive || has_remote_page {
+                hover.with_cursor(Cursor::PointingHand).finish()
+            } else {
+                hover.finish()
+            }
         };
 
         let mut stack = Stack::new().with_child(hover);
@@ -2287,6 +2416,12 @@ impl TypedActionView for DisplayChip {
             DisplayChipAction::OpenGithubPullRequest(url) => {
                 ctx.open_url(url);
             }
+            DisplayChipAction::ResolveBranchWebUrl => {
+                self.resolve_branch_web_url(false, ctx);
+            }
+            DisplayChipAction::OpenBranchOnRemote => {
+                self.resolve_branch_web_url(true, ctx);
+            }
         }
     }
 }
@@ -2479,3 +2614,12 @@ pub fn udi_icon_size(appearance: &Appearance, app: &AppContext) -> f32 {
 #[cfg(test)]
 #[path = "display_chip_tests.rs"]
 mod tests;
+
+/// How the branch chip's tooltip names the click that opens the branch on its remote.
+fn open_on_remote_click_label() -> &'static str {
+    if cfg!(target_os = "macos") {
+        "Cmd+click"
+    } else {
+        "Ctrl+click"
+    }
+}

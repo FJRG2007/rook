@@ -1,4 +1,5 @@
 // TODO: restrict what we make public here.
+mod branch_web_url;
 mod builtins;
 pub mod context_chip;
 pub mod current_prompt;
