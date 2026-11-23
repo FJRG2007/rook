@@ -4,6 +4,7 @@ use std::sync::{Arc, Weak};
 use std::time::Duration;
 
 use futures::{FutureExt as _, pin_mut};
+use instant::Instant;
 use itertools::Itertools;
 use parking_lot::FairMutex;
 use rook_completer::completer::CommandExitStatus;
@@ -21,6 +22,7 @@ use super::context_chip::{
     ExternalCommandsAvailability, GeneratorContext, PromptGenerator, RefreshConfig,
     ShellCommandGenerator,
 };
+use super::local_git::{FailedDirectory, LocalGitQuery};
 use super::logging::{ChipCommandLogEntry, PromptChipExecutionPhase, PromptChipLogger};
 use super::prompt::Prompt;
 use super::{ChipResult, ChipValue, ContextChipKind, chips_to_string};
@@ -87,6 +89,8 @@ pub struct ChipState {
     /// Monotonic counter incremented when a user command matching this chip's
     /// `invalidate_on_commands` completes. Hashed via `ChipFingerprintInput::InvalidatingCommandCount`.
     invalidating_command_count: u64,
+    /// The directory this chip's git command last failed in, which the periodic refresh skips.
+    failed_git_directory: FailedDirectory,
 }
 
 impl Drop for ChipState {
@@ -119,6 +123,7 @@ impl ChipState {
             on_click_generator_handle: None,
             should_render: kind.should_render("", &Default::default()),
             invalidating_command_count: 0,
+            failed_git_directory: FailedDirectory::default(),
         }
     }
 
@@ -141,6 +146,7 @@ impl ChipState {
         self.last_failure_fingerprint = None;
         self.availability = ChipAvailability::Enabled;
         self.update_status = ChipUpdateStatus::Idle;
+        self.failed_git_directory.clear();
     }
 }
 
@@ -205,6 +211,8 @@ struct ShellCommandExecutionContext {
     current_dir_path: Option<String>,
     environment_variables: Option<HashMap<String, String>>,
     shell_type: crate::terminal::shell::ShellType,
+    /// Set when the command can run as a plain `git` process instead of through the shell.
+    local_git_query: Option<LocalGitQuery>,
 }
 
 impl CurrentPrompt {
@@ -622,12 +630,22 @@ impl CurrentPrompt {
             env_vars.insert("PATH".to_string(), path_var);
         }
 
+        // Starting git directly is only equivalent when the executor would start the shell as a
+        // local process anyway. On Windows it is limited to PowerShell, whose `PATH` is in
+        // Windows form; another shell's may not be, and a plain process could not resolve git.
+        let local_git_query = cmd.local_git_query().filter(|_| {
+            session.runs_generators_as_local_processes()
+                && (cfg!(not(windows))
+                    || shell_type == crate::terminal::shell::ShellType::PowerShell)
+        });
+
         Some(ShellCommandExecutionContext {
             session,
             command,
             current_dir_path,
             environment_variables,
             shell_type,
+            local_git_query,
         })
     }
 
@@ -638,21 +656,43 @@ impl CurrentPrompt {
     /// local and in-band executors (for example `kill_on_drop` / `on_cancel`), but we intentionally
     /// do not call `session.cancel_active_commands()` because it is session-global and would cancel
     /// unrelated generator commands as well.
+    ///
+    /// With a `local_git_query`, git runs as a plain process instead of through the shell, and
+    /// the shell command is the fallback when git cannot be started that way.
     async fn execute_session_command_with_timeout(
         session: Arc<Session>,
         command: String,
         current_dir_path: Option<String>,
         environment_variables: Option<HashMap<String, String>>,
         timeout: Option<Duration>,
+        local_git_query: Option<LocalGitQuery>,
     ) -> (Option<rook_completer::completer::CommandOutput>, bool) {
-        let command_future = session
-            .execute_command(
-                &command,
-                current_dir_path.as_deref(),
-                environment_variables,
-                ExecuteCommandOptions::default(),
-            )
-            .fuse();
+        let command_future = async {
+            #[cfg(feature = "local_tty")]
+            if let Some(query) = local_git_query {
+                match query
+                    .run(current_dir_path.as_deref(), environment_variables.as_ref())
+                    .await
+                {
+                    Ok(output) => return Ok(output),
+                    Err(err) => {
+                        log::debug!("Could not start git for {query:?}, using the shell: {err}");
+                    }
+                }
+            }
+            #[cfg(not(feature = "local_tty"))]
+            let _ = local_git_query;
+
+            session
+                .execute_command(
+                    &command,
+                    current_dir_path.as_deref(),
+                    environment_variables,
+                    ExecuteCommandOptions::default(),
+                )
+                .await
+        }
+        .fuse();
         let timeout_future = match timeout {
             Some(duration) => Timer::after(duration),
             None => Timer::never(),
@@ -770,6 +810,7 @@ impl CurrentPrompt {
 
                 let timeout = chip.runtime_policy().shell_command_timeout();
                 let suppress_on_failure = chip.runtime_policy().suppress_on_failure();
+                let is_git_query = cmd.local_git_query().is_some();
                 let allow_empty_value = chip.allow_empty_value();
                 let chip_title = chip.title().to_owned();
                 let current_fingerprint = fingerprint;
@@ -782,6 +823,7 @@ impl CurrentPrompt {
                             exec_ctx.current_dir_path.clone(),
                             exec_ctx.environment_variables.clone(),
                             timeout,
+                            exec_ctx.local_git_query,
                         )
                         .await;
                         (value, timed_out, chip_kind, exec_ctx, chip_title)
@@ -835,6 +877,19 @@ impl CurrentPrompt {
                             }
                             _ => (None, ChipUpdateStatus::Error, true),
                         };
+
+                        // Git ran and failed, which outside a repository it does on every
+                        // refresh: remember the directory so the periodic refresh stops there.
+                        if is_git_query && let Some(state) = me.states.get_mut(&chip_kind) {
+                            if failed && value.is_some() {
+                                state.failed_git_directory.record(
+                                    exec_ctx.current_dir_path.as_deref(),
+                                    Instant::now(),
+                                );
+                            } else {
+                                state.failed_git_directory.clear();
+                            }
+                        }
 
                         if suppress_on_failure && failed {
                             if let Some(state) = me.states.get_mut(&chip_kind) {
@@ -930,6 +985,7 @@ impl CurrentPrompt {
                     exec_ctx.current_dir_path.clone(),
                     exec_ctx.environment_variables.clone(),
                     timeout,
+                    exec_ctx.local_git_query,
                 )
                 .await;
                 (value, timed_out, chip_kind, exec_ctx, chip_title)
@@ -993,13 +1049,15 @@ impl CurrentPrompt {
         if let RefreshConfig::Periodically { interval } = chip.refresh_config() {
             let initial_value_generator =
                 initial_value_generator.as_ref().unwrap_or(chip.generator());
-            self.fetch_chip_value_once(
-                chip_kind,
-                initial_value_generator,
-                on_click_generator.clone(),
-                allow_fingerprint_skip,
-                ctx,
-            );
+            if !self.git_failed_in_current_directory(chip_kind, initial_value_generator) {
+                self.fetch_chip_value_once(
+                    chip_kind,
+                    initial_value_generator,
+                    on_click_generator.clone(),
+                    allow_fingerprint_skip,
+                    ctx,
+                );
+            }
             let interval = *interval;
             let chip_kind_clone = chip_kind.clone();
             let future = ctx.spawn(
@@ -1017,6 +1075,30 @@ impl CurrentPrompt {
                 None => log::warn!("Missing state for {chip_kind:?}"),
             }
         }
+    }
+
+    /// Whether `generator` is a git query that recently failed in the current directory, so a
+    /// periodic refresh would only fail again. A completed command clears this (see
+    /// [`Self::update_context`]), so a `git init` is picked up at the next prompt.
+    fn git_failed_in_current_directory(
+        &self,
+        chip_kind: &ContextChipKind,
+        generator: &PromptGenerator,
+    ) -> bool {
+        let PromptGenerator::ShellCommand(cmd) = generator else {
+            return false;
+        };
+        if cmd.local_git_query().is_none() {
+            return false;
+        }
+        let directory = self
+            .latest_context
+            .as_ref()
+            .and_then(|context| context.active_block_metadata.current_working_directory());
+        let now = Instant::now();
+        self.states
+            .get(chip_kind)
+            .is_some_and(|state| state.failed_git_directory.covers(directory, now))
     }
 
     fn run_chips(&mut self, chips: Vec<ContextChipKind>, ctx: &mut ModelContext<Self>) {
@@ -1385,6 +1467,10 @@ impl CurrentPrompt {
             active_block_metadata: active_block.metadata(),
             environment: Environment::from_block(active_block),
         });
+        // The command that produced this block may have created or removed a repository.
+        for state in self.states.values_mut() {
+            state.failed_git_directory.clear();
+        }
         if session_has_changed {
             self.update_states_with_new_context_and_session(ctx);
         } else {

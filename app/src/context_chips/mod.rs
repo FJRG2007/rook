@@ -8,6 +8,7 @@ pub mod display;
 pub mod display_chip;
 pub mod display_menu;
 pub(crate) mod git_branch_on_click;
+pub mod local_git;
 pub(crate) mod logging;
 pub mod node_version_popup;
 pub mod prompt;

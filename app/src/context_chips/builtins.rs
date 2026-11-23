@@ -5,6 +5,7 @@ use rook_util::path::user_friendly_path;
 
 use super::ChipValue;
 use super::context_chip::{GeneratorContext, ShellCommand, ShellCommandGenerator};
+use super::local_git::LocalGitQuery;
 use crate::terminal::shell::ShellType;
 
 #[cfg(test)]
@@ -141,6 +142,7 @@ pub fn shell_git_branch() -> ShellCommandGenerator {
     ]);
 
     ShellCommandGenerator::new(command, Some(vec!["git".to_owned()]))
+        .with_local_git_query(LocalGitQuery::Branch)
 }
 
 pub fn shell_other_git_branches() -> ShellCommandGenerator {
@@ -161,6 +163,7 @@ pub fn shell_other_git_branches() -> ShellCommandGenerator {
     ]);
 
     ShellCommandGenerator::new(command, Some(vec!["git".to_owned()]))
+        .with_local_git_query(LocalGitQuery::OtherBranches)
 }
 
 pub fn shell_git_branch_status() -> ShellCommandGenerator {
@@ -224,6 +227,7 @@ pub fn shell_git_branch_status() -> ShellCommandGenerator {
     ]);
 
     ShellCommandGenerator::new(command, Some(vec!["git".to_owned()]))
+        .with_local_git_query(LocalGitQuery::BranchStatus)
 }
 
 /// Generator function to get summary of git diff (num files changed and num lines changed).
@@ -244,6 +248,7 @@ pub fn shell_git_line_changes() -> ShellCommandGenerator {
     ]);
 
     ShellCommandGenerator::new(command, Some(vec!["git".to_owned()]))
+        .with_local_git_query(LocalGitQuery::LineChanges)
 }
 
 pub fn kubernetes_current_context() -> ShellCommandGenerator {

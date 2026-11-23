@@ -1379,6 +1379,24 @@ impl Session {
         self.session_type() == SessionType::Local
     }
 
+    /// Whether this session's generator commands run as ordinary processes on this machine, in
+    /// its filesystem, so a program can be started directly instead of through the shell with
+    /// the same working directory and environment. False for WSL, MSYS2, SSH, sandboxed and
+    /// in-band sessions, whose executors translate or forward commands.
+    pub fn runs_generators_as_local_processes(&self) -> bool {
+        #[cfg(feature = "local_tty")]
+        {
+            self.command_executor
+                .read()
+                .as_any()
+                .is::<LocalCommandExecutor>()
+        }
+        #[cfg(not(feature = "local_tty"))]
+        {
+            false
+        }
+    }
+
     async fn read_history_for_local_session(&self, is_kaspersky_running: bool) -> Vec<String> {
         let histfile = &self.info.histfile;
         let shell_type = &self.info.shell.shell_type();

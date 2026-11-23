@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use crate::context_chips::context_chip::GeneratorContext;
+use crate::context_chips::local_git::LocalGitQuery;
 use crate::terminal::model::block::BlockMetadata;
 use crate::terminal::model::session::command_executor::testing::TestCommandExecutor;
 use crate::terminal::model::session::{BootstrapSessionType, Session, SessionInfo};
@@ -132,4 +133,25 @@ fn test_node_version() {
             .and_then(|v| v.as_text()),
         Some("v18.0.0")
     );
+}
+
+#[test]
+fn test_git_generators_carry_their_local_git_query() {
+    assert_eq!(super::shell_git_branch().local_git_query(), Some(LocalGitQuery::Branch));
+    assert_eq!(
+        super::shell_git_branch_status().local_git_query(),
+        Some(LocalGitQuery::BranchStatus)
+    );
+    assert_eq!(
+        super::shell_other_git_branches().local_git_query(),
+        Some(LocalGitQuery::OtherBranches)
+    );
+    assert_eq!(super::shell_git_line_changes().local_git_query(), Some(LocalGitQuery::LineChanges));
+}
+
+#[test]
+fn test_non_git_generators_have_no_local_git_query() {
+    assert_eq!(super::kubernetes_current_context().local_git_query(), None);
+    assert_eq!(super::svn_branch_context().local_git_query(), None);
+    assert_eq!(super::svn_dirty_items().local_git_query(), None);
 }

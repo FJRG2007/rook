@@ -4,6 +4,7 @@ use std::time::Duration;
 use serde::{Deserialize, Serialize};
 
 use super::ChipValue;
+use super::local_git::LocalGitQuery;
 use crate::terminal::model::block::{Block, BlockMetadata};
 use crate::terminal::model::session::{Session, SessionId};
 use crate::terminal::shell::ShellType;
@@ -12,6 +13,10 @@ use crate::terminal::shell::ShellType;
 pub struct ShellCommandGenerator {
     command: ShellCommand,
     dependencies: Vec<String>,
+    /// The same query run as a plain `git` process, for sessions that can start one without a
+    /// shell. Only the built-in git chips set it.
+    #[serde(skip)]
+    local_git_query: Option<LocalGitQuery>,
 }
 
 /// Representation of a shell command. The command may or may not be supported on all shells.
@@ -42,11 +47,21 @@ impl ShellCommandGenerator {
         &self.dependencies
     }
 
+    pub fn local_git_query(&self) -> Option<LocalGitQuery> {
+        self.local_git_query
+    }
+
     pub fn new(command: ShellCommand, dependencies: Option<Vec<String>>) -> Self {
         Self {
             command,
             dependencies: dependencies.unwrap_or_default(),
+            local_git_query: None,
         }
+    }
+
+    pub fn with_local_git_query(mut self, query: LocalGitQuery) -> Self {
+        self.local_git_query = Some(query);
+        self
     }
 }
 
