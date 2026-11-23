@@ -13091,6 +13091,10 @@ impl TerminalView {
             }
 
             ModelEvent::TerminalModeSwapped(mode) => {
+                // A program entering the alternate screen has been told about no motion yet,
+                // even if the pointer sits on the cell reported to the previous one.
+                self.last_reported_alt_mouse_motion = None;
+
                 #[cfg(feature = "local_tty")]
                 {
                     let active_command = self
