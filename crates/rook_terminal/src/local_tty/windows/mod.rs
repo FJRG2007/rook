@@ -165,6 +165,12 @@ pub enum PtySpawnError {
     UnsupportedShellStarter(String),
 }
 
+/// Terminates the pre-started PowerShell kept for the next new session, if any. Called when the app
+/// is about to exit.
+pub fn shut_down_pre_started_shell() {
+    warm_shell::shut_down();
+}
+
 pub(super) fn spawn(
     options: PtyOptions,
     event_loop_tx: mio_channel::Sender<writeable_pty::Message>,

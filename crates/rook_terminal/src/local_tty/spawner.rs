@@ -167,6 +167,9 @@ impl PtySpawner {
             log::info!("Tearing down terminal server...");
             drop(server);
         }
+        // The spare PowerShell is not a pane, so nothing else terminates it.
+        #[cfg(windows)]
+        local_tty::windows::shut_down_pre_started_shell();
     }
 
     /// Spawns a pty, returning information about the pty and a handle that can

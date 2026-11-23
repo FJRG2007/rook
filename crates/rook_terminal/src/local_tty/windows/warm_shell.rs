@@ -48,6 +48,10 @@ static SPARE: Mutex<Option<WarmShell>> = Mutex::new(None);
 /// of tabs) starts one spare rather than one per tab.
 static REFILLING: AtomicBool = AtomicBool::new(false);
 
+/// Set once the app is shutting down, so that a refill already in flight does not leave a spare
+/// behind that nothing will ever terminate.
+static SHUT_DOWN: AtomicBool = AtomicBool::new(false);
+
 pub(super) struct WarmShell {
     /// Always `Some` until the shell is claimed; `Drop` terminates whatever is left.
     process: Option<SpawnedProcess>,
@@ -216,7 +220,10 @@ fn write_claim_script(path: &Path, statements: &[String]) -> std::io::Result<()>
 /// Starts a spare for the shell `options` describes in the background, unless one is already
 /// waiting or on its way.
 pub(super) fn refill(options: &PtyOptions) {
-    if eligible_starter(options).is_none() || REFILLING.swap(true, Ordering::AcqRel) {
+    if SHUT_DOWN.load(Ordering::Acquire)
+        || eligible_starter(options).is_none()
+        || REFILLING.swap(true, Ordering::AcqRel)
+    {
         return;
     }
     let options = options.clone();
@@ -262,12 +269,29 @@ fn start_spare(options: &PtyOptions) {
                 environment_block,
                 session_id,
             };
-            // Dropped outside the lock: replacing a stale spare terminates its process.
-            let previous = lock_spare().replace(spare);
+            // Dropped outside the lock: replacing a stale spare terminates its process, and so does
+            // finding that the app started shutting down while this one was starting.
+            let previous = {
+                let mut slot = lock_spare();
+                if SHUT_DOWN.load(Ordering::Acquire) {
+                    Some(spare)
+                } else {
+                    slot.replace(spare)
+                }
+            };
             drop(previous);
         }
         Err(err) => log::warn!("Could not pre-start a shell: {err:#}"),
     }
+}
+
+/// Terminates the spare, if there is one, and stops new ones from being started. The spare lives in
+/// a static that is never dropped, and it is spawned outside Rook's job object, so without this it
+/// would outlive the app.
+pub(super) fn shut_down() {
+    SHUT_DOWN.store(true, Ordering::Release);
+    let spare = lock_spare().take();
+    drop(spare);
 }
 
 /// Returns the starter for the shell `options` describes if it is one a spare is kept for: a local
