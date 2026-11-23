@@ -409,4 +409,16 @@ fn antigravity_notifications_are_supported() {
     assert_eq!(parsed_task_complete.agent, CLIAgent::Antigravity);
     assert_eq!(parsed_task_complete.event, CLIAgentEventType::Stop);
     assert!(handler.handle_event(parsed_task_complete).is_some());
+
+    let prompt_req_body = r#"{"v":1,"agent":"agy","event":"prompt_required"}"#;
+    let parsed_prompt_req = handler
+        .try_parse(
+            Some(CLI_AGENT_NOTIFICATION_SENTINEL),
+            prompt_req_body,
+            false,
+        )
+        .expect("should successfully parse prompt_required payload");
+    assert_eq!(parsed_prompt_req.agent, CLIAgent::Antigravity);
+    assert_eq!(parsed_prompt_req.event, CLIAgentEventType::NeedsInput);
+    assert!(handler.handle_event(parsed_prompt_req).is_some());
 }

@@ -25,7 +25,8 @@ use crate::ai::llms::LLMId;
 use crate::server::server_api::ai::{AIClient, MockAIClient, TaskStatusUpdate};
 use crate::terminal::CLIAgent;
 use crate::terminal::cli_agent_sessions::{
-    CLIAgentSessionStatus, CLIAgentSessionsModel, CLIAgentSessionsModelEvent,
+    BlockedSource, CLIAgentInputState, CLIAgentSession, CLIAgentSessionStatus,
+    CLIAgentSessionsModel, CLIAgentSessionsModelEvent,
 };
 
 /// Helper to assert a (state, Option<TaskStatusUpdate>) tuple.
@@ -447,6 +448,7 @@ fn cli_success_maps_correctly() {
 fn cli_blocked_maps_correctly() {
     let (state, update) = map_cli_session_status(&CLIAgentSessionStatus::Blocked {
         message: Some("needs approval".into()),
+        source: BlockedSource::PermissionRequest,
     });
     assert_eq!(state, AgentTaskState::Blocked);
     let update = update.expect("should have status update");
@@ -455,7 +457,10 @@ fn cli_blocked_maps_correctly() {
 
 #[test]
 fn cli_blocked_without_message() {
-    let (state, update) = map_cli_session_status(&CLIAgentSessionStatus::Blocked { message: None });
+    let (state, update) = map_cli_session_status(&CLIAgentSessionStatus::Blocked {
+        message: None,
+        source: BlockedSource::PermissionRequest,
+    });
     assert_eq!(state, AgentTaskState::Blocked);
     assert!(update.is_none());
 }
@@ -689,6 +694,7 @@ fn confirmed_terminal_state_remembers_blocked() {
             terminal_view_id,
             CLIAgentSessionStatus::Blocked {
                 message: Some("needs approval".into()),
+                source: BlockedSource::PermissionRequest,
             },
         );
 
