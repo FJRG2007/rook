@@ -717,6 +717,13 @@ fn on_shell_determined<S: TerminalSurface>(
         }
     };
 
+    // A pre-started shell reports under the session ID it was started with, not the one
+    // generated for this request; hooks from an unregistered session are rejected.
+    #[cfg(windows)]
+    if let Some(session_id) = pty.claimed_session_id() {
+        model.lock().register_session_id(session_id);
+    }
+
     let pid = pty.get_pid();
     #[cfg(unix)]
     let fd = pty.get_fd();

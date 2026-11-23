@@ -3,6 +3,7 @@ mod conpty_api;
 mod environment;
 mod pipes;
 mod proc_thread_attribute_list;
+mod warm_shell;
 
 use std::ffi::{OsStr, OsString};
 use std::os::windows::ffi::OsStrExt;
@@ -15,6 +16,7 @@ pub use conpty_api::ConptyApi;
 use conpty_api::ConptyApiError;
 use environment::get_shell_environment_variables;
 pub use environment::get_user_and_system_env_variable;
+use rook_core::SessionId;
 use rook_errors::{report_error, report_if_error};
 use rookui_core::{AppContext, SingletonEntity};
 use thiserror::Error;
@@ -64,6 +66,8 @@ pub(super) struct PtySpawnResult {
     pub pipe: mio::windows::NamedPipe,
     pub conpty_api: ConptyApi,
     child_exit_watcher: ChildExitWatcher,
+    /// The session ID of a pre-started shell this PTY took over, if it did; see [`warm_shell`].
+    claimed_session_id: Option<SessionId>,
 }
 
 pub struct PseudoConsoleChild {
@@ -165,9 +169,61 @@ pub(super) fn spawn(
     options: PtyOptions,
     event_loop_tx: mio_channel::Sender<writeable_pty::Message>,
 ) -> Result<PtySpawnInfo, PtySpawnError> {
-    let conpty_api = unsafe { ConptyApi::load() }?;
-    let environment_block = get_shell_environment_variables(&options);
+    let (process, claimed_session_id) = match warm_shell::claim(&options) {
+        Some(warm) => {
+            // The spare was started in the home directory without the pane's own variables.
+            // Queued ahead of everything else, their assignment runs before the bootstrap is
+            // sourced, and the bootstrap moves to the directory it finds in its variable.
+            if let Some(input) = warm_shell::claim_input(&options) {
+                let _ = event_loop_tx.send(writeable_pty::Message::Input(input.into()));
+            }
+            let session_id = warm.session_id();
+            (warm.into_process(), Some(session_id))
+        }
+        None => {
+            let environment_block = get_shell_environment_variables(&options);
+            (spawn_process(&options, &environment_block)?, None)
+        }
+    };
+    warm_shell::refill(&options);
 
+    let SpawnedProcess {
+        conpty_api,
+        pty_handle,
+        server,
+        process_information,
+    } = process;
+    let pipe = unsafe { mio::windows::NamedPipe::from_raw_handle(server.0 as *mut _) };
+    let child_exit_watcher = ChildExitWatcher::new(process_information.hProcess, event_loop_tx)
+        .map_err(PtySpawnError::ChildExitWatcherFailed)?;
+    let child = PseudoConsoleChild {
+        process_info: process_information,
+    };
+    let result = PtySpawnResult {
+        pty_handle,
+        pipe,
+        conpty_api,
+        child_exit_watcher,
+        claimed_session_id,
+    };
+    Ok(PtySpawnInfo { result, child })
+}
+
+/// A shell process running under a pseudoconsole that nothing reads from yet.
+struct SpawnedProcess {
+    conpty_api: ConptyApi,
+    pty_handle: HPCON,
+    /// The server end of the pseudoconsole's pipe.
+    server: HANDLE,
+    process_information: PROCESS_INFORMATION,
+}
+
+/// Creates a pseudoconsole and starts the shell described by `options` inside it.
+fn spawn_process(
+    options: &PtyOptions,
+    environment_block: &[u16],
+) -> Result<SpawnedProcess, PtySpawnError> {
+    let conpty_api = unsafe { ConptyApi::load() }?;
     let PtyOptions {
         size,
         shell_starter,
@@ -222,6 +278,7 @@ pub(super) fn spawn(
 
     let start_directory = options
         .start_dir
+        .clone()
         .filter(|start_dir| start_dir.is_dir())
         .or_else(|| {
             std::env::var_os("USERPROFILE")
@@ -257,19 +314,12 @@ pub(super) fn spawn(
 
     let _ = unsafe { conpty_api.release(pty_handle) };
 
-    let pipe = unsafe { mio::windows::NamedPipe::from_raw_handle(server.0 as *mut _) };
-    let child_exit_watcher = ChildExitWatcher::new(process_information.hProcess, event_loop_tx)
-        .map_err(PtySpawnError::ChildExitWatcherFailed)?;
-    let child = PseudoConsoleChild {
-        process_info: process_information,
-    };
-    let result = PtySpawnResult {
-        pty_handle,
-        pipe,
+    Ok(SpawnedProcess {
         conpty_api,
-        child_exit_watcher,
-    };
-    Ok(PtySpawnInfo { result, child })
+        pty_handle,
+        server,
+        process_information,
+    })
 }
 #[derive(Error, Debug)]
 pub enum EncodingError {
@@ -380,6 +430,7 @@ pub struct Pty {
     token: mio::Token,
     conpty_api: ConptyApi,
     pty_closed: bool,
+    claimed_session_id: Option<SessionId>,
 }
 
 impl Pty {
@@ -401,6 +452,7 @@ impl Pty {
                         pipe,
                         conpty_api,
                         child_exit_watcher,
+                        claimed_session_id,
                     },
                     handle,
                 )| {
@@ -412,6 +464,7 @@ impl Pty {
                         token: PTY_TOKEN,
                         conpty_api,
                         pty_closed: false,
+                        claimed_session_id,
                     };
                     pty.on_resize(&size);
                     pty
@@ -421,6 +474,12 @@ impl Pty {
 
     pub fn get_pid(&self) -> u32 {
         self.handle.pid()
+    }
+
+    /// The session ID baked into a pre-started shell this PTY took over, which differs from the
+    /// one generated for the requested shell. The terminal model has to accept hooks carrying it.
+    pub fn claimed_session_id(&self) -> Option<SessionId> {
+        self.claimed_session_id
     }
 
     /// Closes the pseudoconsole and disconnects from the console host.

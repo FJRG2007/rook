@@ -3,7 +3,9 @@ Remove-Module -Name PSReadline
 
 $global:_rookOriginalPrompt = $function:global:prompt
 
-if ($PSEdition -eq 'Desktop' -or $IsWindows) {
+# The effective policy is Restricted whenever a policy-scope setting is, so when it is not, neither
+# of those can be and the remaining lookups are skipped.
+if (($PSEdition -eq 'Desktop' -or $IsWindows) -and (Get-ExecutionPolicy) -eq 'Restricted') {
     $EP = [Microsoft.PowerShell.ExecutionPolicy]
     # MachinePolicy and UserPolicy scopes cannot be overridden. If either is Restricted, there's nothing we can do.
     if ((Get-ExecutionPolicy -Scope MachinePolicy) -eq $EP::Restricted -or (Get-ExecutionPolicy -Scope UserPolicy) -eq $EP::Restricted) {

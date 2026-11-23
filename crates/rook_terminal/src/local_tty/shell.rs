@@ -486,6 +486,33 @@ impl DirectShellStarter {
         self.session_id
     }
 
+    /// Whether this starter's arguments are the standard ones for its shell, which are the only
+    /// ones that can be regenerated from the shell path and type alone.
+    #[cfg_attr(not(windows), allow(dead_code))]
+    pub(super) fn has_standard_args(&self) -> bool {
+        let shell_path = self.shell_path.to_string_lossy();
+        arguments_for_session_spawning_command(&shell_path, self.shell_type, self.session_id)
+            == self.args
+    }
+
+    /// Returns a starter for the same shell under a fresh session ID, or `None` if this one was
+    /// built with arguments other than the standard ones, which could not be reproduced from
+    /// the shell path and type alone.
+    #[cfg_attr(not(windows), allow(dead_code))]
+    pub(super) fn with_new_session_id(&self) -> Option<Self> {
+        if !self.has_standard_args() {
+            return None;
+        }
+        let shell_path = self.shell_path.to_string_lossy();
+        let session_id = generate_session_id();
+        Some(Self {
+            shell_type: self.shell_type,
+            args: arguments_for_session_spawning_command(&shell_path, self.shell_type, session_id),
+            shell_path: self.shell_path.clone(),
+            session_id,
+        })
+    }
+
     pub(super) fn display_name(&self) -> &str {
         if self
             .shell_path

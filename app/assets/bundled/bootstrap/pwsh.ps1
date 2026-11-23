@@ -169,11 +169,17 @@ $null = New-Module -Name Rook-Module -ScriptBlock {
             'PSWorkflow', # Legacy workflow (Windows PS 5)
             'PSWorkflowUtility'        # Legacy workflow utility (Windows PS 5)
         )
-        $functionNamesRaw = Get-Command -CommandType Function -Module $corePsModules |
-            Where-Object { -not $_.Name.StartsWith('Rook') } |
+        # One lookup for both kinds: every 'Get-Command -Module' call analyzes each matching
+        # module on disk, so asking separately for functions and cmdlets paid for that twice
+        # (0.3-0.6 s against 0.1 s, for the same names in the same order).
+        $coreCommands = Get-Command -CommandType Function, Cmdlet -Module $corePsModules
+        $functionNamesRaw = $coreCommands |
+            Where-Object { $_.CommandType -eq 'Function' -and -not $_.Name.StartsWith('Rook') } |
             Select-Object -ExpandProperty Name
         $functionNames = $functionNamesRaw -join [Environment]::NewLine
-        $builtinsRaw = Get-Command -CommandType Cmdlet -Module $corePsModules | Select-Object -ExpandProperty Name
+        $builtinsRaw = $coreCommands |
+            Where-Object { $_.CommandType -eq 'Cmdlet' } |
+            Select-Object -ExpandProperty Name
         $builtins = $builtinsRaw -join [Environment]::NewLine
         $shellVersion = $PSVersionTable.PSVersion.ToString()
         # PowerShell wasn't cross-platform until version 6. Anything before that is definitely on Windows.
@@ -645,25 +651,42 @@ $null = New-Module -Name Rook-Module -ScriptBlock {
 
     # The inner runspace pool maintains a pool of runspaces that can execute
     # arbitrary commands against the user's current environment without
-    # writing to the screen. Initialize to minimum of 10 runspaces
-    # to handle double the number of context chips we currently have
-    # that use in-band commands
-    $script:innerRunspacePool = [runspacefactory]::CreateRunspacePool(10, 20)
+    # writing to the screen. It grows on demand up to 20 runspaces, enough
+    # for double the number of context chips we currently have that use
+    # in-band commands.
+    #
+    # Both pools open in the background: opening a runspace costs 50-80 ms,
+    # and opening them here kept the prompt waiting for every one of them
+    # (0.6-0.8 s with the ten this pool used to start with). They are waited
+    # for in Rook-Wait-RunspacePools, right before their first use.
+    $script:innerRunspacePool = [runspacefactory]::CreateRunspacePool(2, 20)
     $script:innerRunspacePool.ApartmentState = [System.Threading.ApartmentState]::STA
     $script:innerRunspacePool.ThreadOptions = 'ReuseThread'
-    $script:innerRunspacePool.Open() | Out-Null
+    $script:innerRunspacePoolOpening = $script:innerRunspacePool.BeginOpen($null, $null)
 
     # The outer runspace pool maintains a pool of runspaces that
     # share the same host as the user's session. This allows them
     # to send OSC commands via Write-Host. These outer runspaces
     # handle receiving results from the inner runspaces and formatting
     # those results into OSCs.
-    # Initialized to minimum of 5 runspaces since we currently do not
-    # run more than one outer command at a time.
-    $script:outerRunspacePool = [runspacefactory]::CreateRunspacePool(5, 10, $Host)
+    # Starts with a single runspace since we currently do not run more than
+    # one outer command at a time.
+    $script:outerRunspacePool = [runspacefactory]::CreateRunspacePool(1, 10, $Host)
     $script:outerRunspacePool.ApartmentState = [System.Threading.ApartmentState]::STA
     $script:outerRunspacePool.ThreadOptions = 'ReuseThread'
-    $script:outerRunspacePool.Open() | Out-Null
+    $script:outerRunspacePoolOpening = $script:outerRunspacePool.BeginOpen($null, $null)
+
+    # Blocks until both pools have finished opening. Only the first call waits.
+    function Rook-Wait-RunspacePools {
+        if ($null -ne $script:innerRunspacePoolOpening) {
+            $script:innerRunspacePool.EndOpen($script:innerRunspacePoolOpening)
+            $script:innerRunspacePoolOpening = $null
+        }
+        if ($null -ne $script:outerRunspacePoolOpening) {
+            $script:outerRunspacePool.EndOpen($script:outerRunspacePoolOpening)
+            $script:outerRunspacePoolOpening = $null
+        }
+    }
 
     class RookGeneratorCommand {
         [string]$CommandId
@@ -674,6 +697,8 @@ $null = New-Module -Name Rook-Module -ScriptBlock {
         param(
             [RookGeneratorCommand[]]$commands
         )
+
+        Rook-Wait-RunspacePools
 
         $jobNumber = $script:inBandCommandCount++
 
