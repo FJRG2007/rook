@@ -15,6 +15,9 @@ inputs:
     description: If true, dependencies needed for building release artifacts will be installed (e.g., cargo-about for license generation).
   cache_key:
     description: If set, the cache key to use.  If unset, the cache key will be derived from the target OS.
+  save_cache:
+    description: If false, the Rust cache is restored but never saved. Defaults to true; saving still only happens on main.
+    default: 'true'
   ssh_key:
     description: SSH private key used to clone the private rook-channel-config repository. Only consumed when running in warpdotdev/warp-internal.
 
@@ -111,19 +114,21 @@ runs:
         # workspace from scratch: 39 of its 52 minutes were compilation and 13
         # were tests.
         cache-on-failure: true
-        # Cache the workspace's own crates, not just its dependencies. Without
-        # this the action deletes them before saving, which is why a job could
-        # restore a cache on a full match and still spend 28 of its 43 minutes
-        # compiling. It costs cache size, and the repo shares a 10 GB ceiling
-        # across every key - which is affordable now that a push runs one
-        # platform rather than three, and that 8 GB of entries under renamed
-        # keys have been deleted. If eviction starts again, this is the first
-        # thing to reconsider.
-        cache-workspace-crates: true        # Save from main and from release tags. Tags were excluded before, so a
-        # release build found no cache, compiled the whole graph from scratch,
-        # and saved nothing for the next tag to reuse - which is where nearly
-        # all of a release's wall clock went.
-        save-if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
+        # Dependencies only. Caching the workspace's own crates made each test
+        # entry 2.2-3.3 GB and saved nothing: a fresh checkout gives every
+        # source file a new mtime, so jobs that restored an exact match still
+        # recompiled ~80 workspace crates. The repo's cache sat at ~9.6 GB of
+        # its 10 GB ceiling and entries were evicted within the same run, so a
+        # cold run paid 146 min of compilation on macOS and 12-19 min for
+        # clippy. Dependency-only entries are what survive between runs.
+        cache-workspace-crates: false
+        # Save from main only. A cache saved by a tag run is scoped to that tag
+        # and can be restored by nothing else, not even the next tag, so saving
+        # there only spent budget and evicted entries main would reuse.
+        # Automatic releases run with `--ref main`, so they save and restore
+        # under main like any other main run. `save_cache: false` opts a job
+        # out entirely.
+        save-if: ${{ inputs.save_cache != 'false' && github.ref == 'refs/heads/main' }}
 
     - name: Set up Namespace cache
       if: ${{ startsWith(runner.name, 'nsc-runner') }}

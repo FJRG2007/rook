@@ -160,6 +160,17 @@ jobs:
     needs: changes
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
+    # No debug info in the test build. The dev profile asks for line tables,
+    # which every one of the ~90 test binaries carries into its link - a PDB per
+    # binary on Windows - and into the target directory the cache stores. A
+    # failing test still reports its file and line, because the panic location
+    # is compiled in rather than read from debug info; only the frames of a
+    # RUST_BACKTRACE lose their line numbers. Scoped to this job: the lint and
+    # release-profile jobs only check, so they emit none to drop, and changing
+    # their environment would only invalidate their cache keys.
+    env:
+      CARGO_PROFILE_DEV_DEBUG: 0
+      CARGO_PROFILE_TEST_DEBUG: 0
     strategy:
       fail-fast: false
       matrix:
@@ -323,6 +334,7 @@ jobs:
           # and sharing the entry would leave the tag build restoring a cache
           # it cannot use and unable to save the one it could.
           cache_key: ${{ matrix.os }}-rlto-check
+          save_cache: 'false'
 
       # Only the release profile and its feature set are verified here, and
       # `cargo check` establishes that without paying for codegen and LTO. The
