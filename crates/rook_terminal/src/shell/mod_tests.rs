@@ -376,6 +376,24 @@ fn multiple_single_quotes_all_escaped() {
     assert_eq!(ps.matches("''").count(), 3);
 }
 
+#[test]
+fn fish_escapes_backslashes_so_a_trailing_one_cannot_close_the_quote() {
+    let result = shell_escape_single_quotes(r"C:\dir\", ShellType::Fish);
+    assert_eq!(result, r"C:\\dir\\");
+}
+
+#[test]
+fn powershell_doubles_typographic_single_quotes() {
+    let result = shell_escape_single_quotes(
+        "a\u{2018}b\u{2019}c\u{201A}d\u{201B}",
+        ShellType::PowerShell,
+    );
+    assert_eq!(
+        result,
+        "a\u{2018}\u{2018}b\u{2019}\u{2019}c\u{201A}\u{201A}d\u{201B}\u{201B}"
+    );
+}
+
 /// A path containing embedded single quotes that attempt to break out of a
 /// surrounding single-quoted context (e.g. `cat '...'` or `cd '...'`).
 /// Every shell type must neutralize the quotes so the injected commands

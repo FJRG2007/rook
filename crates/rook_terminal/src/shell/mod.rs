@@ -1019,12 +1019,21 @@ mod tests;
 pub fn shell_escape_single_quotes(command: &str, shell_type: ShellType) -> String {
     match shell_type {
         ShellType::Fish => {
-            // Backslash-escape single quotes for Fish.
-            command.replace('\'', r"\'")
+            // Fish single-quoted strings treat both `\'` and `\\` as escapes, so backslashes are
+            // escaped first: otherwise a value ending in `\` would escape the closing quote.
+            command.replace('\\', r"\\").replace('\'', r"\'")
         }
         ShellType::PowerShell => {
-            // In powershell we escape single quotes using two single quotes ''
-            command.replace('\'', "''")
+            // PowerShell escapes a single quote by doubling it, and also accepts the typographic
+            // single quotes as quote characters, so each of those is doubled too.
+            let mut escaped = String::with_capacity(command.len());
+            for c in command.chars() {
+                if matches!(c, '\'' | '\u{2018}' | '\u{2019}' | '\u{201A}' | '\u{201B}') {
+                    escaped.push(c);
+                }
+                escaped.push(c);
+            }
+            escaped
         }
         _ => {
             // For Bash and Zsh, replace each single quote with a '"'"' sequence.
