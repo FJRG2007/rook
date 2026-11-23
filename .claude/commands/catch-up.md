@@ -49,7 +49,7 @@ Read `script/rebrand.py`'s header before trusting it on new files: it deliberate
 
 Ask the user before applying anything that changes behaviour they would notice, removes a feature, or lands on top of one of Rook's own changes. Apply the rest yourself.
 
-Verify with `cargo check -p rook` and, because that does not build test targets, `cargo check --workspace --all-targets --exclude rook_js --exclude command-signatures-v2`. That second one needs libclang; if it is unavailable locally, say so rather than claiming the tests compile.
+Verify with `cargo check -p rook` and, because that does not build test targets, `cargo check --workspace --all-targets`. That second one needs libclang; if it is unavailable locally, say so rather than claiming the tests compile.
 
 ## 5. Read what users are reporting
 

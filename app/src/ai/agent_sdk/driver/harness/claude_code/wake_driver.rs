@@ -25,6 +25,7 @@ use crate::server::server_api::ServerApi;
 use crate::server::server_api::ai::AIClient;
 use crate::server::server_api::harness_support::ResolvePromptRequest;
 use crate::terminal::CLIAgent;
+use crate::terminal::shell::ShellType;
 
 const CLAUDE_WAKE_PROMPT: &str = "A lead agent mailbox message is available for this child run. Review the mailbox context and continue the task.";
 pub(super) const CLAUDE_WAKE_PROMPT_FILE_NAME: &str = "wake-turn-prompt.txt";
@@ -206,10 +207,8 @@ impl ClaudeHarness {
         let config_root = claude_config_dir().context("Failed to resolve Claude config dir")?;
         write_envelope(&remote.envelope, &config_root)
             .context("Failed to rehydrate Claude transcript for wake")?;
-        if let Err(error) = write_session_index_entry(remote.session_id, &working_dir, &config_root)
-        {
-            log::warn!("Failed to update Claude sessions-index.json for wake: {error:#}");
-        }
+        write_session_index_entry(remote.session_id, &working_dir, &config_root)
+            .context("Failed to update Claude sessions-index.json for wake")?;
 
         let state_dir = parent_bridge_root()?.join(remote.session_id.to_string());
         ensure_parent_bridge_state_dir(&state_dir)?;
@@ -231,6 +230,7 @@ impl ClaudeHarness {
             None,
             None,
             true,
+            ShellType::Bash,
         );
         let env_vars = local_wake_task_env_vars(Some(&task_id), parent_run_id.as_deref());
 

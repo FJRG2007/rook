@@ -2,9 +2,9 @@ use std::cmp::Ordering;
 
 use rook_completer::completer::{EngineDirEntry, EngineFileType};
 use rook_util::file_type::is_binary_file;
+use rook_util::path::expand_session_home;
 use rookui::r#async::SpawnedFutureHandle;
 use rookui::{AppContext, Entity, ModelContext};
-use typed_path::TypedPathBuf;
 
 use super::display_menu::GenericMenuItem;
 use crate::completer::SessionContext;
@@ -86,13 +86,11 @@ impl DirectoryFetcher {
         session_context: &SessionContext,
         dir_path: &str,
     ) -> Vec<DirectoryItem> {
-        // Convert the directory path to TypedPathBuf, expanding ~ if needed
-        let expanded_path = shellexpand::tilde(dir_path).into_owned();
-        let typed_path = if expanded_path != dir_path {
-            TypedPathBuf::from(expanded_path)
-        } else {
-            TypedPathBuf::from(dir_path)
-        };
+        let typed_path = expand_session_home(
+            dir_path,
+            session_context.session.home_dir(),
+            session_context.session.path_separators().all,
+        );
 
         // Force re-read the directory from disk so the chip reflects its current contents rather
         // than serving the possibly-stale entry from the shared `SessionContext` cache.

@@ -547,6 +547,7 @@ use crate::workspace::view::cloud_agent_capacity_modal::CloudAgentCapacityModalV
 use crate::workspace::{
     CommandSearchOptions, ForkAIConversationParams, ForkFromExchange,
     ForkedConversationDestination, OneTimeModalModel, ToastStack, WorkspaceAction,
+    WorkspaceRegistry,
 };
 use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
 use crate::workspaces::workspace::CustomerType;
@@ -718,17 +719,10 @@ pub const DEFAULT_ASK_AI_AUTOSUGGESTION_TEXT: &str = "What happened here?";
 
 const ROOK_MD_PATH: &str = "ROOK.md";
 
-/// `shell_plugins` tag reported by bootstrap when the shell's `^R` binding has been rebound away
-/// from its default reverse-history-search widget (e.g. by fzf or atuin). Must match the tag
-/// name used in `app/assets/bundled/bootstrap/zsh_body.sh`.
-const EXTERNAL_CTRL_R_HISTORY_PLUGIN_TAG: &str = "external_ctrl_r_history";
-
-/// `shell_plugins` tag reported by bootstrap when the shell's `^T` binding has been rebound away
-/// from its default line-editor binding to an external file-search widget (e.g. fzf). Independent
-/// of [`EXTERNAL_CTRL_R_HISTORY_PLUGIN_TAG`] -- a shell can have either, both, or neither, since
-/// each binding is detected and reported on its own. Must match the tag name used in
-/// `app/assets/bundled/bootstrap/zsh_body.sh`.
-const EXTERNAL_CTRL_T_FILE_PLUGIN_TAG: &str = "external_ctrl_t_file";
+/// `shell_plugins` tags reported by bootstrap when ctrl-r identifies a supported shell plugin.
+/// fzf provides ctrl-r, ctrl-t, and alt-c, while atuin only provides ctrl-r.
+const FZF_PLUGIN_TAG: &str = "fzf";
+const ATUIN_PLUGIN_TAG: &str = "atuin";
 
 /// Name of the bootstrap-installed shell function invoked to hand ctrl-r off to the shell's
 /// own external history widget. Must match the function name defined in
@@ -739,6 +733,17 @@ const EXTERNAL_CTRL_R_HELPER_COMMAND: &str = "rook_run_external_ctrl_r_widget";
 /// external file-search widget. Must match the function name defined in
 /// `app/assets/bundled/bootstrap/zsh_body.sh`.
 const EXTERNAL_CTRL_T_HELPER_COMMAND: &str = "rook_run_external_ctrl_t_widget";
+
+/// Name of the bootstrap-installed shell function invoked to hand alt-c off to fzf's directory
+/// search widget.
+const EXTERNAL_ALT_C_HELPER_COMMAND: &str = "rook_run_external_alt_c_widget";
+
+fn ctrl_t_apply_mode(shell_type: ShellType) -> ShellWidgetApplyMode {
+    match shell_type {
+        ShellType::Fish => ShellWidgetApplyMode::Replace,
+        ShellType::Bash | ShellType::Zsh | ShellType::PowerShell => ShellWidgetApplyMode::Splice,
+    }
+}
 
 pub const LONG_RUNNING_AGENT_REQUESTED_COMMAND_CONTEXT_KEY: &str = "LongRunningRequestedCommand";
 pub const LONG_RUNNING_AGENT_REQUESTED_COMMAND_USER_TOOK_OVER_CONTEXT_KEY: &str =
@@ -6135,6 +6140,149 @@ impl TerminalView {
         }
         self.remove_cloud_mode_queue_row(ctx);
     }
+
+    fn ai_block_targets_for_history_event(
+        &self,
+        event: &BlocklistAIHistoryEvent,
+        ctx: &AppContext,
+    ) -> Vec<ViewHandle<AIBlock>> {
+        match event {
+            BlocklistAIHistoryEvent::AppendedExchange {
+                conversation_id, ..
+            } => {
+                // The pane's latest block and the conversation's latest block may each lose
+                // latest-only controls when a new exchange starts.
+                let mut targets = Vec::with_capacity(2);
+                if let Some(handle) =
+                    self.rich_content_views
+                        .iter()
+                        .rev()
+                        .find_map(|rich_content| {
+                            rich_content
+                                .ai_block_metadata()
+                                .map(|metadata| metadata.ai_block_handle.clone())
+                        })
+                {
+                    targets.push(handle);
+                }
+                if let Some(handle) =
+                    self.rich_content_views
+                        .iter()
+                        .rev()
+                        .find_map(|rich_content| {
+                            let metadata = rich_content.ai_block_metadata()?;
+                            (metadata.conversation_id == *conversation_id)
+                                .then(|| metadata.ai_block_handle.clone())
+                        })
+                    && targets.iter().all(|target| target.id() != handle.id())
+                {
+                    targets.push(handle);
+                }
+                targets
+            }
+            BlocklistAIHistoryEvent::UpdatedStreamingExchange { exchange_id, .. } => {
+                // Only the matching block that began live can consume output updates; completed
+                // restored blocks receive replay-only events.
+                self.ai_block_for_exchange(exchange_id)
+                    .filter(|handle| handle.as_ref(ctx).receives_live_output_updates())
+                    .cloned()
+                    .into_iter()
+                    .collect()
+            }
+            BlocklistAIHistoryEvent::UpdatedTodoList {
+                conversation_id, ..
+            } => {
+                // Todo state can appear in earlier exchanges, so every todo-bearing block in the
+                // conversation must refresh.
+                self.rich_content_views
+                    .iter()
+                    .filter_map(|rich_content| {
+                        let metadata = rich_content.ai_block_metadata()?;
+                        (metadata.conversation_id == *conversation_id
+                            && metadata.ai_block_handle.as_ref(ctx).contains_todo_list())
+                        .then(|| metadata.ai_block_handle.clone())
+                    })
+                    .collect()
+            }
+            BlocklistAIHistoryEvent::ConversationUsageMetadataUpdated { conversation_id } => {
+                // The conversation's latest usage pill and each ancestor's latest rollup depend on
+                // this metadata.
+                let history = BlocklistAIHistoryModel::as_ref(ctx);
+                let mut affected_conversation_ids = HashSet::from([*conversation_id]);
+                let mut current_conversation_id = *conversation_id;
+                while let Some(parent_conversation_id) = history
+                    .conversation(&current_conversation_id)
+                    .and_then(|conversation| {
+                        history.resolved_parent_conversation_id_for_conversation(conversation)
+                    })
+                {
+                    if !affected_conversation_ids.insert(parent_conversation_id) {
+                        break;
+                    }
+                    current_conversation_id = parent_conversation_id;
+                }
+                let latest_exchange_ids = affected_conversation_ids
+                    .into_iter()
+                    .filter_map(|conversation_id| {
+                        history
+                            .conversation(&conversation_id)
+                            .and_then(|conversation| conversation.latest_visible_exchange())
+                            .map(|exchange| exchange.id)
+                    })
+                    .collect::<HashSet<_>>();
+
+                self.rich_content_views
+                    .iter()
+                    .filter_map(|rich_content| {
+                        let metadata = rich_content.ai_block_metadata()?;
+                        latest_exchange_ids
+                            .contains(&metadata.exchange_id)
+                            .then(|| metadata.ai_block_handle.clone())
+                    })
+                    .collect()
+            }
+            BlocklistAIHistoryEvent::StartedNewConversation { .. }
+            | BlocklistAIHistoryEvent::CreatedSubtask { .. }
+            | BlocklistAIHistoryEvent::UpgradedTask { .. }
+            | BlocklistAIHistoryEvent::ReassignedExchange { .. }
+            | BlocklistAIHistoryEvent::UpdatedConversationStatus { .. }
+            | BlocklistAIHistoryEvent::SetActiveConversation { .. }
+            | BlocklistAIHistoryEvent::ClearedActiveConversation { .. }
+            | BlocklistAIHistoryEvent::ClearedConversationsForTerminalSurface { .. }
+            | BlocklistAIHistoryEvent::UpdatedAutoexecuteOverride { .. }
+            | BlocklistAIHistoryEvent::SplitConversation { .. }
+            | BlocklistAIHistoryEvent::RemoveConversation { .. }
+            | BlocklistAIHistoryEvent::DeletedConversation { .. }
+            | BlocklistAIHistoryEvent::RestoredConversations { .. }
+            | BlocklistAIHistoryEvent::UpdatedConversationMetadata { .. }
+            | BlocklistAIHistoryEvent::UpdatedConversationTitle { .. }
+            | BlocklistAIHistoryEvent::UpdatedConversationArtifacts { .. }
+            | BlocklistAIHistoryEvent::ConversationServerTokenAssigned { .. }
+            | BlocklistAIHistoryEvent::ConversationTransferredBetweenTerminalSurfaces { .. }
+            | BlocklistAIHistoryEvent::NewConversationRequestComplete { .. }
+            | BlocklistAIHistoryEvent::OrchestrationConfigUpdated { .. }
+            | BlocklistAIHistoryEvent::LocalSharedSessionEstablished { .. } => Vec::new(),
+        }
+    }
+
+    fn route_ai_block_history_event(
+        &self,
+        event: &BlocklistAIHistoryEvent,
+        ctx: &mut ViewContext<Self>,
+    ) {
+        for ai_block in self.ai_block_targets_for_history_event(event, ctx) {
+            ai_block.update(ctx, |block, ctx| {
+                if matches!(
+                    event,
+                    BlocklistAIHistoryEvent::UpdatedStreamingExchange { .. }
+                ) {
+                    block.handle_history_output_update(ctx);
+                } else {
+                    ctx.notify();
+                }
+            });
+        }
+    }
     fn render_owner_for_ai_history_event(
         &self,
         history_model: &BlocklistAIHistoryModel,
@@ -6200,6 +6348,7 @@ impl TerminalView {
         if !should_handle {
             return;
         }
+        self.route_ai_block_history_event(event, ctx);
         // If the conversation details panel is open and showing an active local
         // AI conversation in this terminal view, refresh its data when status,
         // artifacts, exchanges, or metadata change. Mirrors the WASM transcript
@@ -9282,10 +9431,8 @@ impl TerminalView {
             && !model.is_read_only()
     }
 
-    /// If ctrl-r was pressed at an idle prompt on a session whose shell has rebound `^R` away
-    /// from its default reverse-history-search widget (reported via the
-    /// [`EXTERNAL_CTRL_R_HISTORY_PLUGIN_TAG`] shell plugin tag, e.g. by fzf or atuin), hands the
-    /// keypress off to that widget instead of opening Rook's own command search.
+    /// If ctrl-r was pressed at an idle prompt on a session using fzf or atuin, hands the keypress
+    /// off to that plugin instead of opening Rook's own command search.
     ///
     /// Returns `true` if the handoff was triggered, in which case the caller should not open
     /// Rook's command search.
@@ -9304,10 +9451,8 @@ impl TerminalView {
                 .as_ref(ctx)
                 .get(session_id)
                 .is_some_and(|session| {
-                    session
-                        .shell()
-                        .plugins()
-                        .contains(EXTERNAL_CTRL_R_HISTORY_PLUGIN_TAG)
+                    session.shell().plugins().contains(FZF_PLUGIN_TAG)
+                        || session.shell().plugins().contains(ATUIN_PLUGIN_TAG)
                 });
         if !has_external_ctrl_r_widget || self.model.lock().is_alt_screen_active() {
             return false;
@@ -9317,15 +9462,14 @@ impl TerminalView {
             input.trigger_external_shell_widget_handoff(
                 EXTERNAL_CTRL_R_HELPER_COMMAND,
                 ShellWidgetApplyMode::Replace,
-                false, /* capture_cursor */
+                true, /* capture_cursor */
                 ctx,
             )
         })
     }
 
-    /// If ctrl-t was pressed at an idle prompt on a session whose shell has rebound `^T` to an
-    /// external file-search widget (reported via the [`EXTERNAL_CTRL_T_FILE_PLUGIN_TAG`] shell
-    /// plugin tag, e.g. by fzf), hands the keypress off to that widget. Mirrors
+    /// If ctrl-t was pressed at an idle prompt on a session using fzf, hands the keypress off to
+    /// fzf's file-search widget. Mirrors
     /// [`Self::maybe_trigger_external_ctrl_r_history_search`], but lands the selection either by
     /// inserting it into the input editor at the cursor position or by replacing the whole
     /// buffer, depending on the session's shell; see [`Input::trigger_external_shell_widget_handoff`]
@@ -9346,10 +9490,7 @@ impl TerminalView {
         let Some(session) = self.sessions.as_ref(ctx).get(session_id) else {
             return false;
         };
-        if !session
-            .shell()
-            .plugins()
-            .contains(EXTERNAL_CTRL_T_FILE_PLUGIN_TAG)
+        if !session.shell().plugins().contains(FZF_PLUGIN_TAG)
             || self.model.lock().is_alt_screen_active()
         {
             return false;
@@ -9358,12 +9499,7 @@ impl TerminalView {
         // own token-aware replacement and so returns the whole new line; bash/zsh's helper
         // instead searches independently of the draft and reports a plain path to splice in at
         // the cursor. See `ShellWidgetApplyMode` and the fish/bash/zsh helper implementations.
-        let apply_mode = match session.shell().shell_type() {
-            ShellType::Fish => ShellWidgetApplyMode::Replace,
-            ShellType::Bash | ShellType::Zsh | ShellType::PowerShell => {
-                ShellWidgetApplyMode::Splice
-            }
-        };
+        let apply_mode = ctrl_t_apply_mode(session.shell().shell_type());
 
         self.input.update(ctx, |input, ctx| {
             input.trigger_external_shell_widget_handoff(
@@ -9373,6 +9509,39 @@ impl TerminalView {
                 ctx,
             )
         })
+    }
+
+    /// If alt-c was pressed at an idle prompt on a session using fzf, hands the keypress off to
+    /// fzf's directory-search widget.
+    pub fn maybe_trigger_external_alt_c_directory_search(
+        &mut self,
+        ctx: &mut ViewContext<Self>,
+    ) -> bool {
+        if !self.external_alt_c_binding_eligible(ctx) {
+            return false;
+        }
+
+        self.input.update(ctx, |input, ctx| {
+            input.trigger_external_shell_widget_handoff(
+                EXTERNAL_ALT_C_HELPER_COMMAND,
+                ShellWidgetApplyMode::Replace,
+                true, /* capture_cursor */
+                ctx,
+            )
+        })
+    }
+
+    pub(crate) fn external_alt_c_binding_eligible(&self, app: &AppContext) -> bool {
+        if !FeatureFlag::ShellWidgetHandoff.is_enabled()
+            || self.is_long_running()
+            || self.input.as_ref(app).is_voltron_open()
+            || self.model.lock().is_alt_screen_active()
+        {
+            return false;
+        }
+        self.active_block_session_id()
+            .and_then(|session_id| self.sessions.as_ref(app).get(session_id))
+            .is_some_and(|session| session.shell().plugins().contains(FZF_PLUGIN_TAG))
     }
 
     /// Returns `true` when an interactive SSH command has been detected at
@@ -12205,7 +12374,17 @@ impl TerminalView {
                 // case, we want the block to be focused because otherwise,
                 // users get stuck as they'd otherwise need to click into the
                 // box to respond to whether or not they want to update oh my zsh.
-                self.focus_terminal(ctx);
+                //
+                // Skipped while a tab or tab-group rename editor is focused. Taking focus
+                // would end the rename and lose user inputs (#14241).
+                let inline_rename_editor_is_focused = WorkspaceRegistry::as_ref(ctx)
+                    .get(self.window_id, ctx)
+                    .is_some_and(|workspace| {
+                        workspace.as_ref(ctx).is_inline_rename_editor_focused(ctx)
+                    });
+                if !inline_rename_editor_is_focused {
+                    self.focus_terminal(ctx);
+                }
             }
             ModelEvent::AfterBlockStarted {
                 command,
@@ -12373,13 +12552,14 @@ impl TerminalView {
                                         },
                                     );
 
-                                    // Codex doesn't use the sentinel-based plugin protocol,
-                                    // so create the listener proactively on command detection
-                                    // (rather than waiting for a SessionStart event).
-                                    if matches!(detection, Some((CLIAgent::Codex, _))) {
+                                    // Codex and Grok use OSC 9 (and optional rich OSC 777)
+                                    // without requiring a SessionStart sentinel first, so
+                                    // create the listener proactively on command detection.
+                                    if let Some((agent @ (CLIAgent::Codex | CLIAgent::Grok), _)) =
+                                        detection
+                                    {
                                         me.register_cli_agent_listener_without_session_start_event(
-                                            CLIAgent::Codex,
-                                            ctx,
+                                            agent, ctx,
                                         );
                                     }
 
@@ -29109,9 +29289,12 @@ impl View for TerminalView {
         if self.is_input_box_visible(&model_lock, app) {
             context.set.insert(INPUT_BOX_VISIBLE_KEY);
         }
-
-        if self.input.as_ref(app).editor().as_ref(app).is_focused() {
+        let input = self.input.as_ref(app);
+        if input.editor().as_ref(app).is_focused() {
             context.set.insert("EditorFocused");
+        }
+        if input.is_voltron_open() {
+            context.set.insert("VoltronActive");
         }
 
         if model_lock.block_list().selection().is_some() {

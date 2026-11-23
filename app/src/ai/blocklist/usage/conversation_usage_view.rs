@@ -362,9 +362,8 @@ impl ConversationUsageView {
             .unwrap_or(self.usage_info.total_cost_in_cents);
 
         if self.display_mode == DisplayMode::Footer
-            && self.usage_info.credits_spent_for_last_block.is_some()
+            && let Some(last_block_credits) = self.usage_info.credits_spent_for_last_block
         {
-            let last_block_credits = self.usage_info.credits_spent_for_last_block.unwrap();
             labels.push(render_label_text(
                 &usage_label(
                     UsageLabelKind::LastResponse,

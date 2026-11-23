@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use ai::skills::SkillProvider;
 use chrono::Local;
 use pathfinder_color::ColorU;
 use rook_editor::render::model::LineCount;
@@ -268,6 +269,8 @@ fn test_detect_known_agents() {
                 ("vibe", CLIAgent::Vibe),
                 ("agy", CLIAgent::Antigravity),
                 ("omp", CLIAgent::OhMyPi),
+                ("grok", CLIAgent::Grok),
+                ("muse", CLIAgent::Muse),
                 ("rook", CLIAgent::RookTui),
                 ("rook-dev", CLIAgent::RookTui),
                 ("./script/run-tui", CLIAgent::RookTui),
@@ -294,8 +297,149 @@ fn test_detect_with_arguments() {
                 CLIAgent::detect("gemini chat", None, None, ctx),
                 Some(CLIAgent::Gemini),
             );
+            assert_eq!(
+                CLIAgent::detect(r#"muse exec "ping""#, None, None, ctx),
+                Some(CLIAgent::Muse),
+            );
+            assert_eq!(CLIAgent::detect("npx muse", None, None, ctx), None);
         });
     });
+}
+
+#[test]
+fn test_detect_does_not_match_auth_commands() {
+    App::test((), |mut app| async move {
+        app.update(|ctx| {
+            for command in [
+                "codex login",
+                "codex login status",
+                "codex login --device-auth",
+                "codex logout",
+                "claude auth",
+                "claude auth status --json",
+                "claude auth login",
+                "claude auth logout",
+                "/usr/local/bin/codex login status",
+                r"C:\tools\claude auth status --json",
+            ] {
+                for escape_char in [
+                    None,
+                    Some(EscapeChar::Backslash),
+                    Some(EscapeChar::Backtick),
+                ] {
+                    assert_eq!(
+                        CLIAgent::detect(command, escape_char, None, ctx),
+                        None,
+                        "unexpected session for {command:?} with {escape_char:?}",
+                    );
+                }
+            }
+        });
+    });
+}
+
+#[test]
+fn test_detect_does_not_match_auth_commands_with_shell_syntax() {
+    App::test((), |mut app| async move {
+        app.update(|ctx| {
+            for command in [
+                "FOO=bar codex login status",
+                "FOO=bar claude auth status --json",
+                "'/opt/CLI Tools/codex' 'login' status",
+                "'/opt/CLI Tools/claude' 'auth' status --json",
+                "codex login status && claude",
+            ] {
+                assert_eq!(
+                    CLIAgent::detect(command, Some(EscapeChar::Backslash), None, ctx),
+                    None,
+                    "unexpected session for {command:?}",
+                );
+            }
+            assert_eq!(
+                CLIAgent::detect(
+                    r#""C:\Program Files\Claude\claude" auth status --json"#,
+                    Some(EscapeChar::Backtick),
+                    None,
+                    ctx,
+                ),
+                None,
+            );
+        });
+    });
+}
+
+#[test]
+fn test_detect_does_not_match_auth_commands_through_aliases() {
+    App::test((), |mut app| async move {
+        app.update(|ctx| {
+            let map = aliases(&[
+                ("cx", "codex"),
+                ("cc", "claude"),
+                ("cx-status", "FOO=bar codex login status"),
+                ("cc-status", "FOO=bar claude auth status --json"),
+            ]);
+            for command in [
+                "cx login status",
+                "cc auth status --json",
+                "cx-status",
+                "cc-status",
+            ] {
+                assert_eq!(
+                    CLIAgent::detect(command, Some(EscapeChar::Backslash), Some(&map), ctx),
+                    None,
+                    "unexpected session for {command:?}",
+                );
+            }
+        });
+    });
+}
+
+#[test]
+fn test_detect_matches_auth_words_as_prompt_arguments() {
+    App::test((), |mut app| async move {
+        app.update(|ctx| {
+            for (command, expected) in [
+                ("codex --model gpt-5 'fix login'", CLIAgent::Codex),
+                ("claude --model opus 'fix auth'", CLIAgent::Claude),
+                ("codex 'fix login status'", CLIAgent::Codex),
+                ("claude 'fix auth status'", CLIAgent::Claude),
+                ("codex resume", CLIAgent::Codex),
+                ("claude --continue", CLIAgent::Claude),
+            ] {
+                assert_eq!(
+                    CLIAgent::detect(command, Some(EscapeChar::Backslash), None, ctx),
+                    Some(expected),
+                    "failed to detect {command:?}",
+                );
+            }
+        });
+    });
+}
+
+#[test]
+fn test_grok_public_configuration() {
+    assert_eq!(CLIAgent::Grok.command_prefix(), "grok");
+    assert_eq!(CLIAgent::Grok.display_name(), "Grok Build");
+    assert!(CLIAgent::Grok.supports_bash_mode());
+    assert_eq!(CLIAgent::Grok.skill_command_prefix(), "/");
+    assert_eq!(CLIAgent::Grok.icon(), Some(Icon::GrokLogo));
+}
+
+#[test]
+fn test_muse_public_configuration() {
+    assert_eq!(CLIAgent::Muse.command_prefix(), "muse");
+    assert_eq!(CLIAgent::Muse.display_name(), "Muse Code");
+    assert!(CLIAgent::Muse.supports_bash_mode());
+    assert_eq!(CLIAgent::Muse.skill_command_prefix(), "/");
+    assert_eq!(CLIAgent::Muse.icon(), Some(Icon::MuseLogo));
+    assert_eq!(
+        CLIAgent::Muse.supported_skill_providers(),
+        &[
+            SkillProvider::Agents,
+            SkillProvider::Claude,
+            SkillProvider::Codex,
+        ]
+    );
 }
 
 #[test]

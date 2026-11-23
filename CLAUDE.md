@@ -42,11 +42,10 @@ own and the working tree looks fine locally.
 
 ```bash
 cargo check -p rook                        # the app; does NOT build test targets
-cargo check --workspace --all-targets \
-  --exclude rook_js --exclude command-signatures-v2
+cargo check --workspace --all-targets
 ```
 
-The second one is what catches errors in tests, and it needs libclang for `bindgen`. If libclang is not installed locally, say that rather than reporting that the tests compile - CI covers it. `rook_js` targets wasm and `command-signatures-v2` needs its JS toolchain built first, so neither builds on Windows.
+The second one is what catches errors in tests, and it needs libclang for `bindgen`. If libclang is not installed locally, say that rather than reporting that the tests compile - CI covers it.
 
 ## Building and releasing
 

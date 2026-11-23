@@ -2,7 +2,7 @@
 
 Rook is a fork of [warpdotdev/Warp](https://github.com/warpdotdev/warp). This file records how far it has been brought forward, so `/catch-up` knows where to start.
 
-**Last synced upstream commit:** `51242b5f0af80fff81613ff6561eed29ba8922fa` (2026-09-07, "[REV-2383] Scope model listing to selected team (#15804)")
+**Last synced upstream commit:** `f8223cef2d167a5858bf233df8a1fb6f74537fa5` (2026-11-20, "Bump Rust 1.94 and Candle 0.11.1 to drop zip 7.2.0 (#16946)")
 
 ## Where Rook deliberately differs
 
@@ -59,3 +59,33 @@ After re-running the rename, run the tests on every platform rather than only bu
 ### 2026-09-07 - initial import
 
 Imported at `51242b5`. No upstream changes ported yet; everything since is what `/catch-up` will report first.
+
+### 2026-11-23 - `51242b5` to `f8223cef2`
+
+All 412 non-merge commits were triaged; every one was ported, ported in part, or skipped for a reason below. Each was renamed with `replace_case_preserving` from `script/rebrand.py` and dry-applied against the tree, which sorts them into clean (68), three-way (34), already present (11) and conflicting (299). Most of the conflicts are drift in code Rook cannot use.
+
+Ported whole or in the parts Rook can use:
+
+- Terminal and shell: `b231216aa`, `cd4b970e6`, `3308af3ac`, `71cbee776`, `3c5115418`, `56c715dcc`, `063a7643a`, `1645db65c`, `6d6eac300`, `9c870be87`, `c75f182d1`, `d5fdbff50` (flag completions after `--`), `f2b401aed` and `b42435622` (fzf Alt-C and Ctrl-R), `2120e3794` (typed query into zsh Ctrl-R), `5a55a2aca` (only the input.rs hunk: a queued command waits for the final bootstrap precmd), `40b791c35` (no WSL subprocess per directory chip, `~` expands to the session's home), `64f652a8f` (only the `bash_body.sh` fixes, not the CI gate), `01ff35f8a` (Claude launch commands in PowerShell).
+- Workspace and UI: `c72f36d6a` (tab groups in launch configurations), `6f575836c`, `9fb32eddd` (tab group names in vertical-tab search), `3529ae637` (crash moving a Settings tab between windows), `e6e1c4e0f` (Windows backdrop material, the old setting migrated), `33c3bf6b7`, `0bb920b28`, `0d57d4bb2`, `221eda318`, `3959ea721`, `2c6029018`.
+- Editor: `742ca57b5` (uncached editor text layout, with its benchmark), `0efd26e70` (Neovim line text objects), `24e80bea8` (Markdown raw/rendered shortcut).
+- CLI agents: `2718b6658` (Grok), `2012bacff`, `41b83dc7c` (Kiro), `7c3148819` (Muse), `f4868ff31` (Antigravity, without `prompt_required`, whose event type arrives with the unported `9ccb4e3e3`), `03ceb39cf`, `5b9771acf`, `eafc6d18d`, `1f0cf55af`, `626a4d4eb`, `4143c09ff`.
+- Local MCP: `d5d23e611` (rmcp 3.5 and bounded tool calls, without the cloud driver parts), `617c3a996`, `9b499e029`, `d1d6200bf`, `5acc8e7e4`, `5bacd2b61` (User-Agent `Rook-MCP-Client/1.0`, adapted because `a36f769ed` is cloud-only).
+- Dependencies and security: `f2ca97abb` (zip 9), `f8223cef2` (Rust 1.94, Candle 0.11.1, zip 7.2.0 gone), `114bacea6`, `a9520c97d`, `1cc4edf69`, `c79019b55`, `714c51f1e`, `11a809346`, `76a9f5139`, `3337e1000`. The lockfile was replayed by hand; it carries reqwest 0.13.5 rather than 0.13.3, since rmcp 3.5 needs it.
+- Build time: `a06279712` (completions v2 removed: `rook_js`, `command-signatures-v2` and rquickjs are gone, and with them every `--exclude` for them), `783bc3b08`, `b65097e5d`.
+- Tests: `1bf1c6a2b`, `6398d1e96`, `6f120ee52`, `4b790f5fa`, `51031f387`, `8b0e86c51` (without the reconnect tests Rook does not have).
+
+Skipped:
+
+- Cloud agents, Oz, Factory, runners, environments, shared sessions, the ACP harness and Warp's own server-backed agent and its hooks: about 200 commits. Rook has no server to run them against.
+- Billing, credits and spend (about 20), auth, teams and Firebase (about 15), telemetry and Sentry (about 10), and Warp's release, signing and CI pipeline (about 35).
+- `77105899b`: makes shell widget handoff, native shell completions and history ranking v2 the default. Left off on purpose, to keep completions and history as they are.
+- `7cef787ea`: already fixed here, see the crash-recovery row.
+- `94abbc17b`, `c0b7cf95f`, `765ebc8a9`, `42e2a7d75`: raise the Codex and Claude plugin minimums above the vendored plugins, which would then be refused.
+- `43eae5e08`: reverted upstream by `dc4442af2`.
+- `4be2b18b1`: its test client builds on the cloud-only `1d32d02f0`.
+- `11dd3893d`: a compile-time gain that needs a new dependency, `non_structural_derive`, not vetted.
+- `325d4d470`, `8f4865adc`, `cf9434a18`, `6aeacb6ad`: Warp agent, LRC or ACP paths that need the server.
+- `200153270`: changes no files.
+
+Upstream issues read for symptoms Rook inherits: warpdotdev/warp#15262 (every layout pass rebuilt the block-height tree even with nothing to update; fixed here) and #16130/#15894 (git chips start a PowerShell every 30 s per session; fixed here). #14639 (pane switching snapshots app state on the UI thread) still applies and wants a profile first.

@@ -54,8 +54,6 @@ mod notification;
 mod palette;
 mod persistence;
 mod platform;
-#[cfg(feature = "plugin_host")]
-mod plugin;
 mod prefix;
 #[cfg(target_os = "macos")]
 mod preview_config_migration;
@@ -211,8 +209,6 @@ use interval_timer::IntervalTimer;
 use itertools::Itertools;
 #[cfg(feature = "integration_tests")]
 pub use persistence::testing as sqlite_testing;
-#[cfg(feature = "plugin_host")]
-pub use plugin::{PLUGIN_HOST_FLAG, run_plugin_host};
 use referral_theme_status::ReferralThemeStatus;
 use server::server_api::ServerApiProvider;
 use settings::{ExtraMetaKeys, PrivacySettings};
@@ -306,7 +302,9 @@ pub use crate::server::telemetry::{
 };
 use crate::server::telemetry::{AppStartupInfo, CloseTarget, PaletteSource, TelemetryCollector};
 use crate::session_management::{RunningSessionSummary, SessionNavigationData};
-use crate::settings::cloud_preferences_syncer::initialize_cloud_preferences_syncer;
+use crate::settings::cloud_preferences_syncer::{
+    CloudPreferencesSyncerEvent, initialize_cloud_preferences_syncer,
+};
 use crate::settings::manager::SettingsManager;
 use crate::settings::{AISettings, AccessibilitySettings, ScrollSettings, SelectionSettings};
 use crate::settings_view::DisplayCount;
@@ -571,7 +569,21 @@ impl LaunchMode {
         }
     }
 
-    /// Returns `true` if Rook should run headlessly, without a visible UI.
+    /// Returns `true` if Rook renders to native GUI windows on the platform app backend.
+    fn is_gui(&self) -> bool {
+        match self {
+            LaunchMode::App { .. } | LaunchMode::Test { .. } => true,
+            LaunchMode::CommandLine { command, .. } => {
+                matches!(command, CliCommand::Agent(AgentCommand::Run(args)) if args.gui)
+            }
+            LaunchMode::RemoteServerProxy
+            | LaunchMode::RemoteServerDaemon { .. }
+            | LaunchMode::Tui { .. } => false,
+        }
+    }
+
+    /// Returns `true` if Rook runs with no user interface at all. The TUI is not headless:
+    /// it has no GUI window, but it renders to the terminal.
     fn is_headless(&self) -> bool {
         match self {
             LaunchMode::CommandLine { command, .. } => match command {
@@ -579,19 +591,17 @@ impl LaunchMode {
                 _ => true,
             },
             LaunchMode::RemoteServerProxy | LaunchMode::RemoteServerDaemon { .. } => true,
-            // The TUI front-end renders to the terminal, with no GUI window.
-            LaunchMode::Tui { .. } => true,
-            LaunchMode::App { .. } | LaunchMode::Test { .. } => false,
+            LaunchMode::App { .. } | LaunchMode::Test { .. } | LaunchMode::Tui { .. } => false,
         }
     }
 
     /// Whether this launch mode should start the local loopback HTTP server
     /// (`crates/http_server`), which serves app-installation detection and profiling on a
-    /// fixed port. Only non-headless GUI instances start it, since co-located headless
-    /// processes (daemon, CLI, proxy, TUI) would otherwise contend for the fixed port.
+    /// fixed port. Only GUI instances start it, since co-located windowless processes (daemon,
+    /// CLI, proxy, TUI) would otherwise contend for the fixed port.
     #[cfg_attr(target_family = "wasm", allow(dead_code))]
     fn should_start_local_http_server(&self) -> bool {
-        !self.is_headless()
+        self.is_gui()
     }
 
     /// Returns `true` if this process can build and sync codebase indices.
@@ -850,8 +860,6 @@ fn run_worker_command(worker: &rook_cli::WorkerCommand) -> Result<()> {
             crate::terminal::local_tty::run_terminal_server(args);
             Ok(())
         }
-        #[cfg(feature = "plugin_host")]
-        rook_cli::WorkerCommand::PluginHost { .. } => crate::run_plugin_host(),
         #[cfg(feature = "local_tty")]
         rook_cli::WorkerCommand::MinidumpServer { socket_name } => {
             cfg_if::cfg_if! {
@@ -902,11 +910,7 @@ fn run_worker_command(worker: &rook_cli::WorkerCommand) -> Result<()> {
             .map_err(|err| anyhow!(err.to_string()))?;
             Ok(())
         }
-        #[cfg(not(any(
-            feature = "local_tty",
-            feature = "plugin_host",
-            not(target_family = "wasm")
-        )))]
+        #[cfg(all(target_family = "wasm", not(feature = "local_tty")))]
         worker => {
             // On wasm, specifically, we should fail spectacularly if we get here.
             #[cfg(target_family = "wasm")]
@@ -1045,9 +1049,9 @@ fn run_internal(mut launch_mode: LaunchMode) -> Result<()> {
     timer.mark_interval_end("LOG_FILE_SETUP_COMPLETE");
 
     // Claim a background-only process type before anything else can reach
-    // AppKit, so a headless launch never acquires a Dock tile. See APP-2946.
+    // AppKit, so a windowless launch never acquires a Dock tile. See APP-2946.
     #[cfg(target_os = "macos")]
-    if launch_mode.is_headless()
+    if !launch_mode.is_gui()
         && let Err(e) = platform::mac::mark_process_as_background_only()
     {
         log::warn!("Failed to mark process as background-only: {e:#}");
@@ -1227,28 +1231,29 @@ fn run_internal(mut launch_mode: LaunchMode) -> Result<()> {
             tracing_initialization.take(),
         )
     };
-    let mut app_builder = if launch_mode.is_headless() {
-        rookui::platform::AppBuilder::new_headless(
+    let mut app_builder = if launch_mode.is_gui() {
+        rookui::platform::AppBuilder::new(
             callbacks,
             Box::new(ASSETS),
             launch_mode.take_test_driver(),
         )
     } else {
-        rookui::platform::AppBuilder::new(
+        rookui::platform::AppBuilder::new_windowless(
             callbacks,
             Box::new(ASSETS),
             launch_mode.take_test_driver(),
         )
     };
 
-    if matches!(launch_mode, LaunchMode::Tui { .. }) {
-        app_builder.enable_headless_microphone_access_query();
+    // A user is present for any launch with a UI, so it may query microphone authorization.
+    if !launch_mode.is_headless() {
+        app_builder.enable_windowless_microphone_access_query();
     }
 
-    // A headless invocation has no Dock presence, so it performs no Dock-visible
+    // A windowless invocation has no Dock presence, so it performs no Dock-visible
     // setup at all (Dock icon, Dock menu, menu bar). See APP-2946.
     #[cfg(target_os = "macos")]
-    if !launch_mode.is_headless() {
+    if launch_mode.is_gui() {
         use rookui::AssetProvider as _;
         use rookui::platform::mac::AppExt;
 
@@ -1349,10 +1354,6 @@ fn run_internal(mut launch_mode: LaunchMode) -> Result<()> {
         #[cfg(enable_crash_recovery)]
         ctx.add_singleton_model(move |_ctx| crash_recovery);
 
-        #[cfg(feature = "plugin_host")]
-        ctx.add_singleton_model(move |ctx| {
-            plugin::PluginHost::new(ctx).expect("Could not instantiate PluginHost")
-        });
         let app_state = initialize_app(
             &launch_mode,
             timer,
@@ -1876,7 +1877,7 @@ pub(crate) fn initialize_app(
     });
 
     #[cfg(target_os = "macos")]
-    if !launch_mode.is_headless() {
+    if launch_mode.is_gui() {
         AppearanceManager::as_ref(ctx).set_app_icon(ctx);
     }
 
@@ -2326,12 +2327,17 @@ pub(crate) fn initialize_app(
     });
 
     let toml_file_path = settings::user_preferences_toml_file_path();
-    ctx.add_singleton_model(move |ctx| {
+    let cloud_preferences_syncer = ctx.add_singleton_model(move |ctx| {
         initialize_cloud_preferences_syncer(
             toml_file_path,
             startup_toml_parse_error_for_syncer.as_deref(),
             ctx,
         )
+    });
+    ctx.subscribe_to_model(&cloud_preferences_syncer, |_, event, ctx| {
+        if let CloudPreferencesSyncerEvent::InitialLoadCompleted = event {
+            window_settings::migrate_legacy_background_backdrop(ctx);
+        }
     });
     ai::custom_endpoints::init(launch_mode, ctx);
 

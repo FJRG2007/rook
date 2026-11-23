@@ -113,9 +113,6 @@ jobs:
           - os: windows
             name: Windows
             runner: windows-latest
-            # rook_js targets wasm and command-signatures-v2 needs its JS
-            # toolchain built first, so neither builds here.
-            clippy_excludes: --exclude rook_js --exclude command-signatures-v2
           - os: macos
             name: macOS
             runner: macos-latest
@@ -178,15 +175,12 @@ jobs:
           - os: windows
             name: Windows
             runner: windows-latest
-            test_excludes: --exclude command-signatures-v2 --exclude rook_js
           - os: macos
             name: macOS
             runner: macos-latest
-            test_excludes: --exclude command-signatures-v2
           - os: linux
             name: Linux
             runner: ubuntu-latest
-            test_excludes: --exclude command-signatures-v2
     steps:
       - uses: actions/checkout@v7
         if: needs.changes.outputs.code == 'true' && (matrix.os == 'linux' || needs.changes.outputs.full == 'true')

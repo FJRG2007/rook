@@ -1029,7 +1029,11 @@ impl Session {
 
     pub fn home_dir(&self) -> Option<&str> {
         if cfg!(test) {
-            return rook_util::path::TEST_SESSION_HOME_DIR.as_deref();
+            return self
+                .info
+                .home_dir
+                .as_deref()
+                .or(rook_util::path::TEST_SESSION_HOME_DIR.as_deref());
         }
 
         self.info.home_dir.as_deref()
@@ -1869,6 +1873,17 @@ pub mod testing {
                 self.shell.version().clone(),
                 Some(shell_options),
                 self.shell.plugins().clone(),
+                self.shell.shell_path().clone(),
+            );
+            self
+        }
+
+        pub fn with_shell_plugins(mut self, shell_plugins: HashSet<String>) -> Self {
+            self.shell = Shell::new(
+                self.shell.shell_type(),
+                self.shell.version().clone(),
+                self.shell.options().clone(),
+                shell_plugins,
                 self.shell.shell_path().clone(),
             );
             self

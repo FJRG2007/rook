@@ -131,14 +131,16 @@ fn rich_input_submit_strategy(agent: CLIAgent) -> RichInputSubmitStrategy {
         | CLIAgent::OpenCode
         | CLIAgent::Gemini
         | CLIAgent::Auggie
-        | CLIAgent::CursorCli => RichInputSubmitStrategy::DelayedEnter,
-        CLIAgent::Hermes => RichInputSubmitStrategy::BracketedPaste,
+        | CLIAgent::Grok
+        | CLIAgent::CursorCli
+        | CLIAgent::Antigravity => RichInputSubmitStrategy::DelayedEnter,
+        CLIAgent::Hermes | CLIAgent::Muse => RichInputSubmitStrategy::BracketedPaste,
         CLIAgent::Amp
         | CLIAgent::Droid
         | CLIAgent::Pi
+        | CLIAgent::Kiro
         | CLIAgent::Goose
         | CLIAgent::Vibe
-        | CLIAgent::Antigravity
         | CLIAgent::RookTui
         | CLIAgent::Unknown => RichInputSubmitStrategy::Inline,
     }

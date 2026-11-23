@@ -4,7 +4,7 @@ use rookui::elements::{
     MainAxisAlignment, MouseStateHandle, ParentElement, Wrap,
 };
 use rookui::ui_components::components::UiComponent;
-use rookui::{AppContext, Entity, View, ViewContext, ViewHandle};
+use rookui::{AppContext, Entity, TypedActionView, View, ViewContext, ViewHandle};
 
 use super::SettingsSection;
 use super::search::SearchQuery;
@@ -31,6 +31,9 @@ impl AboutPageView {
 
 impl Entity for AboutPageView {
     type Event = SettingsPageEvent;
+}
+impl TypedActionView for AboutPageView {
+    type Action = ();
 }
 
 impl View for AboutPageView {
