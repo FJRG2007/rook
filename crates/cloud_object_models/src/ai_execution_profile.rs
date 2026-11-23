@@ -304,7 +304,8 @@ cfg_if::cfg_if! {
     if #[cfg(any(test, feature = "test-util"))] {
         lazy_static! {
             // Compiling the regexes for the default command execution allowlist/denylist can be slow
-            // in an unoptimized build, so we use empty lists in unit tests.
+            // in an unoptimized build, so we use empty lists in unit tests here and in dependent
+            // crates' tests (via the `test-util` feature).
             pub static ref DEFAULT_COMMAND_EXECUTION_ALLOWLIST: Vec<AgentModeCommandExecutionPredicate> = vec![];
             pub static ref DEFAULT_COMMAND_EXECUTION_DENYLIST: Vec<AgentModeCommandExecutionPredicate> = vec![];
         }

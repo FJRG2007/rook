@@ -3295,7 +3295,10 @@ impl AgentDriver {
     /// `/exit`, then a follow-up Enter after [`HARNESS_EXIT_FOLLOWUP_DELAY`],
     /// then a best-effort force-kill after [`HARNESS_EXIT_FORCE_KILL_DELAY`].
     /// Returns as soon as the command handle resolves, or after the force-kill
-    /// attempt, without waiting to prove the process exited.
+    /// attempt, without waiting to prove the process exited. If `start_event`
+    /// reports the session blocked on `NeedsInput`, skips `/exit` and the
+    /// follow-up and force-kills immediately, since typed text would answer
+    /// the open prompt instead of exiting the harness.
     async fn escalate_harness_exit(
         runner: &dyn harness::HarnessRunner,
         harness_name: &str,
